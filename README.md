@@ -1,10 +1,10 @@
 # 🎧 Speak Up! CEFR A1 — Interactive Listening & Speaking Platform (12 Units)
 
-**Version:** `v1.3.0 (Build 2026.10.25-GOALS-QR)`  
+**Version:** `v1.4.0 (Build 2026.10.25-DIALOGUE-SUMMARY)`  
 **Live GitHub Pages URL:** [https://doit-on.github.io/speak-up-CEFR-A1/](https://doit-on.github.io/speak-up-CEFR-A1/)
 
 ## ✨ Features
-- **TWP (ทวพ.) Landing Page**: Welcomes students with the official **โลโก้ ทวพ.**, bold **"Speak Up! CEFR A1"** title, clear **System Version (`v1.3.0`) & Self-Diagnostic (`8/8 OK`)** banner, and 12-Unit quick-launch cards.
+- **TWP (ทวพ.) Landing Page**: Welcomes students with the official **โลโก้ ทวพ.**, bold **"Speak Up! CEFR A1"** title, clear **System Version (`v1.4.0`) & Self-Diagnostic (`8/8 OK`)** banner, and 12-Unit quick-launch cards.
 - **Complete 12 Units (48 Activities, 219 Interactive Items)** based on the *Speak Up: Listening and Speaking Exercises (CEFR A1)* curriculum.
 - **Pre-Activity Learning Goals & Vocabulary Table (Step 0)**:
   - Displayed immediately upon entering any of the 12 Units before starting Activity 1.

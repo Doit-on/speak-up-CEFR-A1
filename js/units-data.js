@@ -575,20 +575,19 @@ window.SPEAKUP_UNITS = [
     activity1: {
       type: "conversation",
       heading: "Listen to the Conversation",
-      headingTh: "ฟังบทสนทนาที่ร้าน Sunny Café (ฟังจบจึงแสดงตัวอักษรสีแดง)",
+      headingTh: "ฟังบทสนทนาระหว่าง Sara และ Dan ที่ร้าน Sunny Café (ฟังจบแล้วกดปุ่มเพื่อแสดงเนื้อหา)",
       title: "After-School Café",
-      passage: "Server: Hi! Welcome to Sunny Café. Here's the menu.\nDan: Thanks. Can I have a cheese sandwich and a lemonade, please?\nServer: Sure. Anything else?\nDan: No, that's all for me. Sara, what would you like?\nSara: I'd like a chocolate cake and an iced tea, please.\nServer: All right. That's one sandwich, one lemonade, one cake, and one iced tea.\nSara: How much is it?\nServer: It's 150 baht altogether.\nDan: Here you are.\nServer: Thank you! Your order will be ready soon.",
+      passage: "Sara: Hi, Dan! Welcome to Sunny Café. Here's the menu.\nDan: Thanks, Sara. Can I have a cheese sandwich and a lemonade, please?\nSara: Sure. Anything else?\nDan: No, that's all for me. What would you like, Sara?\nSara: I'd like a chocolate cake and an iced tea, please.\nDan: All right. That's one sandwich, one lemonade, one cake, and one iced tea. How much is it?\nSara: It's 150 baht altogether.\nDan: Here you are.\nSara: Thank you! Our order will be ready soon.",
       phrases: [
-        "Server: Hi! Welcome to Sunny Café. Here's the menu.",
-        "Dan: Thanks. Can I have a cheese sandwich and a lemonade, please?",
-        "Server: Sure. Anything else?",
-        "Dan: No, that's all for me. Sara, what would you like?",
+        "Sara: Hi, Dan! Welcome to Sunny Café. Here's the menu.",
+        "Dan: Thanks, Sara. Can I have a cheese sandwich and a lemonade, please?",
+        "Sara: Sure. Anything else?",
+        "Dan: No, that's all for me. What would you like, Sara?",
         "Sara: I'd like a chocolate cake and an iced tea, please.",
-        "Server: All right. That's one sandwich, one lemonade, one cake, and one iced tea.",
-        "Sara: How much is it?",
-        "Server: It's 150 baht altogether.",
+        "Dan: All right. That's one sandwich, one lemonade, one cake, and one iced tea. How much is it?",
+        "Sara: It's 150 baht altogether.",
         "Dan: Here you are.",
-        "Server: Thank you! Your order will be ready soon."
+        "Sara: Thank you! Our order will be ready soon."
       ]
     },
     activity2: [
@@ -603,8 +602,8 @@ window.SPEAKUP_UNITS = [
         answerIndex: 0
       },
       {
-        question: "What does the server do in this conversation?",
-        options: ["a) Teaches the friends how to cook", "b) Asks the friends about their school", "c) Takes the friends' order"],
+        question: "What do Dan and Sara order altogether?",
+        options: ["a) Only two cups of coffee", "b) Burgers and french fries", "c) A sandwich, a lemonade, a cake, and an iced tea"],
         answerIndex: 2
       }
     ],
@@ -625,7 +624,7 @@ window.SPEAKUP_UNITS = [
         answerIndex: 2
       },
       {
-        sentence: "4. The server asks, \"Anything ___?\"",
+        sentence: "4. Sara asks, \"Anything ___?\"",
         options: ["a) else", "b) more", "c) again"],
         answerIndex: 0
       },

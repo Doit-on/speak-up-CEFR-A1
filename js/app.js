@@ -1,7 +1,8 @@
 /**
- * Speak Up! CEFR A1 — Main Application Controller (v1.3.0)
+ * Speak Up! CEFR A1 — Main Application Controller (v1.4.0)
  * Supports 12 Units, Pre-Activity Learning Goals & Vocabulary Table (Step 0) + 4 Activities/Unit,
- * Strict Red-Text Gating, 4-Metric Speech Evaluation, LocalStorage Persistence,
+ * Activity 1 Show/Hide Text Toggle, Multi-Speaker Male/Female Dialogue Voices,
+ * Unit Completion Score Summary Pop-up (Item Counts + Speaking % Average),
  * Full Bilingual TH/EN, ISO/IEC 18004 Group QR Sync, Email Reporting & Self-Diagnostics.
  */
 
@@ -16,6 +17,8 @@ window.SpeakUpApp = (function () {
     act1Playing: false,
     act1CurrentSentence: 0,
     act1TotalSentences: 0,
+    act1CurrentSpeaker: null,
+    act1CurrentGender: null,
     act3Step: 0,
     act4Part: "A",
     studentName: "",
@@ -28,7 +31,7 @@ window.SpeakUpApp = (function () {
     th: {
       homeBtn: "หน้าแรก",
       exercisesBtn: "เข้าสู่บทเรียน",
-      landingVersionBadge: "🚀 เวอร์ชันระบบ: v1.3.0 (Build 2026.10.25-GOALS-QR)",
+      landingVersionBadge: "🚀 เวอร์ชันระบบ: v1.4.0 (Build 2026.10.25-DIALOGUE-SUMMARY)",
       landingSubtitle: "Listening and Speaking Exercises • ระบบฝึกฟังและพูดภาษาอังกฤษครบ 12 Units (48 Activities)",
       landingDesc: "ฝึกทักษะการฟังจับใจความพร้อมเงื่อนไขปลดล็อกข้อความสีแดง และฝึกพูดอัดเสียงพร้อมระบบประเมินผล 4 มาตรฐาน (สำเนียง, ความครบถ้วน, ความชัดเจน, เวลาในการพูด) คิดเป็น %",
       landingKenjiTitle: "🕵️‍♂️ นักสืบเคนจิ • ยินดีต้อนรับเข้าสู่ระบบฝึกภาษาอังกฤษ",
@@ -41,11 +44,11 @@ window.SpeakUpApp = (function () {
       landingFeat1Title: "12 Units • Goals & Vocab",
       landingFeat1Sub: "แสดงเป้าหมาย & คำศัพท์ก่อนเริ่ม",
       landingFeat2Title: "Red-Text Audio Lock",
-      landingFeat2Sub: "ฟังเสียงจบก่อนจึงแสดงตัวสีแดง",
+      landingFeat2Sub: "ฟังจบแล้วกดเปิด/ปิดเนื้อหาได้",
       landingFeat3Title: "4-Metric Speech AI (%)",
       landingFeat3Sub: "สำเนียง • ครบถ้วน • ชัดเจน • เวลา",
-      landingFeat4Title: "Version v1.3.0 Verified",
-      landingFeat4Sub: "QR มาตรฐาน ISO สแกนได้จริง",
+      landingFeat4Title: "Version v1.4.0 Verified",
+      landingFeat4Sub: "แยกเสียงชาย/หญิง & สรุปผลท้ายบท",
       landingUnitsHeading: "📚 เลือกบทเรียนได้ทันที (All 12 Units Overview)",
       landingUnitsSub: "คลิกที่การ์ด Unit ใดก็ได้ด้านล่างเพื่อดู Learning Goals, ตารางคำศัพท์ และเข้าสู่ Activity 1–4",
       appSubtitle: "ระบบฝึกฟัง-พูดภาษาอังกฤษ 12 Units • สไตล์มินิมอลอนิเมะ (LocalStorage Edition)",
@@ -64,17 +67,16 @@ window.SpeakUpApp = (function () {
       act0TabTitle: "0. Goals & Vocab",
       act0TabSub: "เป้าหมาย & ตารางคำศัพท์",
       act1TabTitle: "1. ฟังเนื้อเรื่อง (Story)",
-      act1TabSub: "ฟังจบจึงแสดง Text สีแดง",
+      act1TabSub: "ฟังจบแล้วกดเปิด/ปิดเนื้อหาได้",
       act2TabTitle: "2. ตอบคำถาม (Quiz)",
       act2TabSub: "ตอบก่อนจึงแสดงโจทย์สีแดง",
       act3TabTitle: "3. เติมคำ (Cloze)",
       act3TabSub: "ฟัง Passage & ทำทีละข้อ",
       act4TabTitle: "4. ฝึกพูด (Speak Up!)",
-      act4TabSub: "อัดเสียง & ประเมินพูด 4 ด้าน",
-      listenFirstLock: "🔒 ซ่อนข้อความสีแดง — กรุณากดฟังเสียงให้จบก่อน",
-      unlockedBadge: "✅ ปลดล็อกข้อความสีแดงแล้ว! ฝึกฟังและพูดตามได้เลย",
-      playStoryBtn: "กดเพื่อฟังเสียงเนื้อเรื่อง",
-      repeatPhraseTitle: "🗣️ Listen and repeat each phrase (คลิกฟังทีละประโยคและฝึกออกเสียงตาม)",
+      act4TabSub: "อัดเสียง & ประเมินพูด (% เฉลี่ย)",
+      listenFirstLock: "🔒 ซ่อนเนื้อหา — กรุณากดฟังเสียงให้จบก่อน",
+      unlockedBadge: "✅ ฟังจบแล้ว! กดปุ่มแสดงเนื้อหา หรือปิดเนื้อหาเพื่อฝึกฟังได้",
+      playStoryBtn: "กดเพื่อฟังเสียงเนื้อหา",
       listenBtn: "🔊 ฟังเสียง",
       recordBtn: "🎙️ อัดเสียงพูด",
       stopRecordBtn: "⏹️ หยุดอัดเสียง",
@@ -110,12 +112,12 @@ window.SpeakUpApp = (function () {
       resetScoresBtn: "🗑️ ล้างข้อมูลคะแนนทั้งหมด",
       sendEmailBtn: "📧 เปิดโปรแกรมส่ง Email พร้อมสรุปคะแนน",
       diagModalTitle: "🛡️ ระบบตรวจสอบตัวเองอัตโนมัติ & ข้อมูลเวอร์ชัน",
-      footerRight: "เวอร์ชันระบบ: v1.3.0 (Build 2026.10.25-GOALS-QR) • ตรวจสอบตัวเองอัตโนมัติ"
+      footerRight: "เวอร์ชันระบบ: v1.4.0 (Build 2026.10.25-DIALOGUE-SUMMARY) • ตรวจสอบตัวเองอัตโนมัติ"
     },
     en: {
       homeBtn: "Home",
       exercisesBtn: "Exercises",
-      landingVersionBadge: "🚀 SYSTEM VERSION: v1.3.0 (Build 2026.10.25-GOALS-QR)",
+      landingVersionBadge: "🚀 SYSTEM VERSION: v1.4.0 (Build 2026.10.25-DIALOGUE-SUMMARY)",
       landingSubtitle: "Listening and Speaking Exercises • Complete 12-Unit Interactive Platform (48 Activities)",
       landingDesc: "Practice listening comprehension with Red-Text unlock conditions and record your voice with 4-metric AI evaluation (Accent, Completeness, Clarity, Speaking Time in %).",
       landingKenjiTitle: "🕵️‍♂️ Detective Kenji • Welcome to Speak Up! CEFR A1",
@@ -128,11 +130,11 @@ window.SpeakUpApp = (function () {
       landingFeat1Title: "12 Units • Goals & Vocab",
       landingFeat1Sub: "Goals & Vocabulary before Activity 1",
       landingFeat2Title: "Red-Text Audio Lock",
-      landingFeat2Sub: "Listen first to unlock Red Text",
+      landingFeat2Sub: "Show/Hide text after listening",
       landingFeat3Title: "4-Metric Speech AI (%)",
       landingFeat3Sub: "Accent • Completeness • Clarity • Time",
-      landingFeat4Title: "Version v1.3.0 Verified",
-      landingFeat4Sub: "Genuine ISO/IEC 18004 QR Code",
+      landingFeat4Title: "Version v1.4.0 Verified",
+      landingFeat4Sub: "Male/Female Dialogue & Unit Summary",
       landingUnitsHeading: "📚 Choose Any Unit to Start (All 12 Units Overview)",
       landingUnitsSub: "Click any Unit card below to open its Learning Goals, Vocabulary Table, and Activities 1–4",
       appSubtitle: "12-Unit Interactive English Listening & Speaking Platform (LocalStorage Edition)",
@@ -151,17 +153,16 @@ window.SpeakUpApp = (function () {
       act0TabTitle: "0. Goals & Vocab",
       act0TabSub: "Learning Goals & Vocab Table",
       act1TabTitle: "1. Listen to Story",
-      act1TabSub: "Listen to unlock Red Text",
+      act1TabSub: "Listen then Show/Hide Text",
       act2TabTitle: "2. Understanding",
       act2TabSub: "Answer to reveal Red Question",
       act3TabTitle: "3. Complete Sentence",
       act3TabSub: "Listen & complete step-by-step",
       act4TabTitle: "4. Speak Up! (A, B, C)",
-      act4TabSub: "Record & 4-Metric AI Evaluation",
-      listenFirstLock: "🔒 Red Text Hidden — Please listen to the audio until the end first",
-      unlockedBadge: "✅ Red Text Unlocked! Practice listening & repeating each phrase",
+      act4TabSub: "Record & Avg % Evaluation",
+      listenFirstLock: "🔒 Text Hidden — Please listen to the audio until the end first",
+      unlockedBadge: "✅ Audio Finished! Click the button to show or hide the story text",
       playStoryBtn: "Play Audio Passage",
-      repeatPhraseTitle: "🗣️ Listen and repeat each phrase (Click any sentence to listen & practice)",
       listenBtn: "🔊 Listen",
       recordBtn: "🎙️ Record Voice",
       stopRecordBtn: "⏹️ Stop Recording",
@@ -197,7 +198,7 @@ window.SpeakUpApp = (function () {
       resetScoresBtn: "🗑️ Reset All Scores",
       sendEmailBtn: "📧 Send Score Report via Email",
       diagModalTitle: "🛡️ Automated System Self-Check & Version History",
-      footerRight: "System Version: v1.3.0 (Build 2026.10.25-GOALS-QR) • Self-Diagnostic Active"
+      footerRight: "System Version: v1.4.0 (Build 2026.10.25-DIALOGUE-SUMMARY) • Self-Diagnostic Active"
     }
   };
 
@@ -217,6 +218,8 @@ window.SpeakUpApp = (function () {
     if (!state.progress[uId]) {
       state.progress[uId] = {
         act1Unlocked: false,
+        act1ShowText: false,
+        unitPopupShown: false,
         act1Score: 0,
         act2Answers: {},
         act2Score: 0,
@@ -226,6 +229,13 @@ window.SpeakUpApp = (function () {
         act4Score: 0,
         redUnlocked: {}
       };
+    } else {
+      if (typeof state.progress[uId].act1ShowText !== "boolean") {
+        state.progress[uId].act1ShowText = false;
+      }
+      if (typeof state.progress[uId].unitPopupShown !== "boolean") {
+        state.progress[uId].unitPopupShown = false;
+      }
     }
     return state.progress[uId];
   }
@@ -285,6 +295,84 @@ window.SpeakUpApp = (function () {
     return window.SPEAKUP_UNITS.find(u => u.id === Number(state.unitId)) || window.SPEAKUP_UNITS[0];
   }
 
+  function getUnitById(uId) {
+    return window.SPEAKUP_UNITS.find(u => u.id === Number(uId)) || window.SPEAKUP_UNITS[0];
+  }
+
+  function getUnitDetailedStats(uId) {
+    const unit = getUnitById(uId);
+    const p = ensureUnitProgress(uId);
+
+    const act1Done = p.act1Unlocked ? 1 : 0;
+    const act1Total = 1;
+
+    let act2Correct = 0;
+    const act2Total = unit.activity2.length;
+    const act2Answered = Object.keys(p.act2Answers || {}).length;
+    unit.activity2.forEach((q, idx) => {
+      if (p.act2Answers && p.act2Answers[idx] === q.answerIndex) act2Correct++;
+    });
+
+    let act3Correct = 0;
+    const act3Total = unit.activity3.length;
+    const act3Answered = Object.keys(p.act3Answers || {}).length;
+    unit.activity3.forEach((it, idx) => {
+      if (p.act3Answers && p.act3Answers[idx] === it.answerIndex) act3Correct++;
+    });
+
+    const evalsList = Object.values(p.act4Evals || {});
+    const act4CompletedCount = evalsList.length;
+    const act4TotalItems =
+      (unit.activity4.partA ? unit.activity4.partA.length : 0) +
+      (unit.activity4.partB && unit.activity4.partB.items ? unit.activity4.partB.items.length : 0) +
+      (unit.activity4.partC && unit.activity4.partC.items ? unit.activity4.partC.items.length : 0);
+
+    const act4AvgPercent = act4CompletedCount > 0
+      ? Math.round(evalsList.reduce((acc, ev) => acc + (ev.overall || 0), 0) / act4CompletedCount)
+      : 0;
+    const act4AvgAccent = act4CompletedCount > 0
+      ? Math.round(evalsList.reduce((acc, ev) => acc + (ev.accent || 0), 0) / act4CompletedCount)
+      : 0;
+    const act4AvgComplete = act4CompletedCount > 0
+      ? Math.round(evalsList.reduce((acc, ev) => acc + (ev.completeness || 0), 0) / act4CompletedCount)
+      : 0;
+    const act4AvgClarity = act4CompletedCount > 0
+      ? Math.round(evalsList.reduce((acc, ev) => acc + (ev.clarity || 0), 0) / act4CompletedCount)
+      : 0;
+    const act4AvgTime = act4CompletedCount > 0
+      ? Math.round(evalsList.reduce((acc, ev) => acc + (ev.timeScore || 0), 0) / act4CompletedCount)
+      : 0;
+
+    p.act4Score = act4AvgPercent;
+
+    const isUnitCompleted =
+      p.act1Unlocked &&
+      act2Answered >= act2Total &&
+      act3Answered >= act3Total &&
+      act4CompletedCount >= 1;
+
+    return {
+      act1Done,
+      act1Total,
+      act2Correct,
+      act2Answered,
+      act2Total,
+      act3Correct,
+      act3Answered,
+      act3Total,
+      exerciseCorrect: act2Correct + act3Correct,
+      exerciseTotal: act2Total + act3Total,
+      act4CompletedCount,
+      act4TotalItems,
+      act4AvgPercent,
+      act4AvgAccent,
+      act4AvgComplete,
+      act4AvgClarity,
+      act4AvgTime,
+      isUnitCompleted
+    };
+  }
+
   function getUnitTotalScore(uId) {
     const p = ensureUnitProgress(uId);
     return Math.round((p.act1Score + p.act2Score + p.act3Score + p.act4Score) / 4);
@@ -293,17 +381,31 @@ window.SpeakUpApp = (function () {
   function getAllUnitsSummary() {
     let sum = 0;
     let completedUnits = 0;
+    let totalExerciseCorrect = 0;
+    let totalExerciseQuestions = 0;
+    let speakingSum = 0;
+    let speakingUnitsCount = 0;
+
     for (let i = 1; i <= 12; i++) {
       const s = getUnitTotalScore(i);
       sum += s;
-      const p = ensureUnitProgress(i);
-      if (p.act1Score > 0 && p.act2Score > 0 && p.act3Score > 0 && p.act4Score > 0) {
+      const st = getUnitDetailedStats(i);
+      totalExerciseCorrect += st.exerciseCorrect;
+      totalExerciseQuestions += st.exerciseTotal;
+      if (st.act4CompletedCount > 0) {
+        speakingSum += st.act4AvgPercent;
+        speakingUnitsCount++;
+      }
+      if (st.isUnitCompleted) {
         completedUnits++;
       }
     }
     return {
       averageScore: Math.round(sum / 12),
-      completedUnits
+      completedUnits,
+      totalExerciseCorrect,
+      totalExerciseQuestions,
+      overallSpeakingAvg: speakingUnitsCount > 0 ? Math.round(speakingSum / speakingUnitsCount) : 0
     };
   }
 
@@ -340,20 +442,25 @@ window.SpeakUpApp = (function () {
 
   function updateScoreBadges() {
     const uId = state.unitId;
-    const p = ensureUnitProgress(uId);
-    const unitScore = getUnitTotalScore(uId);
+    const st = getUnitDetailedStats(uId);
     const allSummary = getAllUnitsSummary();
+    const itemUnit = state.lang === "th" ? "ข้อ" : "";
 
     const setEl = (id, html) => {
       const el = document.getElementById(id);
       if (el) el.innerHTML = html;
     };
 
-    setEl("score-act1", `${p.act1Score}%`);
-    setEl("score-act2", `${p.act2Score}%`);
-    setEl("score-act3", `${p.act3Score}%`);
-    setEl("score-act4", `${p.act4Score}%`);
-    setEl("header-unit-score", `Unit ${uId}: ${unitScore}% (${allSummary.completedUnits}/12)`);
+    setEl("score-act1", `${st.act1Done}/${st.act1Total} ${itemUnit}`.trim());
+    setEl("score-act2", `${st.act2Correct}/${st.act2Total} ${itemUnit}`.trim());
+    setEl("score-act3", `${st.act3Correct}/${st.act3Total} ${itemUnit}`.trim());
+    setEl("score-act4", `${st.act4AvgPercent}%`);
+    setEl(
+      "header-unit-score",
+      state.lang === "th"
+        ? `Unit ${uId}: ${st.exerciseCorrect}/${st.exerciseTotal} ข้อ • พูด ${st.act4AvgPercent}% (${allSummary.completedUnits}/12)`
+        : `Unit ${uId}: ${st.exerciseCorrect}/${st.exerciseTotal} • Speak ${st.act4AvgPercent}% (${allSummary.completedUnits}/12)`
+    );
     setEl("room-badge-label", `${t("groupBtn")}: ${state.roomCode}`);
   }
 
@@ -364,19 +471,19 @@ window.SpeakUpApp = (function () {
     if (!guideEl) return;
 
     const msgsTh = {
-      0: `"ยินดีต้อนรับสู่ <b>${unit.title} (${unit.titleTh})</b> ครับ! ก่อนเริ่มทำแบบฝึกหัด มาดู <b>Learning Goals (เป้าหมายการเรียนรู้)</b> และฝึกฟัง <b>ตารางคำศัพท์ (Vocabulary | ความหมาย | Example)</b> ด้านล่างกันก่อน เมื่อพร้อมแล้วกดปุ่ม <b>'ไปที่ Activity 1'</b> ได้เลยครับ!"`,
-      1: `"ใน <b>Activity 1 (${unit.activity1.heading})</b> ระบบได้ซ่อนเนื้อหาไว้ทั้งหมด ให้กดปุ่ม ▶️ เพื่อฟังเสียงอ่านจนจบครบทุกประโยคก่อน แล้ว <b>ข้อความตัวอักษรสีแดง</b> จึงจะเปิดออกครับ!"`,
-      2: `"ใน <b>Activity 2: Check Your Understanding</b> ให้กดฟังเสียงคำถามแล้ว <b>เลือกคำตอบ a, b หรือ c ก่อน</b> จากนั้นระบบจะแสดงโจทย์ตัวอักษร <b>สีแดง</b> พร้อมเฉลยครับ!"`,
-      3: `"ใน <b>Activity 3: Listen Again & Complete</b> กดฟังเสียงอ่าน Passage แล้วเลือกคำตอบเติมในช่องว่าง <b>ทีละข้อ</b> (ต้องตอบข้อปัจจุบันก่อนจึงจะกดไปข้อถัดไปได้ครับ)"`,
-      4: `"ใน <b>Activity 4: Speak Up!</b> มีครบทั้ง <b>Part A, Part B และ Part C</b> กดฟังเสียงก่อนเพื่อเปิดข้อความสีแดง แล้วกดไมโครโฟนเพื่ออัดเสียงพูดและฟังเสียงตัวเอง ระบบจะประเมิน <b>สำเนียง, ความครบถ้วน, ความชัดเจน และเวลาพูด</b> ออกมาเป็น % พร้อมคำแนะนำครับ!"`
+      0: `"ยินดีต้อนรับสู่ <b>${unit.title} (${unit.titleTh})</b> ครับ! ก่อนเริ่มทำแบบฝึกหัด มาดู <b>Learning Goals</b> และฝึกฟัง <b>ตารางคำศัพท์และประโยคตัวอย่าง</b> ด้านล่างกันก่อน เมื่อพร้อมแล้วกดปุ่ม <b>'ไปที่ Activity 1'</b> ได้เลยครับ!"`,
+      1: `"ใน <b>Activity 1 (${unit.activity1.heading})</b> ระบบซ่อนเนื้อหาไว้ก่อน ให้กดปุ่ม ▶️ เพื่อฟังเสียงอ่านจนจบ (บทสนทนาจะแยกเสียงผู้ชาย/ผู้หญิงตามชื่อตัวละคร) เมื่อฟังจบแล้วสามารถกดปุ่ม <b>'แสดงเนื้อหา'</b> หรือกด <b>'ปิดเนื้อหา'</b> เพื่อฝึกฟังซ้ำได้ครับ!"`,
+      2: `"ใน <b>Activity 2: Check Your Understanding</b> ให้กดฟังเสียงคำถามแล้ว <b>เลือกคำตอบ a, b หรือ c ก่อน</b> จากนั้นระบบจะแสดงโจทย์ตัวอักษร <b>สีแดง</b> พร้อมนับคะแนนตามจำนวนข้อ (เต็ม ${unit.activity2.length} ข้อ) ครับ!"`,
+      3: `"ใน <b>Activity 3: Listen Again & Complete</b> กดฟังเสียงอ่าน Passage แล้วเลือกคำตอบเติมในช่องว่าง <b>ทีละข้อ</b> (คะแนนเต็ม ${unit.activity3.length} ข้อ)"`,
+      4: `"ใน <b>Activity 4: Speak Up!</b> มีครบทั้ง <b>Part A, Part B และ Part C</b> กดฟังเสียงก่อนเพื่อเปิดข้อความสีแดง แล้วกดไมโครโฟนเพื่ออัดเสียงพูด คะแนนการอ่านออกเสียงจะคิดเป็น <b>% เฉลี่ยจากทุกข้อที่ทำ</b> และเมื่อทำครบจะมี Pop-up สรุปคะแนนทั้ง Unit พร้อมปุ่มไปทำ Unit ต่อไปครับ!"`
     };
 
     const msgsEn = {
-      0: `"Welcome to <b>${unit.title}</b>! Before starting Activity 1, review the <b>Learning Goals</b> and practice listening to the <b>Vocabulary, Meaning & Example Sentences</b> below. Click <b>'Go to Activity 1'</b> when you're ready!"`,
-      1: `"In <b>Activity 1 (${unit.activity1.heading})</b>, the passage is hidden. Click ▶️ and listen until the reading finishes completely to unlock the <b>Red Text</b> and phrase practice!"`,
-      2: `"In <b>Activity 2: Check Your Understanding</b>, listen to each question and <b>select your answer first</b> to reveal the <b>Red Question Text</b>!"`,
-      3: `"In <b>Activity 3: Listen Again & Complete</b>, listen to the passage and complete each sentence <b>step-by-step</b>."`,
-      4: `"In <b>Activity 4: Speak Up! (Parts A, B, C)</b>, listen to unlock the Red Text, record your voice, listen to your playback, and get a <b>4-metric score (%)</b> with feedback!"`
+      0: `"Welcome to <b>${unit.title}</b>! Review the <b>Learning Goals</b> and practice listening to the <b>Vocabulary & Example Sentences</b> below. Click <b>'Go to Activity 1'</b> when you're ready!"`,
+      1: `"In <b>Activity 1 (${unit.activity1.heading})</b>, listen to the passage until the end first (dialogues use Male and Female voices according to character names). Once finished, click <b>'Show Story Text'</b> to view the passage or <b>'Hide Story Text'</b> to practice listening!"`,
+      2: `"In <b>Activity 2: Check Your Understanding</b>, listen to each question and <b>select your answer first</b> to reveal the <b>Red Question Text</b> (Scored out of ${unit.activity2.length} items)!"`,
+      3: `"In <b>Activity 3: Listen Again & Complete</b>, listen to the passage and complete each sentence <b>step-by-step</b> (Scored out of ${unit.activity3.length} items)."`,
+      4: `"In <b>Activity 4: Speak Up! (Parts A, B, C)</b>, record your voice to get an <b>average % speaking score</b> across all completed items, then view your Unit Summary Pop-up and proceed to the next Unit!"`
     };
 
     guideEl.innerHTML = state.lang === "th" ? (msgsTh[act] || msgsTh[0]) : (msgsEn[act] || msgsEn[0]);
@@ -432,14 +539,15 @@ window.SpeakUpApp = (function () {
     const overallBadge = document.getElementById("landing-overall-progress");
     if (overallBadge) {
       overallBadge.textContent = state.lang === "th"
-        ? `คะแนนเฉลี่ยรวม: ${summary.averageScore}% (${summary.completedUnits}/12 Units)`
-        : `Overall Average: ${summary.averageScore}% (${summary.completedUnits}/12 Units)`;
+        ? `แบบฝึกหัดรวม: ${summary.totalExerciseCorrect}/${summary.totalExerciseQuestions} ข้อ • พูดเฉลี่ย: ${summary.overallSpeakingAvg}% (${summary.completedUnits}/12 Units)`
+        : `Exercises: ${summary.totalExerciseCorrect}/${summary.totalExerciseQuestions} • Speaking Avg: ${summary.overallSpeakingAvg}% (${summary.completedUnits}/12 Units)`;
     }
 
     const grid = document.getElementById("landing-units-grid");
     if (grid) {
       grid.innerHTML = window.SPEAKUP_UNITS.map(u => {
         const uScore = getUnitTotalScore(u.id);
+        const st = getUnitDetailedStats(u.id);
         const subTitle = state.lang === "th"
           ? u.titleTh
           : `${u.learningGoals[0]}`;
@@ -450,8 +558,8 @@ window.SpeakUpApp = (function () {
             <div>
               <div class="flex items-center justify-between gap-2 mb-1">
                 <span class="text-xs font-extrabold text-indigo-600 uppercase">UNIT ${u.id}</span>
-                <span class="px-2 py-0.5 rounded-full text-xs font-bold ${uScore >= 80 ? "bg-emerald-100 text-emerald-800" : uScore > 0 ? "bg-amber-100 text-amber-800" : "bg-white text-slate-500 border border-slate-200"}">
-                  ${uScore}%
+                <span class="px-2 py-0.5 rounded-full text-xs font-bold ${st.isUnitCompleted ? "bg-emerald-100 text-emerald-800" : uScore > 0 ? "bg-amber-100 text-amber-800" : "bg-white text-slate-500 border border-slate-200"}">
+                  ${st.exerciseCorrect}/${st.exerciseTotal} • ${st.act4AvgPercent}%
                 </span>
               </div>
               <p class="font-bold text-sm text-slate-900 group-hover:text-indigo-950">${u.themeIcon} ${u.title.replace(/^Unit \d+:\s*/, "")}</p>
@@ -478,10 +586,10 @@ window.SpeakUpApp = (function () {
     const select = document.getElementById("unit-select");
     if (select) {
       select.innerHTML = window.SPEAKUP_UNITS.map(u => {
-        const uScore = getUnitTotalScore(u.id);
-        const flag = uScore >= 80 ? "✅" : uScore > 0 ? "⏳" : "📘";
+        const st = getUnitDetailedStats(u.id);
+        const flag = st.isUnitCompleted ? "✅" : (st.act1Done || st.act2Answered || st.act3Answered || st.act4CompletedCount) ? "⏳" : "📘";
         const label = state.lang === "th" ? `${u.title} — ${u.titleTh}` : u.title;
-        return `<option value="${u.id}" ${u.id === Number(state.unitId) ? "selected" : ""}>${flag} ${label} (${uScore}%)</option>`;
+        return `<option value="${u.id}" ${u.id === Number(state.unitId) ? "selected" : ""}>${flag} ${label} (${st.exerciseCorrect}/${st.exerciseTotal} • ${st.act4AvgPercent}%)</option>`;
       }).join("");
     }
 
@@ -511,7 +619,7 @@ window.SpeakUpApp = (function () {
         <div class="flex flex-wrap items-center justify-between gap-2">
           <h3 class="text-sm sm:text-base font-extrabold text-indigo-950 flex items-center gap-2">
             <span>🎯</span>
-            <span>Learning Goals (${state.lang === "th" ? "สิ่งที่ผู้เรียนจะได้เรียนรู้ในบทนี้" : "What you will learn in this unit"})</span>
+            <span>Learning Goals</span>
           </h3>
           <button type="button" onclick="SpeakUpApp.speakLearningGoals()" class="px-3 py-1.5 rounded-xl bg-white text-indigo-700 border border-indigo-200 hover:bg-indigo-50 text-xs font-bold shadow-sm">
             🔊 ${state.lang === "th" ? "ฟัง Learning Goals" : "Listen to Goals"}
@@ -527,12 +635,12 @@ window.SpeakUpApp = (function () {
         </ul>
       </div>
 
-      <!-- 3-Column Vocabulary Table (Vocabulary | ความหมาย | Example) matching PDF -->
+      <!-- 3-Column Vocabulary Table -->
       <div class="space-y-3">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div>
             <h3 class="text-sm sm:text-base font-extrabold text-slate-900">
-              📖 ${state.lang === "th" ? "ตารางคำศัพท์และประโยคตัวอย่าง (Vocabulary • ความหมาย • Example)" : "Vocabulary, Meaning & Example Sentences"}
+              📖 ${state.lang === "th" ? "ตารางคำศัพท์และประโยคตัวอย่าง" : "Vocabulary & Example Sentences"}
             </h3>
             <p class="text-xs text-slate-500">
               ${state.lang === "th" ? "กดปุ่ม 🔊 ในแต่ละแถวเพื่อฟังการออกเสียงคำศัพท์และประโยคตัวอย่างก่อนเริ่มทำ Activity 1" : "Click 🔊 on any row to listen to the pronunciation and example sentence"}
@@ -548,7 +656,7 @@ window.SpeakUpApp = (function () {
             <thead>
               <tr class="bg-indigo-50/90 border-b border-indigo-100 text-xs sm:text-sm font-extrabold text-indigo-950">
                 <th class="py-3 px-4">Vocabulary / Phrase</th>
-                <th class="py-3 px-4">ความหมาย (Meaning)</th>
+                <th class="py-3 px-4">ความหมาย</th>
                 <th class="py-3 px-4">Example Sentence</th>
                 <th class="py-3 px-4 text-center">${state.lang === "th" ? "ฝึกฟังเสียง" : "Audio"}</th>
               </tr>
@@ -578,7 +686,7 @@ window.SpeakUpApp = (function () {
             ✅ ${state.lang === "th" ? "เรียนรู้เป้าหมายและคำศัพท์ประจำบทเรียบร้อยแล้วใช่ไหมครับ?" : "Ready to start the listening exercise?"}
           </p>
           <p class="text-xs text-emerald-800">
-            ${state.lang === "th" ? "กดปุ่มด้านขวาเพื่อเข้าสู่ Activity 1: ฟังเสียงเนื้อเรื่องให้จบเพื่อปลดล็อกข้อความสีแดง" : "Click the button on the right to begin Activity 1: Listen to the Story"}
+            ${state.lang === "th" ? "กดปุ่มด้านขวาเพื่อเข้าสู่ Activity 1: ฟังเสียงเนื้อหาให้จบเพื่อปลดล็อกปุ่มแสดงเนื้อหา" : "Click the button on the right to begin Activity 1: Listen to the Story"}
           </p>
         </div>
         <button type="button" onclick="SpeakUpApp.switchActivity(1)" class="w-full sm:w-auto px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-2 cursor-pointer flex-shrink-0">
@@ -589,7 +697,7 @@ window.SpeakUpApp = (function () {
   }
 
   // =========================================================================
-  // RENDER ACTIVITY 1: LISTEN TO THE STORY (RED TEXT HIDDEN UNTIL FINISHED)
+  // RENDER ACTIVITY 1: LISTEN TO THE STORY (SHOW/HIDE TEXT BUTTON AFTER AUDIO)
   // =========================================================================
   function renderActivity1() {
     const unit = getCurrentUnit();
@@ -600,27 +708,50 @@ window.SpeakUpApp = (function () {
 
     const formattedPassage = a1.passage
       .split("\n")
-      .map(line => `<p class="mb-2">${line}</p>`)
+      .map(line => {
+        const m = line.match(/^([A-Za-z]+):\s*(.+)$/);
+        if (m && window.SpeechEngine) {
+          const spk = m[1];
+          const textBody = m[2];
+          const g = window.SpeechEngine.detectGenderByName(spk);
+          const icon = g === "male" ? "👨" : "👩";
+          const badgeCls = g === "male"
+            ? "bg-sky-100 text-sky-900 border-sky-300"
+            : "bg-pink-100 text-pink-900 border-pink-300";
+          return `<p class="mb-2.5 flex items-start gap-2"><span class="px-2 py-0.5 rounded-lg text-xs font-extrabold border ${badgeCls} flex-shrink-0 mt-0.5">${icon} ${spk}:</span> <span class="red-voice-text">${textBody}</span></p>`;
+        }
+        return `<p class="mb-2 red-voice-text">${line}</p>`;
+      })
       .join("");
 
     const subHeading = state.lang === "th"
-      ? a1.headingTh
-      : "Listen to the full reading first. The Red Text passage will stay hidden until the audio finishes.";
+      ? "ฟังเสียงอ่านเนื้อหาจนจบก่อน จึงจะสามารถกดปุ่มเปิดดูเนื้อหา หรือกดปิดเนื้อหาเพื่อฝึกฟังซ้ำได้"
+      : "Listen to the full audio first to unlock the Show / Hide Story Text button.";
+
+    const speakerBadgeText = state.act1Playing && state.act1CurrentSpeaker
+      ? (state.lang === "th"
+          ? ` • 🎙️ ผู้พูด: ${state.act1CurrentSpeaker} (${state.act1CurrentGender === "male" ? "เสียงผู้ชาย 👨" : "เสียงผู้หญิง 👩"})`
+          : ` • 🎙️ Speaker: ${state.act1CurrentSpeaker} (${state.act1CurrentGender === "male" ? "Male Voice 👨" : "Female Voice 👩"})`)
+      : "";
 
     const listeningStatusText = state.act1Playing
       ? (state.lang === "th"
-          ? `🔊 กำลังอ่านออกเสียงประโยคที่ ${state.act1CurrentSentence} / ${state.act1TotalSentences} ... (กรุณาฟังให้จบ)`
-          : `🔊 Reading sentence ${state.act1CurrentSentence} of ${state.act1TotalSentences} ... (Please listen until the end)`)
-      : (state.lang === "th"
-          ? "เสียงอ่านชัดเจน ไม่เร็วเกินไป (0.85x) • ต้องฟังจนจบก่อนเนื้อหาจึงจะแสดง"
-          : "Clear & steady voice (0.85x) • Must listen until the end to reveal text");
+          ? `🔊 กำลังอ่านออกเสียงประโยคที่ ${state.act1CurrentSentence} / ${state.act1TotalSentences}${speakerBadgeText}`
+          : `🔊 Reading sentence ${state.act1CurrentSentence} of ${state.act1TotalSentences}${speakerBadgeText}`)
+      : p.act1Unlocked
+        ? (state.lang === "th"
+            ? "✅ ฟังเสียงจบแล้ว! กดปุ่ม 'แสดงเนื้อหา' เพื่อดูข้อความ หรือกด 'ปิดเนื้อหา' เพื่อฝึกฟังโดยไม่ดูข้อความ"
+            : "✅ Audio finished! Click 'Show Story Text' to read, or 'Hide Story Text' to listen without text")
+        : (state.lang === "th"
+            ? "เสียงอ่านชัดเจน (0.85x) • ต้องฟังจนจบก่อนจึงจะมีปุ่มให้กดแสดงเนื้อหา"
+            : "Clear & steady voice (0.85x) • Listen until the end to unlock the Show Text button");
 
     container.innerHTML = `
       <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-4">
         <div>
           <span class="text-xs font-bold text-rose-500 uppercase">Activity 1 • ${a1.heading}</span>
           <h2 class="text-lg font-bold text-slate-900">
-            ${unit.themeIcon} ${p.act1Unlocked ? `<span class="red-voice-text">${a1.title}</span>` : (state.lang === "th" ? `บทฟังเนื้อเรื่อง Unit ${unit.id} (ซ่อนข้อความไว้ก่อน)` : `Unit ${unit.id} Listening Passage (Text Hidden)`)}
+            ${unit.themeIcon} ${(p.act1Unlocked && p.act1ShowText) ? `<span class="red-voice-text">${a1.title}</span>` : (state.lang === "th" ? `บทฟังเนื้อหา Unit ${unit.id} (ซ่อนเนื้อหาไว้)` : `Unit ${unit.id} Listening Passage (Text Hidden)`)}
           </h2>
           <p class="text-xs text-slate-500">${subHeading}</p>
         </div>
@@ -637,7 +768,7 @@ window.SpeakUpApp = (function () {
           </button>
           <div class="flex-1">
             <p class="font-bold text-sm text-indigo-950">
-              ${t("playStoryBtn")} ${p.act1Unlocked ? `: "${a1.title}"` : ""}
+              ${t("playStoryBtn")} ${(p.act1Unlocked && p.act1ShowText) ? `: "${a1.title}"` : ""}
             </p>
             <p id="act1-status-line" class="text-xs font-semibold ${state.act1Playing ? "text-rose-600" : "text-slate-600"}">
               ${listeningStatusText}
@@ -650,10 +781,16 @@ window.SpeakUpApp = (function () {
 
         ${p.act1Unlocked ? `
           <div class="flex items-center gap-2 flex-wrap">
-            <button type="button" onclick="SpeakUpApp.relockAct1()" class="px-3 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition">
-              🔒 ${state.lang === "th" ? "ซ่อนข้อความเพื่อฝึกฟังใหม่" : "Hide Text & Listen Again"}
-            </button>
-            <button type="button" onclick="SpeakUpApp.switchActivity(2)" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition">
+            ${p.act1ShowText ? `
+              <button type="button" onclick="SpeakUpApp.toggleAct1Text(false)" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-amber-500 hover:bg-amber-600 text-white shadow-sm transition cursor-pointer">
+                🙈 ${state.lang === "th" ? "ปิดเนื้อหาเพื่อฝึกฟัง" : "Hide Story Text to Listen"}
+              </button>
+            ` : `
+              <button type="button" onclick="SpeakUpApp.toggleAct1Text(true)" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-rose-600 hover:bg-rose-700 text-white shadow-sm transition cursor-pointer">
+                📖 ${state.lang === "th" ? "แสดงเนื้อหา" : "Show Story Text"}
+              </button>
+            `}
+            <button type="button" onclick="SpeakUpApp.switchActivity(2)" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition cursor-pointer">
               ${state.lang === "th" ? "ไปทำ Activity 2 ต่อ →" : "Continue to Activity 2 →"}
             </button>
           </div>
@@ -665,45 +802,56 @@ window.SpeakUpApp = (function () {
           <div class="text-4xl">${state.act1Playing ? "🎧🎶" : "🎧🔒"}</div>
           <p class="font-extrabold text-sm sm:text-base ${state.act1Playing ? "text-indigo-900" : "text-rose-800"}">
             ${state.act1Playing
-              ? (state.lang === "th" ? "กำลังอ่านเนื้อเรื่อง... กรุณาตั้งใจฟังจนจบ (ห้ามข้าม)" : "Reading the passage aloud... Please listen until the end")
-              : (state.lang === "th" ? "เนื้อหาตัวอักษรสีแดงถูกซ่อนไว้จนกว่าจะฟังการอ่านเนื้อหาเสร็จ" : "The Red Text passage is hidden until the audio reading finishes completely")}
+              ? (state.lang === "th" ? "กำลังอ่านเนื้อหา... กรุณาตั้งใจฟังจนจบ" : "Reading the passage aloud... Please listen until the end")
+              : (state.lang === "th" ? "เนื้อหาถูกซ่อนไว้ กรุณากดฟังการอ่านเนื้อหาให้จบก่อน" : "The passage is hidden until you finish listening to the audio")}
           </p>
           <p class="text-xs ${state.act1Playing ? "text-indigo-600 font-semibold" : "text-rose-600"}">
             ${state.act1Playing
-              ? (state.lang === "th" ? `ระบบกำลังอ่านประโยคที่ ${state.act1CurrentSentence} จาก ${state.act1TotalSentences} เมื่ออ่านครบแล้วข้อความจะเปิดออกอัตโนมัติ` : `Reading sentence ${state.act1CurrentSentence} of ${state.act1TotalSentences}. Text will appear automatically once finished.`)
+              ? (state.lang === "th" ? `ระบบกำลังอ่านประโยคที่ ${state.act1CurrentSentence} จาก ${state.act1TotalSentences} เมื่ออ่านครบแล้วจะมีปุ่มให้กดแสดงเนื้อหา` : `Reading sentence ${state.act1CurrentSentence} of ${state.act1TotalSentences}. Once finished, the 'Show Story Text' button will appear.`)
               : (state.lang === "th" ? "กดปุ่ม ▶️ ด้านบนเพื่อเริ่มฟังเสียงอ่านเนื้อหาตั้งแต่ต้นจนจบ" : "Click the ▶️ button above to start listening from start to finish")}
           </p>
         </div>
+      ` : !p.act1ShowText ? `
+        <!-- Unlocked but Hidden State: User must click button to reveal text, or can listen while text stays hidden -->
+        <div class="p-8 rounded-2xl border-2 border-dashed border-emerald-300 bg-emerald-50/50 text-center space-y-3 fade-in">
+          <div class="text-4xl">✅🎧</div>
+          <p class="font-extrabold text-sm sm:text-base text-emerald-950">
+            ${state.lang === "th" ? "ฟังเสียงอ่านเนื้อหาจบเรียบร้อยแล้ว! (ขณะนี้ซ่อนเนื้อหาไว้)" : "Audio completed! (Story text is currently hidden)"}
+          </p>
+          <p class="text-xs text-slate-600 max-w-lg mx-auto">
+            ${state.lang === "th"
+              ? "กดปุ่ม '📖 แสดงเนื้อหา' ด้านล่างหากต้องการเปิดอ่านเนื้อหาตัวอักษรสีแดง หรือกดปุ่ม '🔊 ฟังเสียงโดยปิดเนื้อหา' เพื่อฝึกฟังอีกครั้ง"
+              : "Click '📖 Show Story Text' below to reveal the passage, or click '🔊 Listen Without Text' to practice listening again."}
+          </p>
+          <div class="flex flex-wrap items-center justify-center gap-3 pt-1">
+            <button type="button" onclick="SpeakUpApp.toggleAct1Text(true)" class="px-5 py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-extrabold shadow-md transition cursor-pointer">
+              📖 ${state.lang === "th" ? "กดเพื่อแสดงเนื้อหา (Show Story Text)" : "Show Story Text"}
+            </button>
+            <button type="button" onclick="SpeakUpApp.playAct1Passage()" class="px-4 py-2.5 rounded-2xl bg-white border border-indigo-200 text-indigo-700 hover:bg-indigo-50 text-xs sm:text-sm font-bold shadow-sm transition cursor-pointer">
+              🔊 ${state.lang === "th" ? "ฟังเสียงโดยปิดเนื้อหา" : "Listen Without Text"}
+            </button>
+          </div>
+        </div>
       ` : `
         <div class="space-y-4 fade-in">
-          <!-- Revealed Red Text Passage -->
-          <div class="p-5 rounded-2xl bg-rose-50/70 border-2 border-rose-200 space-y-2 shadow-sm">
-            <div class="flex flex-wrap items-center justify-between gap-2">
+          <!-- Revealed Red Text Passage with Hide Text Button -->
+          <div class="p-5 rounded-2xl bg-rose-50/70 border-2 border-rose-200 space-y-3 shadow-sm">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-rose-200/70 pb-2.5">
               <span class="text-xs font-bold text-rose-700 uppercase">
-                ${state.lang === "th" ? "📖 ฟังจบแล้ว! แสดงเนื้อหาตัวอักษรสีแดง (ส่วนที่มีเสียงอ่านออกเสียง)" : "📖 Audio Finished! Unlocked Red Text Passage"}
+                ${state.lang === "th" ? "📖 เนื้อหาบทอ่าน (Red Text Passage)" : "📖 Story / Conversation Text"}
               </span>
-              <button type="button" onclick="SpeakUpApp.playAct1Passage()" class="px-3 py-1 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold">
-                🔊 ${state.lang === "th" ? "ฟังทั้งเรื่องอีกครั้ง" : "Listen Again"}
-              </button>
+              <div class="flex items-center gap-2 flex-wrap">
+                <button type="button" onclick="SpeakUpApp.playAct1Passage()" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold cursor-pointer">
+                  🔊 ${state.lang === "th" ? "ฟังเสียงอีกครั้ง" : "Listen Again"}
+                </button>
+                <button type="button" onclick="SpeakUpApp.toggleAct1Text(false)" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold cursor-pointer">
+                  🙈 ${state.lang === "th" ? "ปิดเนื้อหาเพื่อฟัง" : "Hide Text to Listen"}
+                </button>
+              </div>
             </div>
             <h3 class="text-base font-extrabold red-voice-text">${a1.title}</h3>
-            <div class="text-sm sm:text-base font-semibold red-voice-text leading-relaxed">
+            <div class="text-sm sm:text-base font-semibold leading-relaxed">
               ${formattedPassage}
-            </div>
-          </div>
-
-          <!-- Listen and Repeat Each Phrase -->
-          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-            <h4 class="text-xs font-bold text-indigo-900 uppercase">${t("repeatPhraseTitle")}</h4>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-              ${a1.phrases.map((phrase, idx) => `
-                <div class="p-3 rounded-xl bg-white border border-rose-200 flex items-center justify-between gap-2 shadow-sm hover:border-rose-400 transition">
-                  <span class="text-xs sm:text-sm font-bold red-voice-text">${idx + 1}. ${phrase}</span>
-                  <button type="button" onclick="SpeakUpApp.speakPhraseIndex(${idx})" class="px-3 py-1.5 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-bold flex-shrink-0">
-                    ${t("listenBtn")}
-                  </button>
-                </div>
-              `).join("")}
             </div>
           </div>
         </div>
@@ -717,6 +865,7 @@ window.SpeakUpApp = (function () {
   function renderActivity2() {
     const unit = getCurrentUnit();
     const p = ensureUnitProgress(unit.id);
+    const st = getUnitDetailedStats(unit.id);
     const questions = unit.activity2;
     const container = document.getElementById("panel-2");
     if (!container) return;
@@ -727,8 +876,8 @@ window.SpeakUpApp = (function () {
           <span class="text-xs font-bold text-rose-500 uppercase">Activity 2 • Check Your Understanding</span>
           <h2 class="text-lg font-bold text-slate-900">${state.lang === "th" ? "ฟังเสียงคำถาม แล้วเลือกคำตอบ (โจทย์ตัวสีแดงจะแสดงหลังจากเลือกคำตอบแล้ว)" : "Listen to each question and choose an answer to reveal the Red Question Text"}</h2>
         </div>
-        <span class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800">
-          Score: ${p.act2Score}%
+        <span class="px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-indigo-100 text-indigo-800">
+          ${state.lang === "th" ? `คะแนน: ${st.act2Correct} / ${st.act2Total} ข้อ` : `Score: ${st.act2Correct} / ${st.act2Total}`}
         </span>
       </div>
 
@@ -785,6 +934,17 @@ window.SpeakUpApp = (function () {
           `;
         }).join("")}
       </div>
+
+      ${st.act2Answered >= st.act2Total ? `
+        <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex flex-wrap items-center justify-between gap-3">
+          <p class="text-xs sm:text-sm font-extrabold text-emerald-950">
+            🎉 ${state.lang === "th" ? `ทำ Activity 2 ครบแล้ว! ได้คะแนน ${st.act2Correct} / ${st.act2Total} ข้อ` : `Activity 2 Complete! Score: ${st.act2Correct} / ${st.act2Total}`}
+          </p>
+          <button type="button" onclick="SpeakUpApp.switchActivity(3)" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm transition cursor-pointer">
+            ${state.lang === "th" ? "ไปทำ Activity 3 ต่อ →" : "Continue to Activity 3 →"}
+          </button>
+        </div>
+      ` : ""}
     `;
   }
 
@@ -794,6 +954,7 @@ window.SpeakUpApp = (function () {
   function renderActivity3() {
     const unit = getCurrentUnit();
     const p = ensureUnitProgress(unit.id);
+    const st = getUnitDetailedStats(unit.id);
     const items = unit.activity3;
     const container = document.getElementById("panel-3");
     if (!container) return;
@@ -822,8 +983,8 @@ window.SpeakUpApp = (function () {
           <button type="button" onclick="SpeakUpApp.playAct1Passage()" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-sm">
             ${t("act3PlayPassage")}
           </button>
-          <span class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800">
-            Score: ${p.act3Score}%
+          <span class="px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-indigo-100 text-indigo-800">
+            ${state.lang === "th" ? `คะแนน: ${st.act3Correct} / ${st.act3Total} ข้อ` : `Score: ${st.act3Correct} / ${st.act3Total}`}
           </span>
         </div>
       </div>
@@ -1108,11 +1269,20 @@ window.SpeakUpApp = (function () {
       `;
     }
 
+    const st = getUnitDetailedStats(unit.id);
+    const nextUnitId = unit.id < 12 ? unit.id + 1 : null;
+    const nextUnit = nextUnitId ? getUnitById(nextUnitId) : null;
+
     container.innerHTML = `
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
         <div>
           <span class="text-xs font-bold text-rose-500 uppercase">Activity 4 • Speak Up! (Parts A, B, C)</span>
-          <h2 class="text-lg font-bold text-slate-900">${state.lang === "th" ? "ฝึกพูด อัดเสียง ฟังเสียงตัวเอง และรับผลประเมิน 4 มาตรฐาน (%)" : "Speak, Record, Self-Listen & Get 4-Metric Evaluation (%)"}</h2>
+          <h2 class="text-lg font-bold text-slate-900">${state.lang === "th" ? "ฝึกพูด อัดเสียง ฟังเสียงตัวเอง และรับผลประเมิน (% เฉลี่ยจากทุกข้อที่ทำ)" : "Speak, Record, Self-Listen & Get Average % Evaluation"}</h2>
+          <p class="text-xs font-semibold text-indigo-700 mt-0.5">
+            🎙️ ${state.lang === "th"
+              ? `คะแนนการอ่านออกเสียงเฉลี่ย: ${st.act4AvgPercent}% (ฝึกพูดแล้ว ${st.act4CompletedCount} / ${st.act4TotalItems} ข้อ)`
+              : `Average Speaking Score: ${st.act4AvgPercent}% (${st.act4CompletedCount} / ${st.act4TotalItems} items completed)`}
+          </p>
         </div>
 
         <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-2xl">
@@ -1129,12 +1299,176 @@ window.SpeakUpApp = (function () {
       </div>
 
       ${partContentHtml}
+
+      <!-- Bottom Unit Completion Summary & Next Unit Bar -->
+      <div class="p-5 rounded-2xl bg-gradient-to-r from-indigo-50 via-emerald-50 to-sky-50 border-2 border-indigo-200 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+        <div class="space-y-1">
+          <p class="text-sm sm:text-base font-extrabold text-indigo-950">
+            🏆 ${state.lang === "th" ? `สรุปผลคะแนนประจำ ${unit.title}` : `${unit.title} Score Summary`}
+          </p>
+          <p class="text-xs text-slate-700">
+            ${state.lang === "th"
+              ? `แบบฝึกหัด Activity 2: <b>${st.act2Correct}/${st.act2Total} ข้อ</b> • Activity 3: <b>${st.act3Correct}/${st.act3Total} ข้อ</b> • การอ่านออกเสียงเฉลี่ย (Activity 4): <b class="text-rose-600">${st.act4AvgPercent}%</b>`
+              : `Activity 2: <b>${st.act2Correct}/${st.act2Total}</b> • Activity 3: <b>${st.act3Correct}/${st.act3Total}</b> • Speaking Average (Activity 4): <b class="text-rose-600">${st.act4AvgPercent}%</b>`}
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
+          <button type="button" onclick="SpeakUpApp.openUnitCompleteModal(${unit.id})" class="px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-extrabold shadow-md transition cursor-pointer">
+            📊 ${state.lang === "th" ? "เปิด Pop-up สรุปคะแนน Unit นี้" : "View Unit Summary Pop-up"}
+          </button>
+          ${nextUnit ? `
+            <button type="button" onclick="SpeakUpApp.goToNextUnit()" class="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-extrabold shadow-md transition cursor-pointer">
+              🚀 ${state.lang === "th" ? `ไปทำ Unit ${nextUnit.id} ต่อไป →` : `Go to Unit ${nextUnit.id} →`}
+            </button>
+          ` : ""}
+        </div>
+      </div>
     `;
   }
 
   // =========================================================================
-  // RENDER MODALS (GROUP QR, SCORES & EMAIL, DIAGNOSTICS & VERSION)
+  // RENDER MODALS (UNIT COMPLETION POP-UP, GROUP QR, SCORES, DIAGNOSTICS)
   // =========================================================================
+  function renderUnitCompleteModal(targetUnitId) {
+    const uId = targetUnitId || state.unitId;
+    const unit = getUnitById(uId);
+    const st = getUnitDetailedStats(uId);
+    const nextUnitId = unit.id < 12 ? unit.id + 1 : null;
+    const nextUnit = nextUnitId ? getUnitById(nextUnitId) : null;
+
+    const titleEl = document.getElementById("unit-complete-title");
+    if (titleEl) {
+      titleEl.textContent = state.lang === "th"
+        ? `สรุปผลคะแนนประจำบทเรียน — Unit ${unit.id}`
+        : `Unit ${unit.id} Completion Summary`;
+    }
+    const subEl = document.getElementById("unit-complete-subtitle");
+    if (subEl) {
+      subEl.textContent = `${unit.themeIcon} ${unit.title} (${unit.titleTh})`;
+    }
+
+    const bodyEl = document.getElementById("unit-complete-body");
+    if (bodyEl) {
+      bodyEl.innerHTML = `
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <!-- Activity 1 -->
+          <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+            <div>
+              <p class="text-xs font-extrabold text-indigo-600 uppercase">Activity 1 • Listening</p>
+              <p class="text-xs font-bold text-slate-800">${state.lang === "th" ? "ฟังเนื้อเรื่อง/บทสนทนา" : "Listen to the Story"}</p>
+            </div>
+            <span class="px-3 py-1 rounded-xl text-sm font-extrabold ${st.act1Done ? "bg-emerald-100 text-emerald-800" : "bg-slate-200 text-slate-600"}">
+              ${st.act1Done} / ${st.act1Total} ${state.lang === "th" ? "ข้อ" : ""}
+            </span>
+          </div>
+
+          <!-- Activity 2 -->
+          <div class="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-200 flex items-center justify-between">
+            <div>
+              <p class="text-xs font-extrabold text-indigo-700 uppercase">Activity 2 • Understanding</p>
+              <p class="text-xs font-bold text-slate-800">${state.lang === "th" ? "แบบฝึกหัดตอบคำถาม" : "Comprehension Questions"}</p>
+            </div>
+            <span class="px-3 py-1 rounded-xl text-sm font-extrabold bg-indigo-600 text-white shadow-sm">
+              ${st.act2Correct} / ${st.act2Total} ${state.lang === "th" ? "ข้อ" : ""}
+            </span>
+          </div>
+
+          <!-- Activity 3 -->
+          <div class="p-3.5 rounded-2xl bg-sky-50/80 border border-sky-200 flex items-center justify-between">
+            <div>
+              <p class="text-xs font-extrabold text-sky-700 uppercase">Activity 3 • Complete Sentence</p>
+              <p class="text-xs font-bold text-slate-800">${state.lang === "th" ? "แบบฝึกหัดเติมคำในประโยค" : "Sentence Completion"}</p>
+            </div>
+            <span class="px-3 py-1 rounded-xl text-sm font-extrabold bg-sky-600 text-white shadow-sm">
+              ${st.act3Correct} / ${st.act3Total} ${state.lang === "th" ? "ข้อ" : ""}
+            </span>
+          </div>
+
+          <!-- Combined Exercises (Act 2 + Act 3) -->
+          <div class="p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-200 flex items-center justify-between">
+            <div>
+              <p class="text-xs font-extrabold text-emerald-700 uppercase">${state.lang === "th" ? "รวมคะแนนแบบฝึกหัด" : "Total Exercise Score"}</p>
+              <p class="text-xs font-bold text-slate-800">Activity 2 + Activity 3</p>
+            </div>
+            <span class="px-3 py-1 rounded-xl text-sm font-extrabold bg-emerald-600 text-white shadow-sm">
+              ${st.exerciseCorrect} / ${st.exerciseTotal} ${state.lang === "th" ? "ข้อ" : ""}
+            </span>
+          </div>
+        </div>
+
+        <!-- Activity 4 Speaking Average % Box -->
+        <div class="p-4 rounded-2xl bg-rose-50/80 border-2 border-rose-200 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <span class="text-xs font-extrabold text-rose-600 uppercase">Activity 4 • Speak Up! (Parts A, B, C)</span>
+              <h4 class="text-sm font-extrabold text-slate-900">
+                ${state.lang === "th"
+                  ? `คะแนนการอ่านออกเสียงเฉลี่ย (จากที่ทำ ${st.act4CompletedCount} ข้อ)`
+                  : `Average Speaking Score (${st.act4CompletedCount} items completed)`}
+              </h4>
+            </div>
+            <span class="px-4 py-1.5 rounded-2xl bg-rose-600 text-white font-extrabold text-base shadow-sm">
+              ${st.act4AvgPercent}%
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+            <div class="p-2 rounded-xl bg-white border border-rose-100 text-center">
+              <p class="text-slate-500 font-semibold">${state.lang === "th" ? "สำเนียง" : "Accent"}</p>
+              <p class="font-extrabold text-indigo-700 text-sm">${st.act4AvgAccent}%</p>
+            </div>
+            <div class="p-2 rounded-xl bg-white border border-rose-100 text-center">
+              <p class="text-slate-500 font-semibold">${state.lang === "th" ? "ความครบถ้วน" : "Completeness"}</p>
+              <p class="font-extrabold text-emerald-700 text-sm">${st.act4AvgComplete}%</p>
+            </div>
+            <div class="p-2 rounded-xl bg-white border border-rose-100 text-center">
+              <p class="text-slate-500 font-semibold">${state.lang === "th" ? "ความชัดเจน" : "Clarity"}</p>
+              <p class="font-extrabold text-sky-700 text-sm">${st.act4AvgClarity}%</p>
+            </div>
+            <div class="p-2 rounded-xl bg-white border border-rose-100 text-center">
+              <p class="text-slate-500 font-semibold">${state.lang === "th" ? "เวลาในการพูด" : "Speaking Time"}</p>
+              <p class="font-extrabold text-amber-700 text-sm">${st.act4AvgTime}%</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    const footerEl = document.getElementById("unit-complete-footer");
+    if (footerEl) {
+      footerEl.innerHTML = `
+        <button type="button" onclick="SpeakUpApp.closeModal('unit-complete-modal')" class="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">
+          ${state.lang === "th" ? "ทบทวนอยู่ใน Unit นี้ต่อ" : "Stay in This Unit"}
+        </button>
+        ${nextUnit ? `
+          <button type="button" onclick="SpeakUpApp.goToNextUnit()" class="w-full sm:w-auto px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs sm:text-sm font-extrabold shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+            <span>🚀 ${state.lang === "th" ? `ไปทำ Unit ${nextUnit.id}: ${nextUnit.title.replace(/^Unit \d+:\s*/, "")} →` : `Go to Unit ${nextUnit.id}: ${nextUnit.title.replace(/^Unit \d+:\s*/, "")} →`}</span>
+          </button>
+        ` : `
+          <button type="button" onclick="SpeakUpApp.closeModal('unit-complete-modal'); SpeakUpApp.openModal('score-modal');" class="w-full sm:w-auto px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-extrabold shadow-md transition cursor-pointer">
+            🏆 ${state.lang === "th" ? "ดูตารางสรุปคะแนนรวมทั้ง 12 Units" : "View All 12 Units Score Summary"}
+          </button>
+        `}
+      `;
+    }
+  }
+
+  function checkAndTriggerUnitCompletePopup(uId) {
+    const p = ensureUnitProgress(uId);
+    const st = getUnitDetailedStats(uId);
+    if (st.isUnitCompleted && !p.unitPopupShown) {
+      p.unitPopupShown = true;
+      saveState();
+      safeSound("playFanfare");
+      renderUnitCompleteModal(uId);
+      const m = document.getElementById("unit-complete-modal");
+      if (m) {
+        m.classList.remove("hidden");
+        m.style.display = "flex";
+      }
+    }
+  }
+
   function getShareableBaseUrl() {
     try {
       if (window.location && (window.location.protocol === "http:" || window.location.protocol === "https:")) {
@@ -1179,16 +1513,15 @@ window.SpeakUpApp = (function () {
     const tbody = document.getElementById("scores-table-body");
     if (tbody) {
       tbody.innerHTML = window.SPEAKUP_UNITS.map(u => {
-        const p = ensureUnitProgress(u.id);
-        const total = getUnitTotalScore(u.id);
+        const st = getUnitDetailedStats(u.id);
         return `
           <tr class="border-b border-slate-100 text-xs">
             <td class="py-2 font-bold text-slate-800">${u.themeIcon} Unit ${u.id}: ${u.title.replace(/^Unit \d+:\s*/, "")}</td>
-            <td class="py-2 text-center">${p.act1Score}%</td>
-            <td class="py-2 text-center">${p.act2Score}%</td>
-            <td class="py-2 text-center">${p.act3Score}%</td>
-            <td class="py-2 text-center font-semibold text-rose-600">${p.act4Score}%</td>
-            <td class="py-2 text-center font-extrabold text-indigo-700">${total}%</td>
+            <td class="py-2 text-center">${st.act1Done}/${st.act1Total}</td>
+            <td class="py-2 text-center font-semibold">${st.act2Correct}/${st.act2Total} ${state.lang === "th" ? "ข้อ" : ""}</td>
+            <td class="py-2 text-center font-semibold">${st.act3Correct}/${st.act3Total} ${state.lang === "th" ? "ข้อ" : ""}</td>
+            <td class="py-2 text-center font-extrabold text-rose-600">${st.act4AvgPercent}%</td>
+            <td class="py-2 text-center font-extrabold text-indigo-700">${st.exerciseCorrect}/${st.exerciseTotal} (${st.act4AvgPercent}%)</td>
           </tr>
         `;
       }).join("");
@@ -1197,11 +1530,11 @@ window.SpeakUpApp = (function () {
     if (masterEl) {
       masterEl.innerHTML = state.lang === "th"
         ? `<div>
-            <p class="text-xs font-bold text-indigo-900">คะแนนเฉลี่ยรวมทั้ง 12 Units: <span class="text-lg text-indigo-700">${summary.averageScore}%</span></p>
+            <p class="text-xs font-bold text-indigo-900">คะแนนแบบฝึกหัดรวม 12 Units: <span class="text-base text-indigo-700">${summary.totalExerciseCorrect}/${summary.totalExerciseQuestions} ข้อ</span> • อ่านออกเสียงเฉลี่ย: <span class="text-base text-rose-600">${summary.overallSpeakingAvg}%</span></p>
             <p class="text-xs text-slate-600">ทำครบทุก Activity แล้ว: <b>${summary.completedUnits} / 12 Units</b> • ห้องเรียน: <b>${state.roomCode}</b></p>
            </div>`
         : `<div>
-            <p class="text-xs font-bold text-indigo-900">Overall 12-Unit Average: <span class="text-lg text-indigo-700">${summary.averageScore}%</span></p>
+            <p class="text-xs font-bold text-indigo-900">Total Exercises (12 Units): <span class="text-base text-indigo-700">${summary.totalExerciseCorrect}/${summary.totalExerciseQuestions}</span> • Speaking Average: <span class="text-base text-rose-600">${summary.overallSpeakingAvg}%</span></p>
             <p class="text-xs text-slate-600">Completed Units: <b>${summary.completedUnits} / 12 Units</b> • Room: <b>${state.roomCode}</b></p>
            </div>`;
     }
@@ -1337,6 +1670,23 @@ window.SpeakUpApp = (function () {
       renderAll();
     },
 
+    goToNextUnit() {
+      this.closeModal("unit-complete-modal");
+      const nextId = state.unitId < 12 ? Number(state.unitId) + 1 : 1;
+      this.changeUnit(nextId);
+      try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {}
+    },
+
+    openUnitCompleteModal(targetUnitId) {
+      safeSound("playFanfare");
+      renderUnitCompleteModal(targetUnitId || state.unitId);
+      const m = document.getElementById("unit-complete-modal");
+      if (m) {
+        m.classList.remove("hidden");
+        m.style.display = "flex";
+      }
+    },
+
     speakLearningGoals() {
       const unit = getCurrentUnit();
       window.SpeechEngine.speak([`Learning Goals for ${unit.title}`, ...unit.learningGoals]);
@@ -1371,27 +1721,37 @@ window.SpeakUpApp = (function () {
 
     playAct1Passage() {
       const unit = getCurrentUnit();
-      const sentences = [unit.activity1.title, ...(unit.activity1.phrases || [unit.activity1.passage])];
+      const sentences = [unit.activity1.title, ...(unit.activity1.phrases || unit.activity1.passage.split("\n"))];
       state.act1Playing = true;
       state.act1CurrentSentence = 1;
       state.act1TotalSentences = sentences.length;
+      state.act1CurrentSpeaker = null;
+      state.act1CurrentGender = null;
       renderActivity1();
 
       window.SpeechEngine.speak(sentences, {
-        onProgress: (pct, curIdx, total) => {
+        onProgress: (pct, curIdx, total, curItem) => {
           state.act1CurrentSentence = curIdx || 1;
           state.act1TotalSentences = total || sentences.length;
+          state.act1CurrentSpeaker = curItem && curItem.speaker ? curItem.speaker : null;
+          state.act1CurrentGender = curItem && curItem.gender ? curItem.gender : null;
           const bar = document.getElementById("act1-progress-bar");
           if (bar) bar.style.width = `${pct}%`;
           const statusEl = document.getElementById("act1-status-line");
           if (statusEl) {
+            const spkInfo = state.act1CurrentSpeaker
+              ? (state.lang === "th"
+                  ? ` • 🎙️ ผู้พูด: ${state.act1CurrentSpeaker} (${state.act1CurrentGender === "male" ? "เสียงผู้ชาย 👨" : "เสียงผู้หญิง 👩"})`
+                  : ` • 🎙️ Speaker: ${state.act1CurrentSpeaker} (${state.act1CurrentGender === "male" ? "Male Voice 👨" : "Female Voice 👩"})`)
+              : "";
             statusEl.textContent = state.lang === "th"
-              ? `🔊 กำลังอ่านออกเสียงประโยคที่ ${state.act1CurrentSentence} / ${state.act1TotalSentences} ... (กรุณาฟังให้จบ)`
-              : `🔊 Reading sentence ${state.act1CurrentSentence} of ${state.act1TotalSentences} ... (Please listen until the end)`;
+              ? `🔊 กำลังอ่านออกเสียงประโยคที่ ${state.act1CurrentSentence} / ${state.act1TotalSentences}${spkInfo}`
+              : `🔊 Reading sentence ${state.act1CurrentSentence} of ${state.act1TotalSentences}${spkInfo}`;
           }
         },
         onEnd: () => {
           state.act1Playing = false;
+          state.act1CurrentSpeaker = null;
           this.unlockAct1Now();
         }
       });
@@ -1403,9 +1763,22 @@ window.SpeakUpApp = (function () {
       state.act1Playing = false;
       if (!p.act1Unlocked) {
         safeSound("playUnlock");
+        p.act1Unlocked = true;
+        // Require the user to click 'Show Story Text' button after listening finishes!
+        p.act1ShowText = false;
       }
-      p.act1Unlocked = true;
       p.act1Score = 100;
+      saveState();
+      renderActivity1();
+      checkAndTriggerUnitCompletePopup(unit.id);
+    },
+
+    toggleAct1Text(show) {
+      safeSound("playClick");
+      const unit = getCurrentUnit();
+      const p = ensureUnitProgress(unit.id);
+      if (!p.act1Unlocked) return;
+      p.act1ShowText = !!show;
       saveState();
       renderActivity1();
     },
@@ -1415,15 +1788,9 @@ window.SpeakUpApp = (function () {
       const p = ensureUnitProgress(unit.id);
       if (window.SpeechEngine) window.SpeechEngine.stop();
       state.act1Playing = false;
-      p.act1Unlocked = false;
+      p.act1ShowText = false;
       saveState();
       renderActivity1();
-    },
-
-    speakPhraseIndex(idx) {
-      const unit = getCurrentUnit();
-      const phrase = unit.activity1.phrases[idx];
-      if (phrase) window.SpeechEngine.speak(phrase);
     },
 
     speakAct2Question(qIdx) {
@@ -1451,6 +1818,7 @@ window.SpeakUpApp = (function () {
       p.act2Score = Math.round((correct / unit.activity2.length) * 100);
       saveState();
       renderActivity2();
+      checkAndTriggerUnitCompletePopup(unit.id);
     },
 
     answerAct3(stepIdx, oIdx) {
@@ -1472,6 +1840,7 @@ window.SpeakUpApp = (function () {
       p.act3Score = Math.round((correct / unit.activity3.length) * 100);
       saveState();
       renderActivity3();
+      checkAndTriggerUnitCompletePopup(unit.id);
     },
 
     jumpAct3Step(stepIdx) {
@@ -1541,6 +1910,7 @@ window.SpeakUpApp = (function () {
           recalculateAct4Score(unit.id);
           saveState();
           renderActivity4();
+          checkAndTriggerUnitCompletePopup(unit.id);
         }
       );
     },
@@ -1554,6 +1924,7 @@ window.SpeakUpApp = (function () {
       if (id === "qr-modal") renderQRModal();
       if (id === "score-modal") renderScoresModal();
       if (id === "diag-modal") renderDiagnosticsModal();
+      if (id === "unit-complete-modal") renderUnitCompleteModal(state.unitId);
       const m = document.getElementById(id);
       if (m) {
         m.classList.remove("hidden");
@@ -1615,17 +1986,17 @@ window.SpeakUpApp = (function () {
         `Speak Up! CEFR A1 — Score Report (Version v${window.APP_VERSION.version})`,
         `Student: ${state.studentName || "Student"}`,
         `Room / Group: ${state.roomCode}`,
-        `Overall Average (12 Units): ${summary.averageScore}% (${summary.completedUnits}/12 Units Completed)`,
+        `Total Exercises (12 Units): ${summary.totalExerciseCorrect}/${summary.totalExerciseQuestions} items`,
+        `Overall Speaking Average: ${summary.overallSpeakingAvg}% (${summary.completedUnits}/12 Units Completed)`,
         `----------------------------------------`
       ];
 
       window.SPEAKUP_UNITS.forEach(u => {
-        const p = ensureUnitProgress(u.id);
-        const total = getUnitTotalScore(u.id);
-        lines.push(`${u.title}: Total ${total}% (Act1: ${p.act1Score}%, Act2: ${p.act2Score}%, Act3: ${p.act3Score}%, Act4 Speak: ${p.act4Score}%)`);
+        const st = getUnitDetailedStats(u.id);
+        lines.push(`${u.title}: Act1 ${st.act1Done}/${st.act1Total}, Act2 ${st.act2Correct}/${st.act2Total}, Act3 ${st.act3Correct}/${st.act3Total}, Act4 Speaking Avg: ${st.act4AvgPercent}%`);
       });
 
-      const subject = encodeURIComponent(`Speak Up CEFR A1 Score Report - ${state.studentName || "Student"} (${summary.averageScore}%)`);
+      const subject = encodeURIComponent(`Speak Up CEFR A1 Score Report - ${state.studentName || "Student"} (${summary.totalExerciseCorrect}/${summary.totalExerciseQuestions} • Speak ${summary.overallSpeakingAvg}%)`);
       const body = encodeURIComponent(lines.join("\n"));
       const recipient = encodeURIComponent(state.studentEmail || "");
       window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;

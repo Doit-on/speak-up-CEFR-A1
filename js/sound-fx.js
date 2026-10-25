@@ -77,40 +77,71 @@ window.SoundFX = (function () {
 })();
 
 /**
- * Clear & Slow Text-to-Speech (TTS) Controller
+ * Clear & Slow Text-to-Speech (TTS) Controller with Multi-Speaker Male/Female Dialogue Voices
  * Prevents premature onend/onerror triggers and supports sequential sentence playback
  */
 window.SpeechEngine = (function () {
   let speechRate = 0.85; // Clear & not too fast by default
   let selectedVoice = null;
+  let maleVoice = null;
+  let femaleVoice = null;
+  let femaleVoiceAlt = null;
   let activeTimer = null;
   let progressTimer = null;
   let currentSessionId = 0;
   let isPlayingNow = false;
   let activeUtterance = null; // Prevent garbage collection of utterance in Chrome
 
+  const MALE_NAMES = new Set([
+    'ben', 'jack', 'troy', 'dan', 'tom', 'max', 'alex', 'david',
+    'john', 'mike', 'sam', 'peter', 'paul', 'mark', 'kevin', 'leo',
+    'boy', 'man', 'father', 'brother', 'mr'
+  ]);
+
+  const FEMALE_NAMES = new Set([
+    'emma', 'maya', 'sara', 'mia', 'lily', 'joy', 'tara', 'nina',
+    'anna', 'may', 'lisa', 'amy', 'kate', 'lucy', 'jane', 'sarah',
+    'girl', 'woman', 'mother', 'sister', 'ms', 'mrs', 'miss'
+  ]);
+
   function initVoices() {
     if (!('speechSynthesis' in window)) return;
     const voices = window.speechSynthesis.getVoices();
     if (!voices || !voices.length) return;
 
-    const preferred = [
-      'Google US English',
-      'Microsoft Aria Online',
-      'Microsoft Jenny Online',
-      'Microsoft Guy Online',
-      'Samantha',
-      'Alex',
-      'Google UK English Female'
+    const enVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith('en'));
+    const pool = enVoices.length ? enVoices : voices;
+
+    const maleHints = [
+      'Microsoft Guy', 'Microsoft Christopher', 'Microsoft Eric', 'Microsoft Roger',
+      'Microsoft Steffan', 'Microsoft David', 'Microsoft Mark', 'Microsoft George',
+      'Microsoft Ryan', 'Google UK English Male', 'Daniel', 'Alex', 'Fred', 'James', 'Male'
     ];
-    for (const name of preferred) {
-      const found = voices.find(v => v.name.includes(name) && v.lang.startsWith('en'));
+    for (const hint of maleHints) {
+      const found = pool.find(v => v.name.toLowerCase().includes(hint.toLowerCase()));
       if (found) {
-        selectedVoice = found;
-        return;
+        maleVoice = found;
+        break;
       }
     }
-    selectedVoice = voices.find(v => v.lang === 'en-US') || voices.find(v => v.lang.startsWith('en')) || voices[0];
+
+    const femaleHints = [
+      'Microsoft Aria', 'Microsoft Jenny', 'Microsoft Michelle', 'Microsoft Ana',
+      'Microsoft Zira', 'Microsoft Hazel', 'Microsoft Susan', 'Google US English',
+      'Google UK English Female', 'Samantha', 'Victoria', 'Karen', 'Moira', 'Tessa', 'Female'
+    ];
+    const matchedFemales = [];
+    for (const hint of femaleHints) {
+      const found = pool.find(v => v.name.toLowerCase().includes(hint.toLowerCase()) && !matchedFemales.includes(v));
+      if (found) matchedFemales.push(found);
+    }
+    if (matchedFemales.length > 0) femaleVoice = matchedFemales[0];
+    if (matchedFemales.length > 1) femaleVoiceAlt = matchedFemales[1];
+
+    selectedVoice = femaleVoice || maleVoice || pool.find(v => v.lang === 'en-US') || pool[0];
+    if (!femaleVoice) femaleVoice = selectedVoice;
+    if (!maleVoice) maleVoice = pool.find(v => v !== femaleVoice) || selectedVoice;
+    if (!femaleVoiceAlt) femaleVoiceAlt = femaleVoice;
   }
 
   if ('speechSynthesis' in window) {
@@ -118,12 +149,68 @@ window.SpeechEngine = (function () {
     window.speechSynthesis.onvoiceschanged = initVoices;
   }
 
-  function cleanTextForSpeech(rawText) {
-    return String(rawText || '')
+  function detectGenderByName(name) {
+    if (!name) return null;
+    const lower = String(name).trim().toLowerCase();
+    if (MALE_NAMES.has(lower)) return 'male';
+    if (FEMALE_NAMES.has(lower)) return 'female';
+    return null;
+  }
+
+  /**
+   * Parses a raw line such as "Emma: Hi! My name is Emma." or narrative text
+   * and returns { speaker, gender, cleanedText, pitch, voiceVariant }
+   */
+  function parseSpeakerAndText(rawText, fallbackGender = null) {
+    const str = String(rawText || '').trim();
+    const speakerMatch = str.match(/^([A-Za-z]+):\s*(.+)$/);
+    let speaker = null;
+    let bodyText = str;
+    let gender = fallbackGender;
+
+    if (speakerMatch) {
+      speaker = speakerMatch[1].trim();
+      bodyText = speakerMatch[2].trim();
+      gender = detectGenderByName(speaker) || fallbackGender || 'female';
+    } else {
+      // Check if narrative introduces a named narrator ("My name is Ben/Troy/Lily")
+      const introMatch = str.match(/\bMy name is ([A-Za-z]+)\b/i) || str.match(/\b([A-Za-z]+)'s Daily Routine\b/i);
+      if (introMatch) {
+        const g = detectGenderByName(introMatch[1]);
+        if (g) gender = g;
+      }
+    }
+
+    const cleaned = bodyText
       .replace(/^[A-Za-z]+:\s*/gm, '')
       .replace(/___+/g, ' blank ')
       .replace(/\s+/g, ' ')
       .trim();
+
+    let pitch = 1.02;
+    let isAltFemale = false;
+    if (gender === 'male') {
+      pitch = 0.82; // Distinct masculine voice register
+    } else if (gender === 'female') {
+      if (speaker && speaker.toLowerCase() === 'tara') {
+        pitch = 1.26;
+        isAltFemale = true;
+      } else {
+        pitch = 1.18; // Distinct feminine voice register
+      }
+    }
+
+    return {
+      speaker,
+      gender: gender || 'neutral',
+      cleanedText: cleaned,
+      pitch,
+      isAltFemale
+    };
+  }
+
+  function cleanTextForSpeech(rawText) {
+    return parseSpeakerAndText(rawText).cleanedText;
   }
 
   function stop() {
@@ -147,8 +234,8 @@ window.SpeechEngine = (function () {
     }
   }
 
-  function speakSingleSentence(sentenceText, rate, pitch, sessionId, onSentenceEnd) {
-    const cleaned = cleanTextForSpeech(sentenceText);
+  function speakSingleItem(itemObj, rate, sessionId, onSentenceEnd) {
+    const cleaned = itemObj.cleanedText;
     if (!cleaned || sessionId !== currentSessionId) {
       onSentenceEnd(false);
       return;
@@ -188,10 +275,18 @@ window.SpeechEngine = (function () {
       const utter = new SpeechSynthesisUtterance(cleaned);
       activeUtterance = utter; // Keep reference alive
       if (!selectedVoice) initVoices();
-      if (selectedVoice) utter.voice = selectedVoice;
-      utter.lang = 'en-US';
+
+      if (itemObj.gender === 'male' && maleVoice) {
+        utter.voice = maleVoice;
+      } else if (itemObj.gender === 'female') {
+        utter.voice = (itemObj.isAltFemale && femaleVoiceAlt) ? femaleVoiceAlt : (femaleVoice || selectedVoice);
+      } else if (selectedVoice) {
+        utter.voice = selectedVoice;
+      }
+
+      utter.lang = (utter.voice && utter.voice.lang) ? utter.voice.lang : 'en-US';
       utter.rate = rate;
-      utter.pitch = pitch || 1.02;
+      utter.pitch = itemObj.pitch || 1.02;
 
       utter.onend = () => {
         completeSentence();
@@ -202,7 +297,6 @@ window.SpeechEngine = (function () {
           settled = true;
           return;
         }
-        // If TTS voice failed to synthesize, wait realistic reading duration before completing
         completeSentence();
       };
 
@@ -214,29 +308,47 @@ window.SpeechEngine = (function () {
   }
 
   /**
-   * Speaks a single text or an array of sentences sequentially.
+   * Speaks a single text or an array of sentences sequentially with automatic Male/Female speaker voices.
    * Calls onEnd ONLY after ALL sentences have finished reading completely.
    */
   function speak(textOrArray, options = {}) {
     stop();
     const sessionId = currentSessionId;
     const rate = options.rate || speechRate;
-    const pitch = options.pitch || 1.02;
 
-    const sentences = Array.isArray(textOrArray)
-      ? textOrArray.map(s => cleanTextForSpeech(s)).filter(Boolean)
+    const rawLines = Array.isArray(textOrArray)
+      ? textOrArray.map(s => String(s || '').trim()).filter(Boolean)
       : String(textOrArray || '')
-          .split(/(?<=[.!?])\s+|\n+/)
-          .map(s => cleanTextForSpeech(s))
+          .split(/\n+|(?<=[.!?])\s+/)
+          .map(s => s.trim())
           .filter(Boolean);
 
-    if (!sentences.length) {
+    // Infer narrative fallback gender if a main character is introduced (e.g. Ben, Troy, Lily)
+    let fallbackGender = options.gender || null;
+    if (!fallbackGender) {
+      for (const line of rawLines) {
+        const m = line.match(/\bMy name is ([A-Za-z]+)\b/i) || line.match(/^([A-Za-z]+)'s\b/i);
+        if (m) {
+          const g = detectGenderByName(m[1]);
+          if (g) {
+            fallbackGender = g;
+            break;
+          }
+        }
+      }
+    }
+
+    const parsedItems = rawLines
+      .map(line => parseSpeakerAndText(line, fallbackGender))
+      .filter(it => it.cleanedText.length > 0);
+
+    if (!parsedItems.length) {
       if (options.onEnd) options.onEnd();
       return;
     }
 
     isPlayingNow = true;
-    if (options.onStart) options.onStart(sentences.length);
+    if (options.onStart) options.onStart(parsedItems.length);
 
     let currentIdx = 0;
 
@@ -246,23 +358,25 @@ window.SpeechEngine = (function () {
 
       const playNext = () => {
         if (sessionId !== currentSessionId) return;
-        if (currentIdx >= sentences.length) {
+        if (currentIdx >= parsedItems.length) {
           isPlayingNow = false;
           activeUtterance = null;
-          if (options.onProgress) options.onProgress(100, sentences.length, sentences.length);
+          if (options.onProgress) options.onProgress(100, parsedItems.length, parsedItems.length, null);
           if (options.onEnd) options.onEnd();
           return;
         }
 
-        const pct = Math.max(5, Math.round((currentIdx / sentences.length) * 100));
-        if (options.onProgress) options.onProgress(pct, currentIdx + 1, sentences.length);
+        const curItem = parsedItems[currentIdx];
+        const pct = Math.max(5, Math.round((currentIdx / parsedItems.length) * 100));
+        if (options.onProgress) options.onProgress(pct, currentIdx + 1, parsedItems.length, curItem);
 
-        speakSingleSentence(sentences[currentIdx], rate, pitch, sessionId, (ok) => {
+        speakSingleItem(curItem, rate, sessionId, (ok) => {
           if (!ok || sessionId !== currentSessionId) return;
           currentIdx++;
-          const nextPct = Math.min(98, Math.round((currentIdx / sentences.length) * 100));
-          if (options.onProgress) options.onProgress(nextPct, Math.min(currentIdx + 1, sentences.length), sentences.length);
-          // Brief natural pause between sentences (280ms)
+          const nextPct = Math.min(98, Math.round((currentIdx / parsedItems.length) * 100));
+          const nextItem = parsedItems[Math.min(currentIdx, parsedItems.length - 1)];
+          if (options.onProgress) options.onProgress(nextPct, Math.min(currentIdx + 1, parsedItems.length), parsedItems.length, nextItem);
+          // Brief natural pause between dialogue turns / sentences (280ms)
           activeTimer = setTimeout(playNext, 280);
         });
       };
@@ -276,6 +390,8 @@ window.SpeechEngine = (function () {
     isPlaying: () => isPlayingNow,
     getRate: () => speechRate,
     setRate: (r) => { speechRate = Number(r) || 0.85; },
+    detectGenderByName,
+    parseSpeakerAndText,
     speak,
     stop
   };

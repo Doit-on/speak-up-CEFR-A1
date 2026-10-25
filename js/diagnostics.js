@@ -1,14 +1,30 @@
 /**
  * Speak Up! CEFR A1 — Automated Self-Diagnostic, Version Control & Genuine ISO-18004 QR Code Engine
- * Version: 1.3.0 (Build 2026.10.25-GOALS-QR)
+ * Version: 1.4.0 (Build 2026.10.25-DIALOGUE-SUMMARY)
  */
 
 window.APP_VERSION = {
-  version: "1.3.0",
-  build: "2026.10.25-GOALS-QR",
+  version: "1.4.0",
+  build: "2026.10.25-DIALOGUE-SUMMARY",
   channel: "GitHub Pages Production (Doit-on/speak-up-CEFR-A1)",
   updatedAt: "2026-10-25",
   changelog: [
+    {
+      version: "1.4.0",
+      date: "2026-10-25",
+      notesTh: [
+        "ปรับหัวข้อ Learning Goals, ตารางคำศัพท์และประโยคตัวอย่าง, และหัวคอลัมน์ ความหมาย ให้สะอาดตามต้นฉบับ",
+        "ปรับ Activity 1 ทุก Unit: เมื่อฟังจบต้องกดปุ่ม 'แสดงเนื้อหา' จึงจะเห็นข้อความสีแดง และมีปุ่ม 'ปิดเนื้อหาเพื่อฝึกฟัง' สลับเปิด/ปิดได้ พร้อมนำส่วน Listen and Repeat ออก",
+        "เพิ่ม Pop-up สรุปคะแนนเมื่อทำครบ Unit โดยแสดงคะแนนแบบฝึกหัดตามจำนวนข้อ (Activity 2: X/3 ข้อ, Activity 3: Y/5 ข้อ) และคะแนนการอ่านออกเสียงเป็น % เฉลี่ยจากทุกข้อที่ทำ พร้อมปุ่มไปทำ Unit ต่อไปทันที",
+        "ปรับบทสนทนาให้เป็นการคุยโต้ตอบ 2 คนตามชื่อตัวละคร พร้อมระบบแยกเสียงผู้ชาย (Male Voice) และเสียงผู้หญิง (Female Voice) ตามชื่อตัวละครอัตโนมัติ"
+      ],
+      notesEn: [
+        "Cleaned up Learning Goals & Vocabulary table headings across all units",
+        "Updated Activity 1 across all units: require clicking 'Show Story Text' after listening finishes, added 'Hide Story Text' toggle button to practice listening, and removed the 'Listen and repeat each phrase' section",
+        "Added Unit Completion Score Summary Pop-up showing exercise scores by item count (Activity 2: X/3, Activity 3: Y/5) and speaking score as average % across completed items, with a direct 'Go to Next Unit' button",
+        "Upgraded all dialogues to 2-person conversations with automatic Male/Female voice selection based on character names"
+      ]
+    },
     {
       version: "1.3.0",
       date: "2026-10-25",
@@ -403,14 +419,20 @@ window.SelfDiagnostics = (function () {
         : "In-memory session active (LocalStorage restricted)"
     });
 
-    // 3. Clear Speech Synthesis (TTS)
-    const ttsOk = !!(window.SpeechEngine && window.SpeechEngine.isSupported());
+    // 3. Clear Speech Synthesis (TTS) + Multi-Speaker Male/Female Dialogue Engine
+    const ttsOk = !!(
+      window.SpeechEngine &&
+      window.SpeechEngine.isSupported() &&
+      typeof window.SpeechEngine.detectGenderByName === "function" &&
+      window.SpeechEngine.detectGenderByName("Jack") === "male" &&
+      window.SpeechEngine.detectGenderByName("Emma") === "female"
+    );
     checks.push({
       id: "tts_engine",
-      nameTh: "ระบบสังเคราะห์เสียงอ่านภาษาอังกฤษ (Sequential TTS 0.85x)",
-      nameEn: "Sequential English Speech Synthesis (TTS 0.85x)",
+      nameTh: "ระบบสังเคราะห์เสียงอ่าน 2 บทสนทนา (แยกเสียงผู้ชาย/ผู้หญิง 0.85x)",
+      nameEn: "Multi-Speaker Male/Female English Speech Synthesis (TTS 0.85x)",
       passed: ttsOk,
-      detail: ttsOk ? `Ready (Default rate: ${window.SpeechEngine.getRate()}x)` : "Fallback timer active"
+      detail: ttsOk ? `Ready (Male/Female Voice Detection • Rate: ${window.SpeechEngine.getRate()}x)` : "Fallback timer active"
     });
 
     // 4. 4-Metric Speech Evaluation Engine Self-Test
@@ -486,7 +508,7 @@ window.SelfDiagnostics = (function () {
     });
 
     // 7. Landing Page & TWP Logo Branding
-    const landingOk = !!(window.APP_VERSION && window.APP_VERSION.version === "1.3.0");
+    const landingOk = !!(window.APP_VERSION && window.APP_VERSION.version === "1.4.0");
     checks.push({
       id: "landing_twp",
       nameTh: "หน้า Landing Page โลโก้ ทวพ. และป้ายแสดง Version ระบบ",
@@ -495,19 +517,20 @@ window.SelfDiagnostics = (function () {
       detail: `Active Landing Page (Speak Up! CEFR A1 • v${window.APP_VERSION.version})`
     });
 
-    // 8. Bilingual TH/EN Dictionary & Pre-Activity Learning Goals Step
+    // 8. Activity 1 Show/Hide Toggle + Unit Completion Summary Pop-up
     const navAndI18nOk = !!(
       window.SpeakUpApp &&
       typeof window.SpeakUpApp.enterWorkspace === "function" &&
-      typeof window.SpeakUpApp.showLandingPage === "function" &&
-      typeof window.SpeakUpApp.setLang === "function"
+      typeof window.SpeakUpApp.toggleAct1Text === "function" &&
+      typeof window.SpeakUpApp.openUnitCompleteModal === "function" &&
+      typeof window.SpeakUpApp.goToNextUnit === "function"
     );
     checks.push({
       id: "bilingual_nav",
-      nameTh: "หน้า Learning Goals & Vocabulary ก่อนเข้า Activity 1 และระบบ 2 ภาษา",
-      nameEn: "Pre-Activity Learning Goals & Vocabulary View + Bilingual Engine",
+      nameTh: "ปุ่มเปิด/ปิดเนื้อหา Activity 1 และ Pop-up สรุปคะแนนท้าย Unit",
+      nameEn: "Activity 1 Show/Hide Text + Unit Completion Pop-up Summary",
       passed: navAndI18nOk,
-      detail: navAndI18nOk ? "Step 0 (Goals & Vocab Table) + TH/EN Ready" : "Navigation missing"
+      detail: navAndI18nOk ? "Show/Hide Text + Unit Summary Pop-up + Next Unit Ready" : "Navigation missing"
     });
 
     const elapsedMs = Math.max(1, Math.round(performance.now() - startTime));
