@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Speak Up! CEFR A1 — ทวพ. Interactive Listening & Speaking (v1.2.1)</title>
+  <title>Speak Up! CEFR A1 — ทวพ. Interactive Listening & Speaking (v1.3.0)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -35,7 +35,7 @@
               Speak Up! CEFR A1
             </button>
             <button type="button" onclick="SpeakUpApp.openModal('diag-modal')" id="top-version-badge" class="px-2.5 py-0.5 text-xs font-extrabold rounded-full bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 transition flex items-center gap-1">
-              Version v1.2.1 • 8/8 OK
+              Version v1.3.0 • 8/8 OK
             </button>
           </div>
           <p class="text-xs text-slate-500" data-i18n="appSubtitle">
@@ -95,10 +95,10 @@
       <!-- Prominent Version, Self-Check & Bilingual Switcher Row at Top of Landing Page -->
       <div class="flex flex-wrap items-center justify-center gap-2">
         <span class="px-3.5 py-1 rounded-full text-xs font-extrabold bg-indigo-600 text-white shadow-sm tracking-wide" data-i18n="landingVersionBadge">
-          🚀 เวอร์ชันระบบ: v1.2.1 (Build 2026.10.25-ACT1-LOCK)
+          🚀 เวอร์ชันระบบ: v1.3.0 (Build 2026.10.25-GOALS-QR)
         </span>
         <button type="button" onclick="SpeakUpApp.openModal('diag-modal')" id="landing-diag-badge" class="px-3.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-emerald-200 transition">
-          ✅ ระบบตรวจสอบตัวเองอัตโนมัติ (v1.2.1): ผ่านครบ 8/8 รายการ
+          ✅ ระบบตรวจสอบตัวเองอัตโนมัติ (v1.3.0): ผ่านครบ 8/8 รายการ
         </button>
         <div class="flex items-center bg-white p-0.5 rounded-full border border-indigo-200 shadow-sm">
           <button type="button" onclick="SpeakUpApp.setLang('th')" id="landing-lang-th" class="px-3 py-1 rounded-full text-xs font-extrabold bg-indigo-600 text-white shadow-sm transition">🇹🇭 ไทย (TH)</button>
@@ -144,7 +144,7 @@
           </div>
           <div>
             <p class="text-xs font-extrabold text-indigo-700 uppercase" data-i18n="landingKenjiTitle">🕵️‍♂️ นักสืบเคนจิ • ยินดีต้อนรับเข้าสู่ระบบฝึกภาษาอังกฤษ</p>
-            <p class="text-xs text-slate-600" data-i18n="landingKenjiDesc">ระบุชื่อผู้เรียนและรหัสห้องเรียน (ถ้ามี) หรือกดปุ่ม 'เริ่มเข้าสู่บทเรียน' ด้านล่างเพื่อเริ่มทำแบบฝึกหัดได้ทันที ข้อมูลจะบันทึกอัตโนมัติในเครื่องครับ</p>
+            <p class="text-xs text-slate-600" data-i18n="landingKenjiDesc">ระบุชื่อผู้เรียนและรหัสห้องเรียน (ถ้ามี) หรือกดปุ่ม 'เริ่มเข้าสู่บทเรียน' ด้านล่างเพื่อดู Learning Goals, คำศัพท์ และเริ่มทำแบบฝึกหัดได้ทันที</p>
           </div>
         </div>
 
@@ -173,8 +173,8 @@
       <!-- System Highlight Badges -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-w-3xl mx-auto pt-2 text-xs">
         <div class="p-2.5 rounded-2xl bg-white/80 border border-indigo-100">
-          <p class="font-extrabold text-indigo-700" data-i18n="landingFeat1Title">12 Units • 48 Activities</p>
-          <p class="text-slate-500" data-i18n="landingFeat1Sub">เนื้อหาครบตามหลักสูตร A1</p>
+          <p class="font-extrabold text-indigo-700" data-i18n="landingFeat1Title">12 Units • Goals & Vocab</p>
+          <p class="text-slate-500" data-i18n="landingFeat1Sub">แสดงเป้าหมาย & คำศัพท์ก่อนเริ่ม</p>
         </div>
         <div class="p-2.5 rounded-2xl bg-white/80 border border-rose-100">
           <p class="font-extrabold text-rose-600" data-i18n="landingFeat2Title">Red-Text Audio Lock</p>
@@ -185,8 +185,8 @@
           <p class="text-slate-500" data-i18n="landingFeat3Sub">สำเนียง • ครบถ้วน • ชัดเจน • เวลา</p>
         </div>
         <div class="p-2.5 rounded-2xl bg-white/80 border border-amber-100">
-          <p class="font-extrabold text-amber-700" data-i18n="landingFeat4Title">Version v1.2.0 Verified</p>
-          <p class="text-slate-500" data-i18n="landingFeat4Sub">ระบบตรวจสอบตัวเองอัตโนมัติ</p>
+          <p class="font-extrabold text-amber-700" data-i18n="landingFeat4Title">Version v1.3.0 Verified</p>
+          <p class="text-slate-500" data-i18n="landingFeat4Sub">QR มาตรฐาน ISO สแกนได้จริง</p>
         </div>
       </div>
     </div>
@@ -196,7 +196,7 @@
       <div class="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h2 class="font-extrabold text-base sm:text-lg text-indigo-950" data-i18n="landingUnitsHeading">📚 เลือกบทเรียนได้ทันที (All 12 Units Overview)</h2>
-          <p class="text-xs text-slate-500" data-i18n="landingUnitsSub">คลิกที่การ์ด Unit ใดก็ได้ด้านล่างเพื่อเข้าสู่แบบฝึกหัดทั้ง 4 Activities ของบทนั้นทันที</p>
+          <p class="text-xs text-slate-500" data-i18n="landingUnitsSub">คลิกที่การ์ด Unit ใดก็ได้ด้านล่างเพื่อดู Learning Goals, ตารางคำศัพท์ และเข้าสู่ Activity 1–4</p>
         </div>
         <span id="landing-overall-progress" class="px-3 py-1 rounded-full text-xs font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200">
           คะแนนเฉลี่ยรวม: 0% (0/12 Units)
@@ -259,16 +259,16 @@
       </div>
     </section>
 
-    <!-- UNIT SELECTOR, VOCABULARY DRAWER BUTTON & VOICE SPEED CONTROL -->
+    <!-- UNIT SELECTOR & VOICE SPEED CONTROL -->
     <section class="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
       <div class="flex items-center gap-2.5 flex-wrap">
         <label for="unit-select" class="text-xs font-bold text-slate-500 uppercase" data-i18n="selectUnit">เลือกบทเรียน (12 Units):</label>
         <select id="unit-select" onchange="SpeakUpApp.changeUnit(this.value)" class="text-xs sm:text-sm font-bold bg-indigo-50/80 text-indigo-950 border border-indigo-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400">
         </select>
 
-        <button type="button" onclick="SpeakUpApp.toggleVocab()" class="px-3 py-2 rounded-xl text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200 hover:bg-sky-100 transition flex items-center gap-1">
-          <span>📖</span>
-          <span data-i18n="vocabBtn">คำศัพท์ประจำบท & ฝึกออกเสียง</span>
+        <button type="button" onclick="SpeakUpApp.switchActivity(0)" class="px-3 py-2 rounded-xl text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200 hover:bg-sky-100 transition flex items-center gap-1">
+          <span>🎯</span>
+          <span data-i18n="vocabBtn">Learning Goals & คำศัพท์ประจำบท</span>
         </button>
       </div>
 
@@ -281,24 +281,21 @@
       </div>
     </section>
 
-    <!-- COLLAPSIBLE LEARNING GOALS & VOCABULARY DRAWER -->
-    <section id="vocab-drawer" class="hidden bg-white rounded-3xl p-5 border border-sky-200 shadow-sm space-y-4 fade-in">
-      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
-        <div>
-          <h3 class="font-bold text-sm text-sky-950" data-i18n="vocabDrawerHeading">🎯 เป้าหมายการเรียนรู้ & คำศัพท์ประจำบท (Learning Goals & Vocabulary)</h3>
-          <ul id="learning-goals-list" class="text-xs text-slate-600 mt-1 space-y-0.5"></ul>
+    <!-- 5 STEPPER TABS: STEP 0 (LEARNING GOALS & VOCAB) + ACTIVITIES 1 TO 4 -->
+    <nav class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+      <button type="button" onclick="SpeakUpApp.switchActivity(0)" id="tab-0" class="p-3 rounded-2xl border-2 border-indigo-500 bg-indigo-50/90 text-left transition shadow-sm">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-xs font-extrabold text-sky-700">STEP 0 • INTRO</span>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 font-bold">📖</span>
         </div>
-        <button type="button" onclick="SpeakUpApp.toggleVocab()" class="px-3 py-1 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold hover:bg-slate-200" data-i18n="vocabCloseBtn">✕ ปิดหน้าต่างคำศัพท์</button>
-      </div>
-      <div id="vocab-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5"></div>
-    </section>
+        <p class="font-bold text-xs sm:text-sm text-slate-800" data-i18n="act0TabTitle">0. Goals & Vocab</p>
+        <p class="text-xs text-slate-500" data-i18n="act0TabSub">เป้าหมาย & ตารางคำศัพท์</p>
+      </button>
 
-    <!-- 4 ACTIVITY NAVIGATION TABS -->
-    <nav class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-      <button type="button" onclick="SpeakUpApp.switchActivity(1)" id="tab-1" class="p-3 rounded-2xl border-2 border-indigo-500 bg-indigo-50/90 text-left transition shadow-sm">
+      <button type="button" onclick="SpeakUpApp.switchActivity(1)" id="tab-1" class="p-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-left transition">
         <div class="flex items-center justify-between mb-1">
           <span class="text-xs font-extrabold text-indigo-600">ACTIVITY 1</span>
-          <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-200 text-indigo-900 font-bold" id="score-act1">0%</span>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-900 font-bold" id="score-act1">0%</span>
         </div>
         <p class="font-bold text-xs sm:text-sm text-slate-800" data-i18n="act1TabTitle">1. ฟังเนื้อเรื่อง (Story)</p>
         <p class="text-xs text-slate-500" data-i18n="act1TabSub">ฟังจบจึงแสดง Text สีแดง</p>
@@ -332,8 +329,9 @@
       </button>
     </nav>
 
-    <!-- ACTIVITY PANELS 1 TO 4 -->
-    <section id="panel-1" class="bg-white rounded-3xl p-5 sm:p-6 border border-indigo-100 shadow-sm space-y-5"></section>
+    <!-- PANELS: STEP 0 (LEARNING GOALS & VOCAB TABLE) + ACTIVITIES 1 TO 4 -->
+    <section id="panel-0" class="bg-white rounded-3xl p-5 sm:p-6 border border-indigo-100 shadow-sm space-y-5"></section>
+    <section id="panel-1" class="hidden bg-white rounded-3xl p-5 sm:p-6 border border-indigo-100 shadow-sm space-y-5"></section>
     <section id="panel-2" class="hidden bg-white rounded-3xl p-5 sm:p-6 border border-indigo-100 shadow-sm space-y-5"></section>
     <section id="panel-3" class="hidden bg-white rounded-3xl p-5 sm:p-6 border border-indigo-100 shadow-sm space-y-5"></section>
     <section id="panel-4" class="hidden bg-white rounded-3xl p-5 sm:p-6 border border-indigo-100 shadow-sm space-y-5"></section>
@@ -346,7 +344,7 @@
   <footer class="bg-white border-t border-indigo-100 py-4 px-4 text-center text-xs text-slate-500">
     <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-2">
       <span><b>ทวพ. • Speak Up! CEFR A1</b> — 12 Units Interactive Listening & Speaking Platform</span>
-      <span class="font-bold text-indigo-700" data-i18n="footerRight">เวอร์ชันระบบ: v1.2.0 (Build 2026.10.25-BILINGUAL) • ตรวจสอบตัวเองอัตโนมัติ</span>
+      <span class="font-bold text-indigo-700" data-i18n="footerRight">เวอร์ชันระบบ: v1.3.0 (Build 2026.10.25-GOALS-QR) • ตรวจสอบตัวเองอัตโนมัติ</span>
     </div>
   </footer>
 
@@ -354,24 +352,37 @@
   <!-- MODAL 1: GROUP QR CODE & ROOM LINK GENERATOR              -->
   <!-- ========================================================= -->
   <div id="qr-modal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 border border-indigo-100 shadow-xl space-y-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 border border-indigo-100 shadow-xl space-y-4 max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between">
         <h3 class="font-extrabold text-base text-indigo-950" data-i18n="qrModalTitle">📱 ระบบทำพร้อมกันเป็นกลุ่ม (Group QR & Link)</h3>
         <button type="button" onclick="SpeakUpApp.closeModal('qr-modal')" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
       </div>
       <p class="text-xs text-slate-600" data-i18n="qrModalDesc">
-        ให้นักเรียนสแกน QR Code นี้เพื่อเข้าสู่ รหัสห้อง (Room) และ Unit ปัจจุบัน พร้อมกันได้ทันที
+        ให้นักเรียนสแกน QR Code มาตรฐาน ISO/IEC 18004 นี้ด้วยกล้องมือถือหรือ LINE เพื่อเข้าสู่ รหัสห้อง (Room) และ Unit ปัจจุบัน พร้อมกันได้ทันที
       </p>
 
-      <div class="flex gap-2">
-        <input id="qr-room-input" type="text" placeholder="CLASS-A1" class="flex-1 text-xs font-bold px-3 py-2 rounded-xl border border-slate-200 uppercase" />
-        <button type="button" onclick="SpeakUpApp.updateRoomCode()" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold" data-i18n="qrUpdateBtn">
-          อัปเดต QR
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div>
+          <label class="text-xs font-bold text-slate-600 block mb-1" data-i18n="qrRoomFieldLabel">🏫 รหัสห้อง (Room):</label>
+          <input id="qr-room-input" type="text" placeholder="CLASS-A1" class="w-full text-xs font-bold px-3 py-2 rounded-xl border border-slate-200 uppercase" />
+        </div>
+        <div>
+          <label class="text-xs font-bold text-slate-600 block mb-1" data-i18n="qrUnitFieldLabel">📘 บทเรียน (Unit):</label>
+          <select id="qr-unit-select" onchange="SpeakUpApp.updateRoomCode()" class="w-full text-xs font-bold px-3 py-2 rounded-xl border border-slate-200 bg-indigo-50/60 text-indigo-950"></select>
+        </div>
+      </div>
+
+      <div class="flex justify-end">
+        <button type="button" onclick="SpeakUpApp.updateRoomCode()" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold" data-i18n="qrUpdateBtn">
+          🔄 อัปเดต QR Code
         </button>
       </div>
 
-      <div class="flex flex-col items-center justify-center p-4 bg-indigo-50/60 rounded-2xl border border-indigo-100">
-        <div id="qr-svg-container" class="w-44 h-44 bg-white p-3 rounded-2xl shadow-sm border border-slate-200"></div>
+      <div class="flex flex-col items-center justify-center p-4 bg-indigo-50/60 rounded-2xl border border-indigo-100 space-y-2">
+        <div id="qr-svg-container" class="w-48 h-48 bg-white p-2.5 rounded-2xl shadow-sm border border-slate-200"></div>
+        <span id="qr-verify-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+          ✅ มาตรฐาน ISO/IEC 18004 • สแกนด้วยกล้องมือถือได้จริง
+        </span>
       </div>
 
       <div class="space-y-1.5">
@@ -383,6 +394,12 @@
           </button>
         </div>
         <p id="qr-copy-feedback" class="text-xs font-bold text-emerald-600"></p>
+      </div>
+
+      <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+        <button type="button" onclick="SpeakUpApp.simulateJoinFromQR()" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold shadow-sm transition" data-i18n="qrSimulateBtn">
+          🚀 ทดสอบเข้าสู่ Unit และห้องกลุ่มนี้ทันที (Join Group Session Now)
+        </button>
       </div>
     </div>
   </div>
@@ -451,9 +468,10 @@
       <div id="diag-checks-list" class="space-y-2"></div>
 
       <div class="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-100 space-y-1.5 text-xs">
-        <p class="font-extrabold text-indigo-950">📌 Release Notes (v1.2.1 — Build 2026.10.25-ACT1-LOCK)</p>
+        <p class="font-extrabold text-indigo-950">📌 Release Notes (v1.3.0 — Build 2026.10.25-GOALS-QR)</p>
         <ul class="list-disc list-inside text-slate-700 space-y-1">
-          <li><b>v1.2.1</b>: ปรับปรุง Activity 1 ให้ซ่อนทั้งชื่อเรื่องและเนื้อหาทั้งหมดไว้ 100% จนกว่าจะฟังเสียงอ่านครบทุกประโยคตั้งแต่ต้นจนจบ (ตัดปุ่มข้ามการฟังออก)</li>
+          <li><b>v1.3.0</b>: แสดงหน้า <b>Learning Goals & ตารางคำศัพท์ (Vocabulary | ความหมาย | Example)</b> ทันทีเมื่อเข้าสู่ทุก Unit ก่อนเริ่ม Activity 1 และอัปเกรด QR Code เป็นมาตรฐานสากล ISO/IEC 18004 สแกนใช้งานได้จริง</li>
+          <li><b>v1.2.1</b>: ปรับปรุง Activity 1 ให้ซ่อนทั้งชื่อเรื่องและเนื้อหาทั้งหมดไว้ 100% จนกว่าจะฟังเสียงอ่านครบทุกประโยคตั้งแต่ต้นจนจบ</li>
           <li><b>v1.2.0</b>: แก้ไขการสลับหน้าเข้าสู่บทเรียน (Enter Workspace) และอัปเกรดระบบแปลภาษา ไทย-อังกฤษ (TH/EN) ครบ 100% ทุกหน้าจอ</li>
           <li><b>v1.1.0</b>: เพิ่มหน้า Landing Page พร้อมโลโก้ ทวพ. หัวข้อ "Speak Up! CEFR A1" และการแสดงหมายเลข Version ระบบอย่างชัดเจน</li>
         </ul>

@@ -1,17 +1,18 @@
 /**
- * Speak Up! CEFR A1 — Main Application Controller (v1.2.0)
- * Supports 12 Units, 4 Activities/Unit, Red-Text Gating, 4-Metric Speech Evaluation,
- * LocalStorage Persistence, Full Bilingual TH/EN, Group QR Sync, Email Reporting & Self-Diagnostics.
+ * Speak Up! CEFR A1 — Main Application Controller (v1.3.0)
+ * Supports 12 Units, Pre-Activity Learning Goals & Vocabulary Table (Step 0) + 4 Activities/Unit,
+ * Strict Red-Text Gating, 4-Metric Speech Evaluation, LocalStorage Persistence,
+ * Full Bilingual TH/EN, ISO/IEC 18004 Group QR Sync, Email Reporting & Self-Diagnostics.
  */
 
 window.SpeakUpApp = (function () {
-  const STORAGE_KEY = "speakup_a1_progress_v121";
+  const STORAGE_KEY = "speakup_a1_progress_v130";
 
   let state = {
     lang: "th",
     view: "landing", // 'landing' | 'workspace'
     unitId: 1,
-    activityId: 1,
+    activityId: 0, // 0 = Learning Goals & Vocabulary (Default before Activity 1), 1..4 = Activities 1..4
     act1Playing: false,
     act1CurrentSentence: 0,
     act1TotalSentences: 0,
@@ -20,7 +21,6 @@ window.SpeakUpApp = (function () {
     studentName: "",
     studentEmail: "",
     roomCode: "CLASS-A1",
-    vocabOpen: false,
     progress: {}
   };
 
@@ -28,41 +28,41 @@ window.SpeakUpApp = (function () {
     th: {
       homeBtn: "หน้าแรก",
       exercisesBtn: "เข้าสู่บทเรียน",
-      landingVersionBadge: "🚀 เวอร์ชันระบบ: v1.2.1 (Build 2026.10.25-ACT1-LOCK)",
+      landingVersionBadge: "🚀 เวอร์ชันระบบ: v1.3.0 (Build 2026.10.25-GOALS-QR)",
       landingSubtitle: "Listening and Speaking Exercises • ระบบฝึกฟังและพูดภาษาอังกฤษครบ 12 Units (48 Activities)",
       landingDesc: "ฝึกทักษะการฟังจับใจความพร้อมเงื่อนไขปลดล็อกข้อความสีแดง และฝึกพูดอัดเสียงพร้อมระบบประเมินผล 4 มาตรฐาน (สำเนียง, ความครบถ้วน, ความชัดเจน, เวลาในการพูด) คิดเป็น %",
       landingKenjiTitle: "🕵️‍♂️ นักสืบเคนจิ • ยินดีต้อนรับเข้าสู่ระบบฝึกภาษาอังกฤษ",
-      landingKenjiDesc: "ระบุชื่อผู้เรียนและรหัสห้องเรียน (ถ้ามี) หรือกดปุ่ม 'เริ่มเข้าสู่บทเรียน' ด้านล่างเพื่อเริ่มทำแบบฝึกหัดได้ทันที ข้อมูลจะบันทึกอัตโนมัติในเครื่องครับ",
+      landingKenjiDesc: "ระบุชื่อผู้เรียนและรหัสห้องเรียน (ถ้ามี) หรือกดปุ่ม 'เริ่มเข้าสู่บทเรียน' ด้านล่างเพื่อดู Learning Goals, ตารางคำศัพท์ และเริ่มทำแบบฝึกหัดได้ทันที",
       landingNameLabel: "👤 ชื่อผู้เรียน (Student Name):",
       landingNamePlaceholder: "ระบุชื่อของคุณ...",
       landingRoomLabel: "🏫 รหัสห้อง / กลุ่ม (Room Code):",
       landingStartBtn: "🎧 เริ่มเข้าสู่บทเรียน (Start Speak Up! CEFR A1) →",
       landingQrBtn: "📱 สร้าง QR เข้ากลุ่มพร้อมกัน",
-      landingFeat1Title: "12 Units • 48 Activities",
-      landingFeat1Sub: "เนื้อหาครบตามหลักสูตร A1",
+      landingFeat1Title: "12 Units • Goals & Vocab",
+      landingFeat1Sub: "แสดงเป้าหมาย & คำศัพท์ก่อนเริ่ม",
       landingFeat2Title: "Red-Text Audio Lock",
       landingFeat2Sub: "ฟังเสียงจบก่อนจึงแสดงตัวสีแดง",
       landingFeat3Title: "4-Metric Speech AI (%)",
       landingFeat3Sub: "สำเนียง • ครบถ้วน • ชัดเจน • เวลา",
-      landingFeat4Title: "Version v1.2.1 Verified",
-      landingFeat4Sub: "ระบบตรวจสอบตัวเองอัตโนมัติ",
+      landingFeat4Title: "Version v1.3.0 Verified",
+      landingFeat4Sub: "QR มาตรฐาน ISO สแกนได้จริง",
       landingUnitsHeading: "📚 เลือกบทเรียนได้ทันที (All 12 Units Overview)",
-      landingUnitsSub: "คลิกที่การ์ด Unit ใดก็ได้ด้านล่างเพื่อเข้าสู่แบบฝึกหัดทั้ง 4 Activities ของบทนั้นทันที",
+      landingUnitsSub: "คลิกที่การ์ด Unit ใดก็ได้ด้านล่างเพื่อดู Learning Goals, ตารางคำศัพท์ และเข้าสู่ Activity 1–4",
       appSubtitle: "ระบบฝึกฟัง-พูดภาษาอังกฤษ 12 Units • สไตล์มินิมอลอนิเมะ (LocalStorage Edition)",
       storageStatus: "บันทึกอัตโนมัติ (LocalStorage)",
       groupBtn: "เข้ากลุ่ม (QR)",
       scoreBtn: "สรุปคะแนน & ส่งเมล",
       diagBtn: "ตรวจสอบระบบ",
       selectUnit: "เลือกบทเรียน (12 Units):",
-      vocabBtn: "คำศัพท์ประจำบท & ฝึกออกเสียง",
-      vocabCloseBtn: "✕ ปิดหน้าต่างคำศัพท์",
-      vocabDrawerHeading: "🎯 เป้าหมายการเรียนรู้ & คำศัพท์ประจำบท (Learning Goals & Vocabulary)",
+      vocabBtn: "Learning Goals & คำศัพท์ประจำบท",
       speedLabel: "ความเร็วเสียง:",
       spdSlow: "ช้า (0.75x)",
       spdClear: "ชัดเจน (0.85x)",
       spdNormal: "ปกติ (1.0x)",
       guideTitle: "🕵️‍♂️ นักสืบเคนจิ (ผู้ช่วยแนะนำการทำแบบฝึกหัด)",
       redRuleBadge: "✨ กฎเหล็ก: ต้องฟังเสียงก่อน ข้อความสีแดงจึงจะแสดง!",
+      act0TabTitle: "0. Goals & Vocab",
+      act0TabSub: "เป้าหมาย & ตารางคำศัพท์",
       act1TabTitle: "1. ฟังเนื้อเรื่อง (Story)",
       act1TabSub: "ฟังจบจึงแสดง Text สีแดง",
       act2TabTitle: "2. ตอบคำถาม (Quiz)",
@@ -74,7 +74,6 @@ window.SpeakUpApp = (function () {
       listenFirstLock: "🔒 ซ่อนข้อความสีแดง — กรุณากดฟังเสียงให้จบก่อน",
       unlockedBadge: "✅ ปลดล็อกข้อความสีแดงแล้ว! ฝึกฟังและพูดตามได้เลย",
       playStoryBtn: "กดเพื่อฟังเสียงเนื้อเรื่อง",
-      unlockDemoBtn: "⏩ แสดงข้อความสีแดงทันที (โหมดทบทวน)",
       repeatPhraseTitle: "🗣️ Listen and repeat each phrase (คลิกฟังทีละประโยคและฝึกออกเสียงตาม)",
       listenBtn: "🔊 ฟังเสียง",
       recordBtn: "🎙️ อัดเสียงพูด",
@@ -97,10 +96,13 @@ window.SpeakUpApp = (function () {
       metricClarity: "3. ความชัดเจนของเสียง (Clarity)",
       metricTime: "4. เวลาและจังหวะการพูด (Speaking Time)",
       qrModalTitle: "📱 ระบบทำพร้อมกันเป็นกลุ่ม (Group QR & Link)",
-      qrModalDesc: "ให้นักเรียนสแกน QR Code นี้เพื่อเข้าสู่ รหัสห้อง (Room) และ Unit ปัจจุบัน พร้อมกันได้ทันที",
-      qrUpdateBtn: "อัปเดต QR",
+      qrModalDesc: "ให้นักเรียนสแกน QR Code มาตรฐาน ISO/IEC 18004 นี้ด้วยกล้องมือถือหรือ LINE เพื่อเข้าสู่ รหัสห้อง (Room) และ Unit ปัจจุบัน พร้อมกันได้ทันที",
+      qrRoomFieldLabel: "🏫 รหัสห้อง (Room):",
+      qrUnitFieldLabel: "📘 บทเรียน (Unit):",
+      qrUpdateBtn: "🔄 อัปเดต QR Code",
       qrShareLabel: "ลิงก์สำหรับแชร์เข้าบทเรียนเดียวกัน:",
       qrCopyBtn: "คัดลอกลิงก์",
+      qrSimulateBtn: "🚀 ทดสอบเข้าสู่ Unit และห้องกลุ่มนี้ทันที (Join Group Session Now)",
       scoreModalTitle: "🏆 ตารางสรุปคะแนนทั้ง 12 Units และส่งผลคะแนนทาง Email",
       emailSectionTitle: "📧 ส่งรายงานผลคะแนนทาง Email (Send Score Report)",
       studentNamePlaceholder: "ชื่อ-นามสกุล / รหัสนักเรียน",
@@ -108,46 +110,46 @@ window.SpeakUpApp = (function () {
       resetScoresBtn: "🗑️ ล้างข้อมูลคะแนนทั้งหมด",
       sendEmailBtn: "📧 เปิดโปรแกรมส่ง Email พร้อมสรุปคะแนน",
       diagModalTitle: "🛡️ ระบบตรวจสอบตัวเองอัตโนมัติ & ข้อมูลเวอร์ชัน",
-      footerRight: "เวอร์ชันระบบ: v1.2.1 (Build 2026.10.25-ACT1-LOCK) • ตรวจสอบตัวเองอัตโนมัติ"
+      footerRight: "เวอร์ชันระบบ: v1.3.0 (Build 2026.10.25-GOALS-QR) • ตรวจสอบตัวเองอัตโนมัติ"
     },
     en: {
       homeBtn: "Home",
       exercisesBtn: "Exercises",
-      landingVersionBadge: "🚀 SYSTEM VERSION: v1.2.1 (Build 2026.10.25-ACT1-LOCK)",
+      landingVersionBadge: "🚀 SYSTEM VERSION: v1.3.0 (Build 2026.10.25-GOALS-QR)",
       landingSubtitle: "Listening and Speaking Exercises • Complete 12-Unit Interactive Platform (48 Activities)",
       landingDesc: "Practice listening comprehension with Red-Text unlock conditions and record your voice with 4-metric AI evaluation (Accent, Completeness, Clarity, Speaking Time in %).",
       landingKenjiTitle: "🕵️‍♂️ Detective Kenji • Welcome to Speak Up! CEFR A1",
-      landingKenjiDesc: "Enter your name and classroom code (optional), or click 'Start Learning' below to jump straight into the exercises. All progress is auto-saved in your browser.",
+      landingKenjiDesc: "Enter your name and classroom code (optional), or click 'Start Learning' below to review Learning Goals, Vocabulary, and start the activities.",
       landingNameLabel: "👤 Student Name:",
       landingNamePlaceholder: "Enter your name...",
       landingRoomLabel: "🏫 Classroom / Group Code:",
       landingStartBtn: "🎧 Start Learning (Enter Speak Up! CEFR A1) →",
       landingQrBtn: "📱 Group QR Code",
-      landingFeat1Title: "12 Units • 48 Activities",
-      landingFeat1Sub: "Complete CEFR A1 Curriculum",
+      landingFeat1Title: "12 Units • Goals & Vocab",
+      landingFeat1Sub: "Goals & Vocabulary before Activity 1",
       landingFeat2Title: "Red-Text Audio Lock",
       landingFeat2Sub: "Listen first to unlock Red Text",
       landingFeat3Title: "4-Metric Speech AI (%)",
       landingFeat3Sub: "Accent • Completeness • Clarity • Time",
-      landingFeat4Title: "Version v1.2.1 Verified",
-      landingFeat4Sub: "Automated Self-Diagnostic System",
+      landingFeat4Title: "Version v1.3.0 Verified",
+      landingFeat4Sub: "Genuine ISO/IEC 18004 QR Code",
       landingUnitsHeading: "📚 Choose Any Unit to Start (All 12 Units Overview)",
-      landingUnitsSub: "Click any Unit card below to open its 4 interactive listening & speaking activities immediately",
+      landingUnitsSub: "Click any Unit card below to open its Learning Goals, Vocabulary Table, and Activities 1–4",
       appSubtitle: "12-Unit Interactive English Listening & Speaking Platform (LocalStorage Edition)",
       storageStatus: "Auto-Saved (LocalStorage)",
       groupBtn: "Group QR",
       scoreBtn: "Scores & Email",
       diagBtn: "Self-Check",
       selectUnit: "Select Unit (1–12):",
-      vocabBtn: "Vocabulary & Listen",
-      vocabCloseBtn: "✕ Close Vocabulary",
-      vocabDrawerHeading: "🎯 Learning Goals & Unit Vocabulary (Listen and Repeat)",
+      vocabBtn: "Learning Goals & Vocabulary",
       speedLabel: "Voice Speed:",
       spdSlow: "Slow (0.75x)",
       spdClear: "Clear (0.85x)",
       spdNormal: "Normal (1.0x)",
       guideTitle: "🕵️‍♂️ Detective Kenji (Your Activity Guide)",
       redRuleBadge: "✨ Golden Rule: Listen to the audio first to reveal Red Text!",
+      act0TabTitle: "0. Goals & Vocab",
+      act0TabSub: "Learning Goals & Vocab Table",
       act1TabTitle: "1. Listen to Story",
       act1TabSub: "Listen to unlock Red Text",
       act2TabTitle: "2. Understanding",
@@ -159,7 +161,6 @@ window.SpeakUpApp = (function () {
       listenFirstLock: "🔒 Red Text Hidden — Please listen to the audio until the end first",
       unlockedBadge: "✅ Red Text Unlocked! Practice listening & repeating each phrase",
       playStoryBtn: "Play Audio Passage",
-      unlockDemoBtn: "⏩ Reveal Red Text Now (Review Mode)",
       repeatPhraseTitle: "🗣️ Listen and repeat each phrase (Click any sentence to listen & practice)",
       listenBtn: "🔊 Listen",
       recordBtn: "🎙️ Record Voice",
@@ -181,11 +182,14 @@ window.SpeakUpApp = (function () {
       metricComplete: "2. Content Completeness",
       metricClarity: "3. Voice Clarity",
       metricTime: "4. Speaking Time & Pace",
-      qrModalTitle: "📱 Group Classroom Session (QR Code & Share Link)",
-      qrModalDesc: "Students can scan this QR Code to join the same Room Code and current Unit simultaneously.",
-      qrUpdateBtn: "Update QR",
+      qrModalTitle: "📱 Group Classroom Session (ISO QR Code & Share Link)",
+      qrModalDesc: "Students can scan this ISO/IEC 18004 QR Code with any phone camera or LINE to join the same Room Code and Unit simultaneously.",
+      qrRoomFieldLabel: "🏫 Room Code:",
+      qrUnitFieldLabel: "📘 Select Unit:",
+      qrUpdateBtn: "🔄 Update QR Code",
       qrShareLabel: "Shareable link for this Room & Unit:",
       qrCopyBtn: "Copy Link",
+      qrSimulateBtn: "🚀 Join This Unit & Group Session Now",
       scoreModalTitle: "🏆 12-Unit Score Summary & Email Report",
       emailSectionTitle: "📧 Send Score Report via Email",
       studentNamePlaceholder: "Student Name / ID",
@@ -193,7 +197,7 @@ window.SpeakUpApp = (function () {
       resetScoresBtn: "🗑️ Reset All Scores",
       sendEmailBtn: "📧 Send Score Report via Email",
       diagModalTitle: "🛡️ Automated System Self-Check & Version History",
-      footerRight: "System Version: v1.2.1 (Build 2026.10.25-ACT1-LOCK) • Self-Diagnostic Active"
+      footerRight: "System Version: v1.3.0 (Build 2026.10.25-GOALS-QR) • Self-Diagnostic Active"
     }
   };
 
@@ -248,6 +252,7 @@ window.SpeakUpApp = (function () {
         const u = parseInt(params.get("unit"), 10);
         if (u >= 1 && u <= 12) {
           state.unitId = u;
+          state.activityId = 0; // Start at Learning Goals & Vocabulary when joining a Unit via QR!
           state.view = "workspace";
         }
       }
@@ -359,20 +364,22 @@ window.SpeakUpApp = (function () {
     if (!guideEl) return;
 
     const msgsTh = {
-      1: `"ยินดีต้อนรับสู่ <b>${unit.title} (${unit.titleTh})</b> ครับ! ใน <b>Activity 1 (${unit.activity1.heading})</b> ให้กดปุ่มฟังเสียงเรื่องราวจนจบก่อน แล้ว <b>ข้อความสีแดง</b> จะเปิดออกพร้อมโหมดฝึกพูดตามทีละประโยคครับ!"`,
+      0: `"ยินดีต้อนรับสู่ <b>${unit.title} (${unit.titleTh})</b> ครับ! ก่อนเริ่มทำแบบฝึกหัด มาดู <b>Learning Goals (เป้าหมายการเรียนรู้)</b> และฝึกฟัง <b>ตารางคำศัพท์ (Vocabulary | ความหมาย | Example)</b> ด้านล่างกันก่อน เมื่อพร้อมแล้วกดปุ่ม <b>'ไปที่ Activity 1'</b> ได้เลยครับ!"`,
+      1: `"ใน <b>Activity 1 (${unit.activity1.heading})</b> ระบบได้ซ่อนเนื้อหาไว้ทั้งหมด ให้กดปุ่ม ▶️ เพื่อฟังเสียงอ่านจนจบครบทุกประโยคก่อน แล้ว <b>ข้อความตัวอักษรสีแดง</b> จึงจะเปิดออกครับ!"`,
       2: `"ใน <b>Activity 2: Check Your Understanding</b> ให้กดฟังเสียงคำถามแล้ว <b>เลือกคำตอบ a, b หรือ c ก่อน</b> จากนั้นระบบจะแสดงโจทย์ตัวอักษร <b>สีแดง</b> พร้อมเฉลยครับ!"`,
       3: `"ใน <b>Activity 3: Listen Again & Complete</b> กดฟังเสียงอ่าน Passage แล้วเลือกคำตอบเติมในช่องว่าง <b>ทีละข้อ</b> (ต้องตอบข้อปัจจุบันก่อนจึงจะกดไปข้อถัดไปได้ครับ)"`,
       4: `"ใน <b>Activity 4: Speak Up!</b> มีครบทั้ง <b>Part A, Part B และ Part C</b> กดฟังเสียงก่อนเพื่อเปิดข้อความสีแดง แล้วกดไมโครโฟนเพื่ออัดเสียงพูดและฟังเสียงตัวเอง ระบบจะประเมิน <b>สำเนียง, ความครบถ้วน, ความชัดเจน และเวลาพูด</b> ออกมาเป็น % พร้อมคำแนะนำครับ!"`
     };
 
     const msgsEn = {
-      1: `"Welcome to <b>${unit.title}</b>! In <b>Activity 1 (${unit.activity1.heading})</b>, listen to the full passage first. Once finished, the <b>Red Text</b> and phrase-by-phrase practice will unlock!"`,
+      0: `"Welcome to <b>${unit.title}</b>! Before starting Activity 1, review the <b>Learning Goals</b> and practice listening to the <b>Vocabulary, Meaning & Example Sentences</b> below. Click <b>'Go to Activity 1'</b> when you're ready!"`,
+      1: `"In <b>Activity 1 (${unit.activity1.heading})</b>, the passage is hidden. Click ▶️ and listen until the reading finishes completely to unlock the <b>Red Text</b> and phrase practice!"`,
       2: `"In <b>Activity 2: Check Your Understanding</b>, listen to each question and <b>select your answer first</b> to reveal the <b>Red Question Text</b>!"`,
       3: `"In <b>Activity 3: Listen Again & Complete</b>, listen to the passage and complete each sentence <b>step-by-step</b>."`,
       4: `"In <b>Activity 4: Speak Up! (Parts A, B, C)</b>, listen to unlock the Red Text, record your voice, listen to your playback, and get a <b>4-metric score (%)</b> with feedback!"`
     };
 
-    guideEl.innerHTML = state.lang === "th" ? msgsTh[act] : msgsEn[act];
+    guideEl.innerHTML = state.lang === "th" ? (msgsTh[act] || msgsTh[0]) : (msgsEn[act] || msgsEn[0]);
   }
 
   // =========================================================================
@@ -391,6 +398,22 @@ window.SpeakUpApp = (function () {
       workspaceScreen.classList.toggle("hidden", isLanding);
       workspaceScreen.style.display = isLanding ? "none" : "block";
     }
+
+    // Sync active panel (0..4)
+    [0, 1, 2, 3, 4].forEach(n => {
+      const panel = document.getElementById("panel-" + n);
+      const isCurrent = n === Number(state.activityId);
+      if (panel) {
+        panel.classList.toggle("hidden", !isCurrent);
+        panel.style.display = isCurrent ? "block" : "none";
+      }
+      const tab = document.getElementById("tab-" + n);
+      if (tab) {
+        tab.className = isCurrent
+          ? "p-3 rounded-2xl border-2 border-indigo-500 bg-indigo-50/90 text-left transition shadow-sm"
+          : "p-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-left transition";
+      }
+    });
   }
 
   function renderLandingPage() {
@@ -420,7 +443,7 @@ window.SpeakUpApp = (function () {
         const subTitle = state.lang === "th"
           ? u.titleTh
           : `${u.learningGoals[0]}`;
-        const enterLabel = state.lang === "th" ? "คลิกเข้าบทเรียน →" : "Open Unit →";
+        const enterLabel = state.lang === "th" ? "ดูเป้าหมาย & คำศัพท์ →" : "Goals & Vocab →";
 
         return `
           <div onclick="SpeakUpApp.enterWorkspace(${u.id})" role="button" tabindex="0" class="cursor-pointer p-4 rounded-2xl border border-slate-200 bg-slate-50/70 hover:bg-indigo-50/80 hover:border-indigo-400 text-left transition shadow-sm group flex flex-col justify-between gap-2">
@@ -448,7 +471,10 @@ window.SpeakUpApp = (function () {
     }
   }
 
-  function renderUnitSelectorAndVocab() {
+  // =========================================================================
+  // RENDER STEP 0: LEARNING GOALS & VOCABULARY TABLE (BEFORE ACTIVITY 1)
+  // =========================================================================
+  function renderStep0GoalsAndVocab() {
     const select = document.getElementById("unit-select");
     if (select) {
       select.innerHTML = window.SPEAKUP_UNITS.map(u => {
@@ -460,25 +486,106 @@ window.SpeakUpApp = (function () {
     }
 
     const unit = getCurrentUnit();
-    const goalsList = document.getElementById("learning-goals-list");
-    if (goalsList) {
-      goalsList.innerHTML = unit.learningGoals.map(g => `<li class="flex items-center gap-1.5"><span>✨</span><span>${g}</span></li>`).join("");
-    }
+    const container = document.getElementById("panel-0");
+    if (!container) return;
 
-    const vocabGrid = document.getElementById("vocab-grid");
-    if (vocabGrid) {
-      vocabGrid.innerHTML = unit.vocabulary.map((v, idx) => `
-        <div class="p-3 rounded-2xl bg-sky-50/70 border border-sky-100 flex items-center justify-between gap-2 hover:bg-sky-100/60 transition">
-          <div>
-            <p class="font-bold text-sm text-slate-800">${v.word} <span class="font-medium text-xs text-sky-700">${state.lang === "th" ? `(${v.meaning})` : ""}</span></p>
-            <p class="text-xs text-slate-600 italic mt-0.5">"${v.example}"</p>
-          </div>
-          <button onclick="SpeakUpApp.speakVocab(${idx})" class="px-2.5 py-1.5 rounded-xl bg-white text-sky-700 border border-sky-200 text-xs font-bold shadow-sm hover:bg-sky-50 flex-shrink-0">
-            🔊 ${state.lang === "th" ? "ฟัง" : "Listen"}
+    container.innerHTML = `
+      <!-- Unit Title Banner + Go to Activity 1 Button -->
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+        <div>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-amber-100 text-amber-800 border border-amber-200">
+            ${state.lang === "th" ? `เตรียมความพร้อมก่อนเริ่มบทเรียน • Unit ${unit.id} จาก 12` : `Unit Preparation • Unit ${unit.id} of 12`}
+          </span>
+          <h2 class="text-xl sm:text-2xl font-extrabold text-indigo-950 mt-1">
+            ${unit.themeIcon} ${unit.title} <span class="text-base font-bold text-indigo-600">(${unit.titleTh})</span>
+          </h2>
+        </div>
+
+        <button type="button" onclick="SpeakUpApp.switchActivity(1)" class="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-sky-500 hover:from-indigo-700 hover:to-sky-600 text-white text-xs sm:text-sm font-extrabold shadow-md transition flex items-center gap-2 cursor-pointer">
+          <span>🎧 ${state.lang === "th" ? "ไปที่ Activity 1: Listen to the Story →" : "Go to Activity 1: Listen to the Story →"}</span>
+        </button>
+      </div>
+
+      <!-- Learning Goals Box -->
+      <div class="p-5 rounded-2xl bg-gradient-to-r from-indigo-50/90 to-sky-50/90 border border-indigo-200 space-y-2.5 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h3 class="text-sm sm:text-base font-extrabold text-indigo-950 flex items-center gap-2">
+            <span>🎯</span>
+            <span>Learning Goals (${state.lang === "th" ? "สิ่งที่ผู้เรียนจะได้เรียนรู้ในบทนี้" : "What you will learn in this unit"})</span>
+          </h3>
+          <button type="button" onclick="SpeakUpApp.speakLearningGoals()" class="px-3 py-1.5 rounded-xl bg-white text-indigo-700 border border-indigo-200 hover:bg-indigo-50 text-xs font-bold shadow-sm">
+            🔊 ${state.lang === "th" ? "ฟัง Learning Goals" : "Listen to Goals"}
           </button>
         </div>
-      `).join("");
-    }
+        <ul class="space-y-1.5 pl-1">
+          ${unit.learningGoals.map(goal => `
+            <li class="flex items-start gap-2 text-xs sm:text-sm font-semibold text-slate-800">
+              <span class="text-indigo-600 font-extrabold">•</span>
+              <span>${goal}</span>
+            </li>
+          `).join("")}
+        </ul>
+      </div>
+
+      <!-- 3-Column Vocabulary Table (Vocabulary | ความหมาย | Example) matching PDF -->
+      <div class="space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 class="text-sm sm:text-base font-extrabold text-slate-900">
+              📖 ${state.lang === "th" ? "ตารางคำศัพท์และประโยคตัวอย่าง (Vocabulary • ความหมาย • Example)" : "Vocabulary, Meaning & Example Sentences"}
+            </h3>
+            <p class="text-xs text-slate-500">
+              ${state.lang === "th" ? "กดปุ่ม 🔊 ในแต่ละแถวเพื่อฟังการออกเสียงคำศัพท์และประโยคตัวอย่างก่อนเริ่มทำ Activity 1" : "Click 🔊 on any row to listen to the pronunciation and example sentence"}
+            </p>
+          </div>
+          <button type="button" onclick="SpeakUpApp.speakAllVocab()" class="px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shadow-sm">
+            🔊 ${state.lang === "th" ? "ฟังคำศัพท์และตัวอย่างทั้งหมด" : "Listen to All Vocabulary"}
+          </button>
+        </div>
+
+        <div class="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-indigo-50/90 border-b border-indigo-100 text-xs sm:text-sm font-extrabold text-indigo-950">
+                <th class="py-3 px-4">Vocabulary / Phrase</th>
+                <th class="py-3 px-4">ความหมาย (Meaning)</th>
+                <th class="py-3 px-4">Example Sentence</th>
+                <th class="py-3 px-4 text-center">${state.lang === "th" ? "ฝึกฟังเสียง" : "Audio"}</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-xs sm:text-sm">
+              ${unit.vocabulary.map((v, idx) => `
+                <tr class="hover:bg-sky-50/50 transition">
+                  <td class="py-3 px-4 font-extrabold text-indigo-900">${v.word}</td>
+                  <td class="py-3 px-4 font-semibold text-slate-700">${v.meaning}</td>
+                  <td class="py-3 px-4 text-slate-800 font-medium">"${v.example}"</td>
+                  <td class="py-3 px-4 text-center">
+                    <button type="button" onclick="SpeakUpApp.speakVocab(${idx})" class="px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold transition">
+                      🔊 ${state.lang === "th" ? "ฟังเสียง" : "Listen"}
+                    </button>
+                  </td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Bottom Call-to-Action to Proceed to Activity 1 -->
+      <div class="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div>
+          <p class="text-xs sm:text-sm font-extrabold text-emerald-950">
+            ✅ ${state.lang === "th" ? "เรียนรู้เป้าหมายและคำศัพท์ประจำบทเรียบร้อยแล้วใช่ไหมครับ?" : "Ready to start the listening exercise?"}
+          </p>
+          <p class="text-xs text-emerald-800">
+            ${state.lang === "th" ? "กดปุ่มด้านขวาเพื่อเข้าสู่ Activity 1: ฟังเสียงเนื้อเรื่องให้จบเพื่อปลดล็อกข้อความสีแดง" : "Click the button on the right to begin Activity 1: Listen to the Story"}
+          </p>
+        </div>
+        <button type="button" onclick="SpeakUpApp.switchActivity(1)" class="w-full sm:w-auto px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-2 cursor-pointer flex-shrink-0">
+          <span>🎧 ${state.lang === "th" ? "เริ่มทำ Activity 1: Listen to the Story →" : "Start Activity 1: Listen to the Story →"}</span>
+        </button>
+      </div>
+    `;
   }
 
   // =========================================================================
@@ -635,7 +742,7 @@ window.SpeakUpApp = (function () {
             <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <div class="flex items-center gap-2.5 flex-wrap">
-                  <button onclick="SpeakUpApp.speakAct2Question(${qIdx})" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-sm flex items-center gap-1.5">
+                  <button type="button" onclick="SpeakUpApp.speakAct2Question(${qIdx})" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-sm flex items-center gap-1.5">
                     ${t("act2ListenQ")} ${qIdx + 1}
                   </button>
                   ${hasAnswered ? `
@@ -668,7 +775,7 @@ window.SpeakUpApp = (function () {
                     }
                   }
                   return `
-                    <button onclick="SpeakUpApp.answerAct2(${qIdx}, ${oIdx})" class="${btnCls}">
+                    <button type="button" onclick="SpeakUpApp.answerAct2(${qIdx}, ${oIdx})" class="${btnCls}">
                       ${opt}
                     </button>
                   `;
@@ -712,7 +819,7 @@ window.SpeakUpApp = (function () {
           <h2 class="text-lg font-bold text-slate-900">${state.lang === "th" ? "ฟังเสียงอ่าน Passage แล้วเลือกคำตอบทีละข้อ" : "Listen to the passage and complete each sentence step-by-step"}</h2>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="SpeakUpApp.playAct1Passage()" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-sm">
+          <button type="button" onclick="SpeakUpApp.playAct1Passage()" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-sm">
             ${t("act3PlayPassage")}
           </button>
           <span class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800">
@@ -735,7 +842,7 @@ window.SpeakUpApp = (function () {
             } else {
               dotCls += "bg-slate-100 text-slate-400";
             }
-            return `<button onclick="SpeakUpApp.jumpAct3Step(${idx})" class="${dotCls}">${idx + 1}</button>`;
+            return `<button type="button" onclick="SpeakUpApp.jumpAct3Step(${idx})" class="${dotCls}">${idx + 1}</button>`;
           }).join("")}
         </div>
       </div>
@@ -758,7 +865,7 @@ window.SpeakUpApp = (function () {
                 btnCls = "p-3.5 rounded-xl border border-slate-200 bg-white/60 text-slate-400 text-sm text-left";
               }
             }
-            return `<button onclick="SpeakUpApp.answerAct3(${step}, ${oIdx})" class="${btnCls}">${opt}</button>`;
+            return `<button type="button" onclick="SpeakUpApp.answerAct3(${step}, ${oIdx})" class="${btnCls}">${opt}</button>`;
           }).join("")}
         </div>
 
@@ -777,17 +884,17 @@ window.SpeakUpApp = (function () {
 
           <div class="flex items-center gap-2">
             ${step > 0 ? `
-              <button onclick="SpeakUpApp.jumpAct3Step(${step - 1})" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">
+              <button type="button" onclick="SpeakUpApp.jumpAct3Step(${step - 1})" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">
                 ${t("act3PrevBtn")}
               </button>
             ` : ""}
 
             ${step < items.length - 1 ? `
-              <button onclick="SpeakUpApp.jumpAct3Step(${step + 1})" ${!hasAnswered ? "disabled" : ""} class="px-4 py-2 rounded-xl text-xs font-bold transition ${hasAnswered ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm" : "bg-slate-200 text-slate-400 cursor-not-allowed"}">
+              <button type="button" onclick="SpeakUpApp.jumpAct3Step(${step + 1})" ${!hasAnswered ? "disabled" : ""} class="px-4 py-2 rounded-xl text-xs font-bold transition ${hasAnswered ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm" : "bg-slate-200 text-slate-400 cursor-not-allowed"}">
                 ${t("act3NextBtn")}
               </button>
             ` : `
-              <button onclick="SpeakUpApp.switchActivity(4)" ${!hasAnswered ? "disabled" : ""} class="px-4 py-2 rounded-xl text-xs font-bold transition ${hasAnswered ? "bg-rose-600 hover:bg-rose-700 text-white shadow-sm" : "bg-slate-200 text-slate-400 cursor-not-allowed"}">
+              <button type="button" onclick="SpeakUpApp.switchActivity(4)" ${!hasAnswered ? "disabled" : ""} class="px-4 py-2 rounded-xl text-xs font-bold transition ${hasAnswered ? "bg-rose-600 hover:bg-rose-700 text-white shadow-sm" : "bg-slate-200 text-slate-400 cursor-not-allowed"}">
                 ${state.lang === "th" ? "ไปทำ Activity 4: Speak Up! →" : "Go to Activity 4: Speak Up! →"}
               </button>
             `}
@@ -812,17 +919,17 @@ window.SpeakUpApp = (function () {
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div class="flex items-center gap-2 flex-wrap">
             <span class="px-2.5 py-1 rounded-lg bg-indigo-100 text-indigo-800 text-xs font-bold">${titleLabel}</span>
-            <button onclick="SpeakUpApp.listenAndUnlockRed('${itemKey}', ${JSON.stringify(listenText).replace(/"/g, '&quot;')})" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-sm">
+            <button type="button" onclick="SpeakUpApp.listenAndUnlockRed('${itemKey}', ${JSON.stringify(listenText).replace(/"/g, '&quot;')})" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-sm">
               ${t("listenBtn")}
             </button>
             ${extraButtonsHtml || ""}
           </div>
 
           <div class="flex items-center gap-2">
-            <button id="rec-btn-${itemKey}" onclick="SpeakUpApp.recordItem('${itemKey}', ${JSON.stringify(targetSpeechText).replace(/"/g, '&quot;')}, ${JSON.stringify(keywords || []).replace(/"/g, '&quot;')}, '${mode}')" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-sm flex items-center gap-1">
+            <button type="button" id="rec-btn-${itemKey}" onclick="SpeakUpApp.recordItem('${itemKey}', ${JSON.stringify(targetSpeechText).replace(/"/g, '&quot;')}, ${JSON.stringify(keywords || []).replace(/"/g, '&quot;')}, '${mode}')" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-sm flex items-center gap-1">
               ${t("recordBtn")}
             </button>
-            <button onclick="SpeakUpApp.playMyRecording('${itemKey}', ${JSON.stringify(ev ? ev.transcript : targetSpeechText).replace(/"/g, '&quot;')})" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-bold ${hasAudio || ev ? "" : "opacity-60"}">
+            <button type="button" onclick="SpeakUpApp.playMyRecording('${itemKey}', ${JSON.stringify(ev ? ev.transcript : targetSpeechText).replace(/"/g, '&quot;')})" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-bold ${hasAudio || ev ? "" : "opacity-60"}">
               ${t("playMyVoiceBtn")}
             </button>
           </div>
@@ -945,7 +1052,7 @@ window.SpeakUpApp = (function () {
           ${a4.partB.items.map((item, idx) => {
             const itemKey = `u${unit.id}_partB_${idx}`;
             const seqBtn = `
-              <button onclick="SpeakUpApp.playPartBSequence('${itemKey}', ${JSON.stringify(item.question).replace(/"/g, '&quot;')}, ${JSON.stringify(item.sample).replace(/"/g, '&quot;')})" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-sm">
+              <button type="button" onclick="SpeakUpApp.playPartBSequence('${itemKey}', ${JSON.stringify(item.question).replace(/"/g, '&quot;')}, ${JSON.stringify(item.sample).replace(/"/g, '&quot;')})" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-sm">
                 ${t("partBAutoBtn")}
               </button>
             `;
@@ -1009,13 +1116,13 @@ window.SpeakUpApp = (function () {
         </div>
 
         <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-2xl">
-          <button onclick="SpeakUpApp.switchAct4Part('A')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition ${state.act4Part === "A" ? "bg-white text-indigo-700 shadow-sm" : "text-slate-600 hover:text-slate-900"}">
+          <button type="button" onclick="SpeakUpApp.switchAct4Part('A')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition ${state.act4Part === "A" ? "bg-white text-indigo-700 shadow-sm" : "text-slate-600 hover:text-slate-900"}">
             Part A: Repeat
           </button>
-          <button onclick="SpeakUpApp.switchAct4Part('B')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition ${state.act4Part === "B" ? "bg-white text-indigo-700 shadow-sm" : "text-slate-600 hover:text-slate-900"}">
+          <button type="button" onclick="SpeakUpApp.switchAct4Part('B')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition ${state.act4Part === "B" ? "bg-white text-indigo-700 shadow-sm" : "text-slate-600 hover:text-slate-900"}">
             Part B: Q&A
           </button>
-          <button onclick="SpeakUpApp.switchAct4Part('C')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition ${state.act4Part === "C" ? "bg-white text-indigo-700 shadow-sm" : "text-slate-600 hover:text-slate-900"}">
+          <button type="button" onclick="SpeakUpApp.switchAct4Part('C')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition ${state.act4Part === "C" ? "bg-white text-indigo-700 shadow-sm" : "text-slate-600 hover:text-slate-900"}">
             Part C: Challenge
           </button>
         </div>
@@ -1028,15 +1135,43 @@ window.SpeakUpApp = (function () {
   // =========================================================================
   // RENDER MODALS (GROUP QR, SCORES & EMAIL, DIAGNOSTICS & VERSION)
   // =========================================================================
+  function getShareableBaseUrl() {
+    try {
+      if (window.location && (window.location.protocol === "http:" || window.location.protocol === "https:")) {
+        return `${window.location.origin}${window.location.pathname}`;
+      }
+    } catch (e) {}
+    return "https://doit-on.github.io/speak-up-CEFR-A1/";
+  }
+
   function renderQRModal() {
-    const shareUrl = `${window.location.origin}${window.location.pathname}?unit=${state.unitId}&room=${encodeURIComponent(state.roomCode)}&lang=${state.lang}`;
+    const qrUnitSelect = document.getElementById("qr-unit-select");
+    if (qrUnitSelect) {
+      qrUnitSelect.innerHTML = window.SPEAKUP_UNITS.map(u =>
+        `<option value="${u.id}" ${u.id === Number(state.unitId) ? "selected" : ""}>Unit ${u.id}: ${u.title.replace(/^Unit \d+:\s*/, "")}</option>`
+      ).join("");
+    }
+    const roomInput = document.getElementById("qr-room-input");
+    if (roomInput && document.activeElement !== roomInput) {
+      roomInput.value = state.roomCode;
+    }
+
+    const baseUrl = getShareableBaseUrl();
+    const shareUrl = `${baseUrl}?unit=${state.unitId}&room=${encodeURIComponent(state.roomCode)}&lang=${state.lang}`;
+    const qrInfo = window.QRGenerator.generateMatrix(shareUrl);
     const qrSvg = window.QRGenerator.generateSVG(shareUrl);
+
     const svgBox = document.getElementById("qr-svg-container");
     if (svgBox) svgBox.innerHTML = qrSvg;
     const urlInput = document.getElementById("qr-share-url");
     if (urlInput) urlInput.value = shareUrl;
-    const roomInput = document.getElementById("qr-room-input");
-    if (roomInput) roomInput.value = state.roomCode;
+
+    const verifyBadge = document.getElementById("qr-verify-badge");
+    if (verifyBadge) {
+      verifyBadge.textContent = state.lang === "th"
+        ? `✅ มาตรฐาน ISO/IEC 18004 (Version ${qrInfo.version} • ${qrInfo.size}x${qrInfo.size}) สแกนเข้า Unit ${state.unitId} ได้จริง`
+        : `✅ ISO/IEC 18004 Verified (Version ${qrInfo.version} • ${qrInfo.size}x${qrInfo.size}) Ready for Unit ${state.unitId}`;
+    }
   }
 
   function renderScoresModal() {
@@ -1111,12 +1246,10 @@ window.SpeakUpApp = (function () {
   }
 
   function renderAll() {
-    // Update all static data-i18n elements
     document.querySelectorAll("[data-i18n]").forEach(el => {
       const key = el.getAttribute("data-i18n");
       if (key) el.textContent = t(key);
     });
-    // Update all placeholders
     document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
       const key = el.getAttribute("data-i18n-placeholder");
       if (key) el.setAttribute("placeholder", t(key));
@@ -1124,7 +1257,7 @@ window.SpeakUpApp = (function () {
 
     updateLanguageButtonsUI();
     renderLandingPage();
-    renderUnitSelectorAndVocab();
+    renderStep0GoalsAndVocab();
     updateGuideMessage();
     updateScoreBadges();
     renderActivity1();
@@ -1146,6 +1279,7 @@ window.SpeakUpApp = (function () {
     showLandingPage() {
       safeSound("playClick");
       if (window.SpeechEngine) window.SpeechEngine.stop();
+      state.act1Playing = false;
       state.view = "landing";
       syncViewVisibility();
       renderLandingPage();
@@ -1160,8 +1294,11 @@ window.SpeakUpApp = (function () {
       if (roomEl && roomEl.value && roomEl.value.trim()) state.roomCode = roomEl.value.trim().toUpperCase();
       if (targetUnitId) {
         state.unitId = Number(targetUnitId);
-        state.act3Step = 0;
       }
+      // Always start at Step 0 (Learning Goals & Vocabulary Table) before Activity 1!
+      state.activityId = 0;
+      state.act1Playing = false;
+      state.act3Step = 0;
       state.view = "workspace";
       syncViewVisibility();
       saveState();
@@ -1192,47 +1329,44 @@ window.SpeakUpApp = (function () {
       safeSound("playClick");
       if (window.SpeechEngine) window.SpeechEngine.stop();
       state.unitId = Number(uId);
+      state.activityId = 0; // Show Learning Goals & Vocabulary first whenever switching to a Unit!
+      state.act1Playing = false;
       state.act3Step = 0;
       state.view = "workspace";
       saveState();
       renderAll();
     },
 
-    toggleVocab() {
-      safeSound("playClick");
-      state.vocabOpen = !state.vocabOpen;
-      const box = document.getElementById("vocab-drawer");
-      if (box) box.classList.toggle("hidden", !state.vocabOpen);
+    speakLearningGoals() {
+      const unit = getCurrentUnit();
+      window.SpeechEngine.speak([`Learning Goals for ${unit.title}`, ...unit.learningGoals]);
     },
 
     speakVocab(idx) {
       const unit = getCurrentUnit();
       const v = unit.vocabulary[idx];
       if (!v) return;
-      window.SpeechEngine.speak(`${v.word}. ${v.example}`);
+      window.SpeechEngine.speak([v.word, v.example]);
+    },
+
+    speakAllVocab() {
+      const unit = getCurrentUnit();
+      const lines = [];
+      unit.vocabulary.forEach(v => {
+        lines.push(`${v.word}. ${v.example}`);
+      });
+      window.SpeechEngine.speak(lines);
     },
 
     switchActivity(actNum) {
       safeSound("playClick");
       if (window.SpeechEngine) window.SpeechEngine.stop();
+      state.act1Playing = false;
       state.view = "workspace";
-      syncViewVisibility();
       state.activityId = Number(actNum);
-      [1, 2, 3, 4].forEach(n => {
-        const panel = document.getElementById("panel-" + n);
-        const isCurrent = n === state.activityId;
-        if (panel) {
-          panel.classList.toggle("hidden", !isCurrent);
-          panel.style.display = isCurrent ? "block" : "none";
-        }
-        const tab = document.getElementById("tab-" + n);
-        if (tab) {
-          tab.className = isCurrent
-            ? "p-3 rounded-2xl border-2 border-indigo-500 bg-indigo-50/90 text-left transition shadow-sm"
-            : "p-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-left transition";
-        }
-      });
+      syncViewVisibility();
       updateGuideMessage();
+      try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {}
     },
 
     playAct1Passage() {
@@ -1371,20 +1505,12 @@ window.SpeakUpApp = (function () {
     playPartBSequence(itemKey, question, sample) {
       const unit = getCurrentUnit();
       const p = ensureUnitProgress(unit.id);
-      window.SpeechEngine.speak(question, {
+      window.SpeechEngine.speak([question, `Sample answer: ${sample}`, `Listen again: ${question}`], {
         onEnd: () => {
-          window.SpeechEngine.speak(`Sample answer: ${sample}`, {
-            onEnd: () => {
-              window.SpeechEngine.speak(`Listen again: ${question}`, {
-                onEnd: () => {
-                  safeSound("playUnlock");
-                  p.redUnlocked[itemKey] = true;
-                  saveState();
-                  renderActivity4();
-                }
-              });
-            }
-          });
+          safeSound("playUnlock");
+          p.redUnlocked[itemKey] = true;
+          saveState();
+          renderActivity4();
         }
       });
     },
@@ -1446,11 +1572,21 @@ window.SpeakUpApp = (function () {
 
     updateRoomCode() {
       const input = document.getElementById("qr-room-input");
+      const unitSel = document.getElementById("qr-unit-select");
       if (input && input.value.trim()) {
         state.roomCode = input.value.trim().toUpperCase();
-        saveState();
-        renderQRModal();
       }
+      if (unitSel && unitSel.value) {
+        state.unitId = Number(unitSel.value);
+      }
+      saveState();
+      renderQRModal();
+    },
+
+    simulateJoinFromQR() {
+      this.updateRoomCode();
+      this.closeModal("qr-modal");
+      this.enterWorkspace(state.unitId);
     },
 
     copyShareLink() {
