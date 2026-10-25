@@ -1,6 +1,6 @@
 /**
  * Speak Up! CEFR A1 — Sound Effects, Clear TTS Engine & 4-Metric Speech Evaluator
- * Version: 1.0.0
+ * Version: 1.2.1
  */
 
 window.SoundFX = (function () {
@@ -78,18 +78,22 @@ window.SoundFX = (function () {
 
 /**
  * Clear & Slow Text-to-Speech (TTS) Controller
+ * Prevents premature onend/onerror triggers and supports sequential sentence playback
  */
 window.SpeechEngine = (function () {
   let speechRate = 0.85; // Clear & not too fast by default
   let selectedVoice = null;
   let activeTimer = null;
+  let progressTimer = null;
+  let currentSessionId = 0;
+  let isPlayingNow = false;
+  let activeUtterance = null; // Prevent garbage collection of utterance in Chrome
 
   function initVoices() {
     if (!('speechSynthesis' in window)) return;
     const voices = window.speechSynthesis.getVoices();
     if (!voices || !voices.length) return;
 
-    // Prefer clear natural English voices
     const preferred = [
       'Google US English',
       'Microsoft Aria Online',
@@ -116,93 +120,160 @@ window.SpeechEngine = (function () {
 
   function cleanTextForSpeech(rawText) {
     return String(rawText || '')
-      .replace(/^[A-Za-z]+:\s*/gm, '') // Remove speaker labels like "Emma: " for smoother reading
+      .replace(/^[A-Za-z]+:\s*/gm, '')
       .replace(/___+/g, ' blank ')
       .replace(/\s+/g, ' ')
       .trim();
   }
 
   function stop() {
+    currentSessionId++;
+    isPlayingNow = false;
+    activeUtterance = null;
     if (activeTimer) {
       clearTimeout(activeTimer);
       activeTimer = null;
     }
+    if (progressTimer) {
+      clearInterval(progressTimer);
+      progressTimer = null;
+    }
     if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
+      try {
+        if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+          window.speechSynthesis.cancel();
+        }
+      } catch (e) {}
     }
   }
 
-  function speak(text, options = {}) {
-    stop();
-    const cleaned = cleanTextForSpeech(text);
-    if (!cleaned) {
-      if (options.onEnd) options.onEnd();
+  function speakSingleSentence(sentenceText, rate, pitch, sessionId, onSentenceEnd) {
+    const cleaned = cleanTextForSpeech(sentenceText);
+    if (!cleaned || sessionId !== currentSessionId) {
+      onSentenceEnd(false);
       return;
     }
 
-    const rate = options.rate || speechRate;
     const wordCount = cleaned.split(/\s+/).length;
-    const estimatedMs = Math.max(1600, Math.round((wordCount / (2.3 * rate)) * 1000) + 600);
+    const minDurationMs = Math.max(900, Math.round((wordCount / (2.5 * rate)) * 1000));
+    const maxDurationMs = Math.max(2500, Math.round((wordCount / (1.6 * rate)) * 1000) + 1800);
+    const startStamp = Date.now();
+    let settled = false;
 
-    let finished = false;
-    const finishOnce = () => {
-      if (finished) return;
-      finished = true;
+    const completeSentence = () => {
+      if (settled || sessionId !== currentSessionId) return;
+      settled = true;
       if (activeTimer) {
         clearTimeout(activeTimer);
         activeTimer = null;
       }
-      if (options.onProgress) options.onProgress(100);
-      if (options.onEnd) options.onEnd();
+      // Enforce minimum realistic reading time in case browser TTS finishes/errors instantaneously
+      const elapsed = Date.now() - startStamp;
+      const remainingWait = Math.max(0, minDurationMs - elapsed);
+      if (remainingWait > 100) {
+        activeTimer = setTimeout(() => {
+          if (sessionId === currentSessionId) onSentenceEnd(true);
+        }, remainingWait);
+      } else {
+        onSentenceEnd(true);
+      }
     };
 
-    if (!('speechSynthesis' in window)) {
-      if (options.onStart) options.onStart();
-      activeTimer = setTimeout(finishOnce, Math.min(estimatedMs, 3000));
+    if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') {
+      activeTimer = setTimeout(completeSentence, minDurationMs);
       return;
     }
 
-    const utter = new SpeechSynthesisUtterance(cleaned);
-    if (!selectedVoice) initVoices();
-    if (selectedVoice) utter.voice = selectedVoice;
-    utter.lang = 'en-US';
-    utter.rate = rate;
-    utter.pitch = options.pitch || 1.02;
+    try {
+      const utter = new SpeechSynthesisUtterance(cleaned);
+      activeUtterance = utter; // Keep reference alive
+      if (!selectedVoice) initVoices();
+      if (selectedVoice) utter.voice = selectedVoice;
+      utter.lang = 'en-US';
+      utter.rate = rate;
+      utter.pitch = pitch || 1.02;
 
-    const startStamp = Date.now();
-    const progressInterval = setInterval(() => {
-      if (finished) {
-        clearInterval(progressInterval);
-        return;
-      }
-      const elapsed = Date.now() - startStamp;
-      const pct = Math.min(95, Math.round((elapsed / estimatedMs) * 100));
-      if (options.onProgress) options.onProgress(pct);
-    }, 150);
+      utter.onend = () => {
+        completeSentence();
+      };
 
-    utter.onstart = () => {
-      if (options.onStart) options.onStart();
-    };
-    utter.onend = () => {
-      clearInterval(progressInterval);
-      finishOnce();
-    };
-    utter.onerror = () => {
-      clearInterval(progressInterval);
-      finishOnce();
-    };
+      utter.onerror = (ev) => {
+        if (ev && (ev.error === 'canceled' || ev.error === 'interrupted')) {
+          settled = true;
+          return;
+        }
+        // If TTS voice failed to synthesize, wait realistic reading duration before completing
+        completeSentence();
+      };
 
-    // Safety fallback timer in case browser speechSynthesis event gets stuck
+      activeTimer = setTimeout(completeSentence, maxDurationMs);
+      window.speechSynthesis.speak(utter);
+    } catch (e) {
+      activeTimer = setTimeout(completeSentence, minDurationMs);
+    }
+  }
+
+  /**
+   * Speaks a single text or an array of sentences sequentially.
+   * Calls onEnd ONLY after ALL sentences have finished reading completely.
+   */
+  function speak(textOrArray, options = {}) {
+    stop();
+    const sessionId = currentSessionId;
+    const rate = options.rate || speechRate;
+    const pitch = options.pitch || 1.02;
+
+    const sentences = Array.isArray(textOrArray)
+      ? textOrArray.map(s => cleanTextForSpeech(s)).filter(Boolean)
+      : String(textOrArray || '')
+          .split(/(?<=[.!?])\s+|\n+/)
+          .map(s => cleanTextForSpeech(s))
+          .filter(Boolean);
+
+    if (!sentences.length) {
+      if (options.onEnd) options.onEnd();
+      return;
+    }
+
+    isPlayingNow = true;
+    if (options.onStart) options.onStart(sentences.length);
+
+    let currentIdx = 0;
+
+    // Give browser 60ms after cancel() before queueing new speech
     activeTimer = setTimeout(() => {
-      clearInterval(progressInterval);
-      finishOnce();
-    }, estimatedMs + 2500);
+      if (sessionId !== currentSessionId) return;
 
-    window.speechSynthesis.speak(utter);
+      const playNext = () => {
+        if (sessionId !== currentSessionId) return;
+        if (currentIdx >= sentences.length) {
+          isPlayingNow = false;
+          activeUtterance = null;
+          if (options.onProgress) options.onProgress(100, sentences.length, sentences.length);
+          if (options.onEnd) options.onEnd();
+          return;
+        }
+
+        const pct = Math.max(5, Math.round((currentIdx / sentences.length) * 100));
+        if (options.onProgress) options.onProgress(pct, currentIdx + 1, sentences.length);
+
+        speakSingleSentence(sentences[currentIdx], rate, pitch, sessionId, (ok) => {
+          if (!ok || sessionId !== currentSessionId) return;
+          currentIdx++;
+          const nextPct = Math.min(98, Math.round((currentIdx / sentences.length) * 100));
+          if (options.onProgress) options.onProgress(nextPct, Math.min(currentIdx + 1, sentences.length), sentences.length);
+          // Brief natural pause between sentences (280ms)
+          activeTimer = setTimeout(playNext, 280);
+        });
+      };
+
+      playNext();
+    }, 60);
   }
 
   return {
     isSupported: () => 'speechSynthesis' in window,
+    isPlaying: () => isPlayingNow,
     getRate: () => speechRate,
     setRate: (r) => { speechRate = Number(r) || 0.85; },
     speak,
@@ -239,7 +310,6 @@ window.VoiceEvaluator = (function () {
       .filter(Boolean);
   }
 
-  // Levenshtein distance for word-level phonetic/spelling proximity
   function similarity(a, b) {
     if (!a || !b) return 0;
     if (a === b) return 1;
@@ -269,7 +339,6 @@ window.VoiceEvaluator = (function () {
     const expectedMinSec = Math.max(1.5, targetWords.length * 0.32);
     const expectedMaxSec = Math.max(4.5, targetWords.length * 0.85);
 
-    // 1. Completeness (ความครบถ้วน)
     let matchedCount = 0;
     const checkList = (keywords && keywords.length) ? normalizeWords(keywords.join(' ')) : targetWords;
     const uniqueChecks = [...new Set(checkList)];
@@ -284,13 +353,11 @@ window.VoiceEvaluator = (function () {
       ? Math.round((matchedCount / uniqueChecks.length) * 100)
       : 90;
 
-    // For open-ended Part B / Part C answers, reward word length & keyword usage generously
     if (mode === 'open' && spokenWords.length >= Math.max(3, Math.floor(targetWords.length * 0.6))) {
       completeness = Math.max(completeness, Math.min(98, 78 + spokenWords.length * 3));
     }
     completeness = Math.max(55, Math.min(100, completeness));
 
-    // 2. Accent & Pronunciation (สำเนียง)
     let wordSimSum = 0;
     targetWords.forEach(tw => {
       const best = spokenWords.reduce((m, sw) => Math.max(m, similarity(tw, sw)), 0);
@@ -304,11 +371,9 @@ window.VoiceEvaluator = (function () {
     }
     accent = Math.max(60, Math.min(99, accent));
 
-    // 3. Clarity (ความชัดเจน)
     const volNormalized = avgVolume > 0 ? Math.min(100, Math.max(70, Math.round(68 + avgVolume * 1.4))) : 90;
     const clarity = Math.max(65, Math.min(99, Math.round(volNormalized * 0.6 + confScore * 0.4)));
 
-    // 4. Speaking Time & Pace (เวลาในการพูด)
     let timeScore = 92;
     const actualSec = Math.max(1.2, Number(durationSec) || expectedMinSec * 1.2);
     if (actualSec < expectedMinSec * 0.7) {
@@ -326,7 +391,6 @@ window.VoiceEvaluator = (function () {
       timeScore * 0.20
     );
 
-    // Generate bilingual actionable recommendations
     let feedbackTh = '';
     let feedbackEn = '';
 
@@ -364,7 +428,7 @@ window.VoiceEvaluator = (function () {
       return;
     }
 
-    SoundFX.playRecordStart();
+    window.SoundFX.playRecordStart();
     isRecording = true;
     recordStartTime = Date.now();
     recognizedText = '';
@@ -374,7 +438,6 @@ window.VoiceEvaluator = (function () {
 
     if (onStatus) onStatus('recording');
 
-    // Start Web Speech Recognition if available
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRec) {
       try {
@@ -398,7 +461,6 @@ window.VoiceEvaluator = (function () {
       }
     }
 
-    // Start MediaRecorder for real voice playback
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       try {
         audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -443,17 +505,14 @@ window.VoiceEvaluator = (function () {
             confidence: recognitionConfidence,
             mode
           });
-          SoundFX.playRecordStop();
+          window.SoundFX.playRecordStop();
           if (onResult) onResult(result, audioStore[recordKey] || null);
         };
         mediaRecorder.start();
         return;
-      } catch (err) {
-        // Fallback to simulated recording if mic permission denied or no mic hardware
-      }
+      } catch (err) {}
     }
 
-    // Fallback simulated recording (1.8 seconds) when microphone is unavailable
     setTimeout(() => {
       if (!isRecording) return;
       isRecording = false;
@@ -467,7 +526,7 @@ window.VoiceEvaluator = (function () {
         confidence: 0.91,
         mode
       });
-      SoundFX.playRecordStop();
+      window.SoundFX.playRecordStop();
       if (onResult) onResult(result, null);
     }, 1800);
   }
@@ -489,10 +548,10 @@ window.VoiceEvaluator = (function () {
     if (blobUrl) {
       const audio = new Audio(blobUrl);
       audio.play().catch(() => {
-        SpeechEngine.speak(fallbackText, { pitch: 1.08 });
+        window.SpeechEngine.speak(fallbackText, { pitch: 1.08 });
       });
     } else if (fallbackText) {
-      SpeechEngine.speak(fallbackText, { pitch: 1.08 });
+      window.SpeechEngine.speak(fallbackText, { pitch: 1.08 });
     }
   }
 

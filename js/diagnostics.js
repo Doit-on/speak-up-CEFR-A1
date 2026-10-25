@@ -4,11 +4,25 @@
  */
 
 window.APP_VERSION = {
-  version: "1.2.0",
-  build: "2026.10.25-BILINGUAL",
+  version: "1.2.1",
+  build: "2026.10.25-ACT1-LOCK",
   channel: "GitHub Pages Production (Doit-on/speak-up-CEFR-A1)",
   updatedAt: "2026-10-25",
   changelog: [
+    {
+      version: "1.2.1",
+      date: "2026-10-25",
+      notesTh: [
+        "ปรับปรุง Activity 1 ให้ซ่อนทั้งชื่อเรื่องและเนื้อหาทั้งหมดไว้ 100% จนกว่าจะฟังเสียงอ่านครบทุกประโยคตั้งแต่ต้นจนจบ",
+        "ตัดปุ่มข้ามการฟังใน Activity 1 ออก เพื่อบังคับให้ผู้เรียนตั้งใจฟังเสียงอ่านจนจบก่อนจึงจะแสดงข้อความตัวอักษรสีแดง",
+        "แก้ไขระบบอ่านออกเสียง (Sequential Sentence TTS) ป้องกันเบราว์เซอร์ตัดจบเสียงอ่านก่อนเวลาจริง และเพิ่มปุ่ม 'ซ่อนข้อความเพื่อฝึกฟังใหม่'"
+      ],
+      notesEn: [
+        "Enforced strict Activity 1 text hiding (both title and passage stay 100% hidden until sequential audio reading finishes)",
+        "Removed skip button in Activity 1 so learners must listen to the entire passage before Red Text appears",
+        "Upgraded Sequential Sentence TTS engine to prevent premature browser cutoff and added a 'Hide Text & Listen Again' button"
+      ]
+    },
     {
       version: "1.2.0",
       date: "2026-10-25",
@@ -200,7 +214,7 @@ window.SelfDiagnostics = (function () {
     });
 
     // 7. Landing Page & TWP Logo Branding
-    const landingOk = !!(window.APP_VERSION && window.APP_VERSION.version === "1.2.0");
+    const landingOk = !!(window.APP_VERSION && window.APP_VERSION.version === "1.2.1");
     checks.push({
       id: "landing_twp",
       nameTh: "หน้า Landing Page โลโก้ ทวพ. และป้ายแสดง Version ระบบ",

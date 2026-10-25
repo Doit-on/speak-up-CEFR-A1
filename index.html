@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Speak Up! CEFR A1 — ทวพ. Interactive Listening & Speaking (v1.2.0)</title>
+  <title>Speak Up! CEFR A1 — ทวพ. Interactive Listening & Speaking (v1.2.1)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -35,7 +35,7 @@
               Speak Up! CEFR A1
             </button>
             <button type="button" onclick="SpeakUpApp.openModal('diag-modal')" id="top-version-badge" class="px-2.5 py-0.5 text-xs font-extrabold rounded-full bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 transition flex items-center gap-1">
-              Version v1.2.0 • 8/8 OK
+              Version v1.2.1 • 8/8 OK
             </button>
           </div>
           <p class="text-xs text-slate-500" data-i18n="appSubtitle">
@@ -95,10 +95,10 @@
       <!-- Prominent Version, Self-Check & Bilingual Switcher Row at Top of Landing Page -->
       <div class="flex flex-wrap items-center justify-center gap-2">
         <span class="px-3.5 py-1 rounded-full text-xs font-extrabold bg-indigo-600 text-white shadow-sm tracking-wide" data-i18n="landingVersionBadge">
-          🚀 เวอร์ชันระบบ: v1.2.0 (Build 2026.10.25-BILINGUAL)
+          🚀 เวอร์ชันระบบ: v1.2.1 (Build 2026.10.25-ACT1-LOCK)
         </span>
         <button type="button" onclick="SpeakUpApp.openModal('diag-modal')" id="landing-diag-badge" class="px-3.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-emerald-200 transition">
-          ✅ ระบบตรวจสอบตัวเองอัตโนมัติ (v1.2.0): ผ่านครบ 8/8 รายการ
+          ✅ ระบบตรวจสอบตัวเองอัตโนมัติ (v1.2.1): ผ่านครบ 8/8 รายการ
         </button>
         <div class="flex items-center bg-white p-0.5 rounded-full border border-indigo-200 shadow-sm">
           <button type="button" onclick="SpeakUpApp.setLang('th')" id="landing-lang-th" class="px-3 py-1 rounded-full text-xs font-extrabold bg-indigo-600 text-white shadow-sm transition">🇹🇭 ไทย (TH)</button>
@@ -451,12 +451,11 @@
       <div id="diag-checks-list" class="space-y-2"></div>
 
       <div class="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-100 space-y-1.5 text-xs">
-        <p class="font-extrabold text-indigo-950">📌 Release Notes (v1.2.0 — Build 2026.10.25-BILINGUAL)</p>
+        <p class="font-extrabold text-indigo-950">📌 Release Notes (v1.2.1 — Build 2026.10.25-ACT1-LOCK)</p>
         <ul class="list-disc list-inside text-slate-700 space-y-1">
+          <li><b>v1.2.1</b>: ปรับปรุง Activity 1 ให้ซ่อนทั้งชื่อเรื่องและเนื้อหาทั้งหมดไว้ 100% จนกว่าจะฟังเสียงอ่านครบทุกประโยคตั้งแต่ต้นจนจบ (ตัดปุ่มข้ามการฟังออก)</li>
           <li><b>v1.2.0</b>: แก้ไขการสลับหน้าเข้าสู่บทเรียน (Enter Workspace) และอัปเกรดระบบแปลภาษา ไทย-อังกฤษ (TH/EN) ครบ 100% ทุกหน้าจอ</li>
           <li><b>v1.1.0</b>: เพิ่มหน้า Landing Page พร้อมโลโก้ ทวพ. หัวข้อ "Speak Up! CEFR A1" และการแสดงหมายเลข Version ระบบอย่างชัดเจน</li>
-          <li><b>v1.0.1</b>: เชื่อมต่อ GitHub Repository (<code>Doit-on/speak-up-CEFR-A1</code>) พร้อมรองรับ GitHub Pages</li>
-          <li><b>v1.0.0</b>: บรรจุข้อมูลครบทั้ง 12 Units (48 Activities) ตามต้นฉบับ Speak Up A1</li>
         </ul>
       </div>
     </div>
