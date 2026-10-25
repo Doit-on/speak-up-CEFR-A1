@@ -1,7 +1,11 @@
 /**
  * Speak Up! CEFR A1 — Minimalist Pastel Anime Stylesheet
- * Version: 1.0.0
+ * Version: 1.2.0
  */
+
+.hidden {
+  display: none !important;
+}
 
 @keyframes floatSlow {
   0%, 100% { transform: translateY(0px); }
@@ -28,12 +32,12 @@
 }
 
 .fade-in {
-  animation: fadeInSlide 0.28s ease-out forwards;
+  animation: fadeInSlide 0.25s ease-out forwards;
 }
 
 /* Signature Red Text for spoken content */
 .red-voice-text {
-  color: #E11D48;
+  color: #E11D48 !important;
 }
 
 /* Custom scrollbar for unit selector and modals */

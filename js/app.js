@@ -1,7 +1,7 @@
 /**
- * Speak Up! CEFR A1 — Main Application Controller
+ * Speak Up! CEFR A1 — Main Application Controller (v1.2.0)
  * Supports 12 Units, 4 Activities/Unit, Red-Text Gating, 4-Metric Speech Evaluation,
- * LocalStorage Persistence, Bilingual TH/EN, Group QR Sync, Email Reporting & Self-Diagnostics.
+ * LocalStorage Persistence, Full Bilingual TH/EN, Group QR Sync, Email Reporting & Self-Diagnostics.
  */
 
 window.SpeakUpApp = (function () {
@@ -18,14 +18,33 @@ window.SpeakUpApp = (function () {
     studentEmail: "",
     roomCode: "CLASS-A1",
     vocabOpen: false,
-    progress: {} // unitId -> { act1Unlocked, act1Score, act2Answers, act2Score, act3Answers, act3Score, act4Scores, act4Transcripts, redUnlocked: {} }
+    progress: {}
   };
 
   const I18N = {
     th: {
       homeBtn: "หน้าแรก",
+      exercisesBtn: "เข้าสู่บทเรียน",
+      landingVersionBadge: "🚀 เวอร์ชันระบบ: v1.2.0 (Build 2026.10.25-BILINGUAL)",
       landingSubtitle: "Listening and Speaking Exercises • ระบบฝึกฟังและพูดภาษาอังกฤษครบ 12 Units (48 Activities)",
       landingDesc: "ฝึกทักษะการฟังจับใจความพร้อมเงื่อนไขปลดล็อกข้อความสีแดง และฝึกพูดอัดเสียงพร้อมระบบประเมินผล 4 มาตรฐาน (สำเนียง, ความครบถ้วน, ความชัดเจน, เวลาในการพูด) คิดเป็น %",
+      landingKenjiTitle: "🕵️‍♂️ นักสืบเคนจิ • ยินดีต้อนรับเข้าสู่ระบบฝึกภาษาอังกฤษ",
+      landingKenjiDesc: "ระบุชื่อผู้เรียนและรหัสห้องเรียน (ถ้ามี) หรือกดปุ่ม 'เริ่มเข้าสู่บทเรียน' ด้านล่างเพื่อเริ่มทำแบบฝึกหัดได้ทันที ข้อมูลจะบันทึกอัตโนมัติในเครื่องครับ",
+      landingNameLabel: "👤 ชื่อผู้เรียน (Student Name):",
+      landingNamePlaceholder: "ระบุชื่อของคุณ...",
+      landingRoomLabel: "🏫 รหัสห้อง / กลุ่ม (Room Code):",
+      landingStartBtn: "🎧 เริ่มเข้าสู่บทเรียน (Start Speak Up! CEFR A1) →",
+      landingQrBtn: "📱 สร้าง QR เข้ากลุ่มพร้อมกัน",
+      landingFeat1Title: "12 Units • 48 Activities",
+      landingFeat1Sub: "เนื้อหาครบตามหลักสูตร A1",
+      landingFeat2Title: "Red-Text Audio Lock",
+      landingFeat2Sub: "ฟังเสียงจบก่อนจึงแสดงตัวสีแดง",
+      landingFeat3Title: "4-Metric Speech AI (%)",
+      landingFeat3Sub: "สำเนียง • ครบถ้วน • ชัดเจน • เวลา",
+      landingFeat4Title: "Version v1.2.0 Verified",
+      landingFeat4Sub: "ระบบตรวจสอบตัวเองอัตโนมัติ",
+      landingUnitsHeading: "📚 เลือกบทเรียนได้ทันที (All 12 Units Overview)",
+      landingUnitsSub: "คลิกที่การ์ด Unit ใดก็ได้ด้านล่างเพื่อเข้าสู่แบบฝึกหัดทั้ง 4 Activities ของบทนั้นทันที",
       appSubtitle: "ระบบฝึกฟัง-พูดภาษาอังกฤษ 12 Units • สไตล์มินิมอลอนิเมะ (LocalStorage Edition)",
       storageStatus: "บันทึกอัตโนมัติ (LocalStorage)",
       groupBtn: "เข้ากลุ่ม (QR)",
@@ -33,20 +52,26 @@ window.SpeakUpApp = (function () {
       diagBtn: "ตรวจสอบระบบ",
       selectUnit: "เลือกบทเรียน (12 Units):",
       vocabBtn: "คำศัพท์ประจำบท & ฝึกออกเสียง",
+      vocabCloseBtn: "✕ ปิดหน้าต่างคำศัพท์",
+      vocabDrawerHeading: "🎯 เป้าหมายการเรียนรู้ & คำศัพท์ประจำบท (Learning Goals & Vocabulary)",
       speedLabel: "ความเร็วเสียง:",
       spdSlow: "ช้า (0.75x)",
       spdClear: "ชัดเจน (0.85x)",
       spdNormal: "ปกติ (1.0x)",
       guideTitle: "🕵️‍♂️ นักสืบเคนจิ (ผู้ช่วยแนะนำการทำแบบฝึกหัด)",
       redRuleBadge: "✨ กฎเหล็ก: ต้องฟังเสียงก่อน ข้อความสีแดงจึงจะแสดง!",
+      act1TabTitle: "1. ฟังเนื้อเรื่อง (Story)",
       act1TabSub: "ฟังจบจึงแสดง Text สีแดง",
+      act2TabTitle: "2. ตอบคำถาม (Quiz)",
       act2TabSub: "ตอบก่อนจึงแสดงโจทย์สีแดง",
+      act3TabTitle: "3. เติมคำ (Cloze)",
       act3TabSub: "ฟัง Passage & ทำทีละข้อ",
+      act4TabTitle: "4. ฝึกพูด (Speak Up!)",
       act4TabSub: "อัดเสียง & ประเมินพูด 4 ด้าน",
       listenFirstLock: "🔒 ซ่อนข้อความสีแดง — กรุณากดฟังเสียงให้จบก่อน",
       unlockedBadge: "✅ ปลดล็อกข้อความสีแดงแล้ว! ฝึกฟังและพูดตามได้เลย",
-      playStoryBtn: "กดเพื่อฟังเสียงเนื้อเรื่อง (Listen)",
-      unlockDemoBtn: "⏩ ข้ามไปดูข้อความสีแดง (สำหรับทบทวน)",
+      playStoryBtn: "กดเพื่อฟังเสียงเนื้อเรื่อง",
+      unlockDemoBtn: "⏩ แสดงข้อความสีแดงทันที (โหมดทบทวน)",
       repeatPhraseTitle: "🗣️ Listen and repeat each phrase (คลิกฟังทีละประโยคและฝึกออกเสียงตาม)",
       listenBtn: "🔊 ฟังเสียง",
       recordBtn: "🎙️ อัดเสียงพูด",
@@ -68,12 +93,43 @@ window.SpeakUpApp = (function () {
       metricComplete: "2. ความครบถ้วนของเนื้อหา (Completeness)",
       metricClarity: "3. ความชัดเจนของเสียง (Clarity)",
       metricTime: "4. เวลาและจังหวะการพูด (Speaking Time)",
-      recPrompt: "กดปุ่มไมโครโฟนเพื่อเริ่มพูด ระบบจะประเมินคะแนนทั้ง 4 ด้านพร้อมคำแนะนำทันที"
+      qrModalTitle: "📱 ระบบทำพร้อมกันเป็นกลุ่ม (Group QR & Link)",
+      qrModalDesc: "ให้นักเรียนสแกน QR Code นี้เพื่อเข้าสู่ รหัสห้อง (Room) และ Unit ปัจจุบัน พร้อมกันได้ทันที",
+      qrUpdateBtn: "อัปเดต QR",
+      qrShareLabel: "ลิงก์สำหรับแชร์เข้าบทเรียนเดียวกัน:",
+      qrCopyBtn: "คัดลอกลิงก์",
+      scoreModalTitle: "🏆 ตารางสรุปคะแนนทั้ง 12 Units และส่งผลคะแนนทาง Email",
+      emailSectionTitle: "📧 ส่งรายงานผลคะแนนทาง Email (Send Score Report)",
+      studentNamePlaceholder: "ชื่อ-นามสกุล / รหัสนักเรียน",
+      studentEmailPlaceholder: "อีเมลผู้รับ (เช่น teacher@school.ac.th)",
+      resetScoresBtn: "🗑️ ล้างข้อมูลคะแนนทั้งหมด",
+      sendEmailBtn: "📧 เปิดโปรแกรมส่ง Email พร้อมสรุปคะแนน",
+      diagModalTitle: "🛡️ ระบบตรวจสอบตัวเองอัตโนมัติ & ข้อมูลเวอร์ชัน",
+      footerRight: "เวอร์ชันระบบ: v1.2.0 (Build 2026.10.25-BILINGUAL) • ตรวจสอบตัวเองอัตโนมัติ"
     },
     en: {
       homeBtn: "Home",
+      exercisesBtn: "Exercises",
+      landingVersionBadge: "🚀 SYSTEM VERSION: v1.2.0 (Build 2026.10.25-BILINGUAL)",
       landingSubtitle: "Listening and Speaking Exercises • Complete 12-Unit Interactive Platform (48 Activities)",
       landingDesc: "Practice listening comprehension with Red-Text unlock conditions and record your voice with 4-metric AI evaluation (Accent, Completeness, Clarity, Speaking Time in %).",
+      landingKenjiTitle: "🕵️‍♂️ Detective Kenji • Welcome to Speak Up! CEFR A1",
+      landingKenjiDesc: "Enter your name and classroom code (optional), or click 'Start Learning' below to jump straight into the exercises. All progress is auto-saved in your browser.",
+      landingNameLabel: "👤 Student Name:",
+      landingNamePlaceholder: "Enter your name...",
+      landingRoomLabel: "🏫 Classroom / Group Code:",
+      landingStartBtn: "🎧 Start Learning (Enter Speak Up! CEFR A1) →",
+      landingQrBtn: "📱 Group QR Code",
+      landingFeat1Title: "12 Units • 48 Activities",
+      landingFeat1Sub: "Complete CEFR A1 Curriculum",
+      landingFeat2Title: "Red-Text Audio Lock",
+      landingFeat2Sub: "Listen first to unlock Red Text",
+      landingFeat3Title: "4-Metric Speech AI (%)",
+      landingFeat3Sub: "Accent • Completeness • Clarity • Time",
+      landingFeat4Title: "Version v1.2.0 Verified",
+      landingFeat4Sub: "Automated Self-Diagnostic System",
+      landingUnitsHeading: "📚 Choose Any Unit to Start (All 12 Units Overview)",
+      landingUnitsSub: "Click any Unit card below to open its 4 interactive listening & speaking activities immediately",
       appSubtitle: "12-Unit Interactive English Listening & Speaking Platform (LocalStorage Edition)",
       storageStatus: "Auto-Saved (LocalStorage)",
       groupBtn: "Group QR",
@@ -81,20 +137,26 @@ window.SpeakUpApp = (function () {
       diagBtn: "Self-Check",
       selectUnit: "Select Unit (1–12):",
       vocabBtn: "Vocabulary & Listen",
+      vocabCloseBtn: "✕ Close Vocabulary",
+      vocabDrawerHeading: "🎯 Learning Goals & Unit Vocabulary (Listen and Repeat)",
       speedLabel: "Voice Speed:",
       spdSlow: "Slow (0.75x)",
       spdClear: "Clear (0.85x)",
       spdNormal: "Normal (1.0x)",
       guideTitle: "🕵️‍♂️ Detective Kenji (Your Activity Guide)",
       redRuleBadge: "✨ Golden Rule: Listen to the audio first to reveal Red Text!",
+      act1TabTitle: "1. Listen to Story",
       act1TabSub: "Listen to unlock Red Text",
+      act2TabTitle: "2. Understanding",
       act2TabSub: "Answer to reveal Red Question",
+      act3TabTitle: "3. Complete Sentence",
       act3TabSub: "Listen & complete step-by-step",
+      act4TabTitle: "4. Speak Up! (A, B, C)",
       act4TabSub: "Record & 4-Metric AI Evaluation",
       listenFirstLock: "🔒 Red Text Hidden — Please listen to the audio until the end first",
       unlockedBadge: "✅ Red Text Unlocked! Practice listening & repeating each phrase",
-      playStoryBtn: "Play Audio Passage (Listen)",
-      unlockDemoBtn: "⏩ Reveal Red Text (Review Mode)",
+      playStoryBtn: "Play Audio Passage",
+      unlockDemoBtn: "⏩ Reveal Red Text Now (Review Mode)",
       repeatPhraseTitle: "🗣️ Listen and repeat each phrase (Click any sentence to listen & practice)",
       listenBtn: "🔊 Listen",
       recordBtn: "🎙️ Record Voice",
@@ -116,12 +178,32 @@ window.SpeakUpApp = (function () {
       metricComplete: "2. Content Completeness",
       metricClarity: "3. Voice Clarity",
       metricTime: "4. Speaking Time & Pace",
-      recPrompt: "Click Record to speak. The system evaluates Accent, Completeness, Clarity, and Time (%)."
+      qrModalTitle: "📱 Group Classroom Session (QR Code & Share Link)",
+      qrModalDesc: "Students can scan this QR Code to join the same Room Code and current Unit simultaneously.",
+      qrUpdateBtn: "Update QR",
+      qrShareLabel: "Shareable link for this Room & Unit:",
+      qrCopyBtn: "Copy Link",
+      scoreModalTitle: "🏆 12-Unit Score Summary & Email Report",
+      emailSectionTitle: "📧 Send Score Report via Email",
+      studentNamePlaceholder: "Student Name / ID",
+      studentEmailPlaceholder: "Recipient Email (e.g. teacher@school.edu)",
+      resetScoresBtn: "🗑️ Reset All Scores",
+      sendEmailBtn: "📧 Send Score Report via Email",
+      diagModalTitle: "🛡️ Automated System Self-Check & Version History",
+      footerRight: "System Version: v1.2.0 (Build 2026.10.25-BILINGUAL) • Self-Diagnostic Active"
     }
   };
 
   function t(key) {
     return (I18N[state.lang] && I18N[state.lang][key]) || I18N.th[key] || key;
+  }
+
+  function safeSound(fnName) {
+    try {
+      if (window.SoundFX && typeof window.SoundFX[fnName] === "function") {
+        window.SoundFX[fnName]();
+      }
+    } catch (e) {}
   }
 
   function ensureUnitProgress(uId) {
@@ -133,9 +215,9 @@ window.SpeakUpApp = (function () {
         act2Score: 0,
         act3Answers: {},
         act3Score: 0,
-        act4Evals: {}, // itemKey -> evaluation result object
+        act4Evals: {},
         act4Score: 0,
-        redUnlocked: {} // itemKey -> boolean
+        redUnlocked: {}
       };
     }
     return state.progress[uId];
@@ -146,25 +228,33 @@ window.SpeakUpApp = (function () {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        state = Object.assign(state, parsed);
+        if (parsed && typeof parsed === "object") {
+          state.lang = parsed.lang === "en" ? "en" : "th";
+          state.unitId = Number(parsed.unitId) || 1;
+          state.studentName = parsed.studentName || "";
+          state.studentEmail = parsed.studentEmail || "";
+          state.roomCode = parsed.roomCode || "CLASS-A1";
+          state.progress = parsed.progress || {};
+        }
       }
     } catch (e) {}
 
-    // Check URL parameters for Group QR / GitHub Pages link sharing (?unit=3&room=ROOM-101&lang=en)
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("unit")) {
-      const u = parseInt(params.get("unit"), 10);
-      if (u >= 1 && u <= 12) {
-        state.unitId = u;
-        state.view = "workspace";
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("unit")) {
+        const u = parseInt(params.get("unit"), 10);
+        if (u >= 1 && u <= 12) {
+          state.unitId = u;
+          state.view = "workspace";
+        }
       }
-    }
-    if (params.get("room")) {
-      state.roomCode = params.get("room").toUpperCase();
-    }
-    if (params.get("lang") === "en" || params.get("lang") === "th") {
-      state.lang = params.get("lang");
-    }
+      if (params.get("room")) {
+        state.roomCode = params.get("room").toUpperCase();
+      }
+      if (params.get("lang") === "en" || params.get("lang") === "th") {
+        state.lang = params.get("lang");
+      }
+    } catch (e) {}
 
     for (let i = 1; i <= 12; i++) ensureUnitProgress(i);
   }
@@ -210,7 +300,6 @@ window.SpeakUpApp = (function () {
   }
 
   function recalculateAct4Score(uId) {
-    const unit = window.SPEAKUP_UNITS.find(u => u.id === Number(uId));
     const p = ensureUnitProgress(uId);
     const evalValues = Object.values(p.act4Evals || {});
     if (!evalValues.length) {
@@ -219,6 +308,26 @@ window.SpeakUpApp = (function () {
     }
     const avg = evalValues.reduce((acc, ev) => acc + (ev.overall || 0), 0) / evalValues.length;
     p.act4Score = Math.round(avg);
+  }
+
+  function updateLanguageButtonsUI() {
+    const isTh = state.lang === "th";
+    ["lang-th", "landing-lang-th"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.className = isTh
+          ? "px-3 py-1 rounded-full text-xs font-extrabold bg-indigo-600 text-white shadow-sm transition"
+          : "px-3 py-1 rounded-full text-xs font-semibold text-slate-600 hover:text-indigo-700 transition";
+      }
+    });
+    ["lang-en", "landing-lang-en"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.className = !isTh
+          ? "px-3 py-1 rounded-full text-xs font-extrabold bg-indigo-600 text-white shadow-sm transition"
+          : "px-3 py-1 rounded-full text-xs font-semibold text-slate-600 hover:text-indigo-700 transition";
+      }
+    });
   }
 
   function updateScoreBadges() {
@@ -236,7 +345,7 @@ window.SpeakUpApp = (function () {
     setEl("score-act2", `${p.act2Score}%`);
     setEl("score-act3", `${p.act3Score}%`);
     setEl("score-act4", `${p.act4Score}%`);
-    setEl("header-unit-score", `Unit ${uId}: ${unitScore}% (${allSummary.completedUnits}/12 Units)`);
+    setEl("header-unit-score", `Unit ${uId}: ${unitScore}% (${allSummary.completedUnits}/12)`);
     setEl("room-badge-label", `${t("groupBtn")}: ${state.roomCode}`);
   }
 
@@ -247,7 +356,7 @@ window.SpeakUpApp = (function () {
     if (!guideEl) return;
 
     const msgsTh = {
-      1: `"ยินดีต้อนรับสู่ <b>${unit.title}</b> ครับ! ใน <b>Activity 1 (${unit.activity1.heading})</b> ให้กดปุ่มฟังเสียงเรื่องราวจนจบก่อน แล้ว <b>ข้อความสีแดง</b> จะเปิดออกพร้อมโหมดฝึกพูดตามทีละประโยคครับ!"`,
+      1: `"ยินดีต้อนรับสู่ <b>${unit.title} (${unit.titleTh})</b> ครับ! ใน <b>Activity 1 (${unit.activity1.heading})</b> ให้กดปุ่มฟังเสียงเรื่องราวจนจบก่อน แล้ว <b>ข้อความสีแดง</b> จะเปิดออกพร้อมโหมดฝึกพูดตามทีละประโยคครับ!"`,
       2: `"ใน <b>Activity 2: Check Your Understanding</b> ให้กดฟังเสียงคำถามแล้ว <b>เลือกคำตอบ a, b หรือ c ก่อน</b> จากนั้นระบบจะแสดงโจทย์ตัวอักษร <b>สีแดง</b> พร้อมเฉลยครับ!"`,
       3: `"ใน <b>Activity 3: Listen Again & Complete</b> กดฟังเสียงอ่าน Passage แล้วเลือกคำตอบเติมในช่องว่าง <b>ทีละข้อ</b> (ต้องตอบข้อปัจจุบันก่อนจึงจะกดไปข้อถัดไปได้ครับ)"`,
       4: `"ใน <b>Activity 4: Speak Up!</b> มีครบทั้ง <b>Part A, Part B และ Part C</b> กดฟังเสียงก่อนเพื่อเปิดข้อความสีแดง แล้วกดไมโครโฟนเพื่ออัดเสียงพูดและฟังเสียงตัวเอง ระบบจะประเมิน <b>สำเนียง, ความครบถ้วน, ความชัดเจน และเวลาพูด</b> ออกมาเป็น % พร้อมคำแนะนำครับ!"`
@@ -264,15 +373,25 @@ window.SpeakUpApp = (function () {
   }
 
   // =========================================================================
-  // RENDER LANDING PAGE & UNIT HEADER
+  // RENDER LANDING PAGE & VIEW SWITCHING
   // =========================================================================
-  function renderLandingPage() {
+  function syncViewVisibility() {
     const landingScreen = document.getElementById("landing-screen");
     const workspaceScreen = document.getElementById("workspace-screen");
-    if (landingScreen && workspaceScreen) {
-      landingScreen.classList.toggle("hidden", state.view !== "landing");
-      workspaceScreen.classList.toggle("hidden", state.view === "landing");
+    const isLanding = state.view === "landing";
+
+    if (landingScreen) {
+      landingScreen.classList.toggle("hidden", !isLanding);
+      landingScreen.style.display = isLanding ? "block" : "none";
     }
+    if (workspaceScreen) {
+      workspaceScreen.classList.toggle("hidden", isLanding);
+      workspaceScreen.style.display = isLanding ? "none" : "block";
+    }
+  }
+
+  function renderLandingPage() {
+    syncViewVisibility();
 
     const nameEl = document.getElementById("landing-student-name");
     if (nameEl && document.activeElement !== nameEl) {
@@ -295,9 +414,13 @@ window.SpeakUpApp = (function () {
     if (grid) {
       grid.innerHTML = window.SPEAKUP_UNITS.map(u => {
         const uScore = getUnitTotalScore(u.id);
-        const p = ensureUnitProgress(u.id);
+        const subTitle = state.lang === "th"
+          ? u.titleTh
+          : `${u.learningGoals[0]}`;
+        const enterLabel = state.lang === "th" ? "คลิกเข้าบทเรียน →" : "Open Unit →";
+
         return `
-          <button onclick="SpeakUpApp.enterWorkspace(${u.id})" class="p-4 rounded-2xl border border-slate-200 bg-slate-50/60 hover:bg-indigo-50/70 hover:border-indigo-300 text-left transition shadow-sm group flex flex-col justify-between gap-2">
+          <div onclick="SpeakUpApp.enterWorkspace(${u.id})" role="button" tabindex="0" class="cursor-pointer p-4 rounded-2xl border border-slate-200 bg-slate-50/70 hover:bg-indigo-50/80 hover:border-indigo-400 text-left transition shadow-sm group flex flex-col justify-between gap-2">
             <div>
               <div class="flex items-center justify-between gap-2 mb-1">
                 <span class="text-xs font-extrabold text-indigo-600 uppercase">UNIT ${u.id}</span>
@@ -306,12 +429,17 @@ window.SpeakUpApp = (function () {
                 </span>
               </div>
               <p class="font-bold text-sm text-slate-900 group-hover:text-indigo-950">${u.themeIcon} ${u.title.replace(/^Unit \d+:\s*/, "")}</p>
-              <p class="text-xs text-slate-500 mt-0.5">${u.titleTh}</p>
+              <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">${subTitle}</p>
             </div>
-            <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden mt-1">
-              <div class="bg-indigo-600 h-full rounded-full" style="width: ${uScore}%"></div>
+            <div class="pt-1 space-y-1.5">
+              <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                <div class="bg-indigo-600 h-full rounded-full" style="width: ${uScore}%"></div>
+              </div>
+              <div class="flex justify-end">
+                <span class="text-xs font-bold text-indigo-600 group-hover:translate-x-0.5 transition">${enterLabel}</span>
+              </div>
             </div>
-          </button>
+          </div>
         `;
       }).join("");
     }
@@ -339,7 +467,7 @@ window.SpeakUpApp = (function () {
       vocabGrid.innerHTML = unit.vocabulary.map((v, idx) => `
         <div class="p-3 rounded-2xl bg-sky-50/70 border border-sky-100 flex items-center justify-between gap-2 hover:bg-sky-100/60 transition">
           <div>
-            <p class="font-bold text-sm text-slate-800">${v.word} <span class="font-medium text-xs text-sky-700">(${v.meaning})</span></p>
+            <p class="font-bold text-sm text-slate-800">${v.word} <span class="font-medium text-xs text-sky-700">${state.lang === "th" ? `(${v.meaning})` : ""}</span></p>
             <p class="text-xs text-slate-600 italic mt-0.5">"${v.example}"</p>
           </div>
           <button onclick="SpeakUpApp.speakVocab(${idx})" class="px-2.5 py-1.5 rounded-xl bg-white text-sky-700 border border-sky-200 text-xs font-bold shadow-sm hover:bg-sky-50 flex-shrink-0">
@@ -365,12 +493,16 @@ window.SpeakUpApp = (function () {
       .map(line => `<p class="mb-2">${line}</p>`)
       .join("");
 
+    const subHeading = state.lang === "th"
+      ? a1.headingTh
+      : "Listen to the audio until the end to reveal the Red Text passage.";
+
     container.innerHTML = `
       <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-4">
         <div>
           <span class="text-xs font-bold text-rose-500 uppercase">Activity 1 • ${a1.heading}</span>
           <h2 class="text-lg font-bold text-slate-900">${unit.themeIcon} ${a1.title}</h2>
-          <p class="text-xs text-slate-500">${a1.headingTh}</p>
+          <p class="text-xs text-slate-500">${subHeading}</p>
         </div>
         <span class="px-3 py-1 rounded-full text-xs font-bold ${p.act1Unlocked ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}">
           ${p.act1Unlocked ? t("unlockedBadge") : t("listenFirstLock")}
@@ -414,7 +546,9 @@ window.SpeakUpApp = (function () {
           <!-- Revealed Red Text Passage -->
           <div class="p-5 rounded-2xl bg-rose-50/70 border-2 border-rose-200 space-y-2 shadow-sm">
             <div class="flex flex-wrap items-center justify-between gap-2">
-              <span class="text-xs font-bold text-rose-700 uppercase">📖 เนื้อหาที่ปลดล็อกแล้ว (ตัวสีแดง = มีเสียงอ่านออกเสียง)</span>
+              <span class="text-xs font-bold text-rose-700 uppercase">
+                ${state.lang === "th" ? "📖 เนื้อหาที่ปลดล็อกแล้ว (ตัวสีแดง = มีเสียงอ่านออกเสียง)" : "📖 Unlocked Passage (Red Text = Spoken Audio Content)"}
+              </span>
               <button onclick="SpeakUpApp.playAct1Passage()" class="px-3 py-1 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold">
                 🔊 ${state.lang === "th" ? "ฟังทั้งเรื่องอีกครั้ง" : "Listen Again"}
               </button>
@@ -490,7 +624,7 @@ window.SpeakUpApp = (function () {
                 </div>
                 ${hasAnswered ? `
                   <span class="px-2.5 py-1 rounded-lg text-xs font-bold ${isCorrect ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800"}">
-                    ${isCorrect ? "✅ Correct!" : `💡 Answer: ${qObj.options[qObj.answerIndex]}`}
+                    ${isCorrect ? (state.lang === "th" ? "✅ ถูกต้อง!" : "✅ Correct!") : `💡 ${qObj.options[qObj.answerIndex]}`}
                   </span>
                 ` : ""}
               </div>
@@ -749,7 +883,6 @@ window.SpeakUpApp = (function () {
 
   function renderActivity4() {
     const unit = getCurrentUnit();
-    const p = ensureUnitProgress(unit.id);
     const a4 = unit.activity4;
     const container = document.getElementById("panel-4");
     if (!container) return;
@@ -901,12 +1034,15 @@ window.SpeakUpApp = (function () {
     }
     const masterEl = document.getElementById("master-score-banner");
     if (masterEl) {
-      masterEl.innerHTML = `
-        <div>
-          <p class="text-xs font-bold text-indigo-900">คะแนนเฉลี่ยรวมทั้ง 12 Units: <span class="text-lg text-indigo-700">${summary.averageScore}%</span></p>
-          <p class="text-xs text-slate-600">ทำครบทุก Activity แล้ว: <b>${summary.completedUnits} / 12 Units</b> • ห้องเรียน: <b>${state.roomCode}</b></p>
-        </div>
-      `;
+      masterEl.innerHTML = state.lang === "th"
+        ? `<div>
+            <p class="text-xs font-bold text-indigo-900">คะแนนเฉลี่ยรวมทั้ง 12 Units: <span class="text-lg text-indigo-700">${summary.averageScore}%</span></p>
+            <p class="text-xs text-slate-600">ทำครบทุก Activity แล้ว: <b>${summary.completedUnits} / 12 Units</b> • ห้องเรียน: <b>${state.roomCode}</b></p>
+           </div>`
+        : `<div>
+            <p class="text-xs font-bold text-indigo-900">Overall 12-Unit Average: <span class="text-lg text-indigo-700">${summary.averageScore}%</span></p>
+            <p class="text-xs text-slate-600">Completed Units: <b>${summary.completedUnits} / 12 Units</b> • Room: <b>${state.roomCode}</b></p>
+           </div>`;
     }
     const nameInput = document.getElementById("student-name-input");
     if (nameInput) nameInput.value = state.studentName || "";
@@ -949,12 +1085,18 @@ window.SpeakUpApp = (function () {
   }
 
   function renderAll() {
-    // Update static i18n labels
+    // Update all static data-i18n elements
     document.querySelectorAll("[data-i18n]").forEach(el => {
       const key = el.getAttribute("data-i18n");
-      el.textContent = t(key);
+      if (key) el.textContent = t(key);
+    });
+    // Update all placeholders
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+      const key = el.getAttribute("data-i18n-placeholder");
+      if (key) el.setAttribute("placeholder", t(key));
     });
 
+    updateLanguageButtonsUI();
     renderLandingPage();
     renderUnitSelectorAndVocab();
     updateGuideMessage();
@@ -976,42 +1118,41 @@ window.SpeakUpApp = (function () {
     },
 
     showLandingPage() {
-      SoundFX.playClick();
-      SpeechEngine.stop();
+      safeSound("playClick");
+      if (window.SpeechEngine) window.SpeechEngine.stop();
       state.view = "landing";
+      syncViewVisibility();
       renderLandingPage();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {}
     },
 
     enterWorkspace(targetUnitId) {
-      SoundFX.playUnlock();
+      safeSound("playUnlock");
       const nameEl = document.getElementById("landing-student-name");
       const roomEl = document.getElementById("landing-room-code");
-      if (nameEl && nameEl.value.trim()) state.studentName = nameEl.value.trim();
-      if (roomEl && roomEl.value.trim()) state.roomCode = roomEl.value.trim().toUpperCase();
-      if (targetUnitId) state.unitId = Number(targetUnitId);
+      if (nameEl && nameEl.value && nameEl.value.trim()) state.studentName = nameEl.value.trim();
+      if (roomEl && roomEl.value && roomEl.value.trim()) state.roomCode = roomEl.value.trim().toUpperCase();
+      if (targetUnitId) {
+        state.unitId = Number(targetUnitId);
+        state.act3Step = 0;
+      }
       state.view = "workspace";
+      syncViewVisibility();
       saveState();
       renderAll();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {}
     },
 
     setLang(lang) {
-      SoundFX.playClick();
-      state.lang = lang;
-      document.getElementById("lang-th").className = lang === "th"
-        ? "px-2.5 py-1 rounded-full text-xs font-bold bg-white text-indigo-700 shadow-sm"
-        : "px-2.5 py-1 rounded-full text-xs font-semibold text-slate-500";
-      document.getElementById("lang-en").className = lang === "en"
-        ? "px-2.5 py-1 rounded-full text-xs font-bold bg-white text-indigo-700 shadow-sm"
-        : "px-2.5 py-1 rounded-full text-xs font-semibold text-slate-500";
+      safeSound("playClick");
+      state.lang = lang === "en" ? "en" : "th";
       saveState();
       renderAll();
     },
 
     setSpeed(rate) {
-      SoundFX.playClick();
-      SpeechEngine.setRate(rate);
+      safeSound("playClick");
+      if (window.SpeechEngine) window.SpeechEngine.setRate(rate);
       ["075", "085", "100"].forEach(id => {
         const el = document.getElementById("spd-" + id);
         if (el) el.className = "px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs";
@@ -1022,16 +1163,17 @@ window.SpeakUpApp = (function () {
     },
 
     changeUnit(uId) {
-      SoundFX.playClick();
-      SpeechEngine.stop();
+      safeSound("playClick");
+      if (window.SpeechEngine) window.SpeechEngine.stop();
       state.unitId = Number(uId);
       state.act3Step = 0;
+      state.view = "workspace";
       saveState();
       renderAll();
     },
 
     toggleVocab() {
-      SoundFX.playClick();
+      safeSound("playClick");
       state.vocabOpen = !state.vocabOpen;
       const box = document.getElementById("vocab-drawer");
       if (box) box.classList.toggle("hidden", !state.vocabOpen);
@@ -1041,19 +1183,25 @@ window.SpeakUpApp = (function () {
       const unit = getCurrentUnit();
       const v = unit.vocabulary[idx];
       if (!v) return;
-      SpeechEngine.speak(`${v.word}. ${v.example}`);
+      window.SpeechEngine.speak(`${v.word}. ${v.example}`);
     },
 
     switchActivity(actNum) {
-      SoundFX.playClick();
-      SpeechEngine.stop();
+      safeSound("playClick");
+      if (window.SpeechEngine) window.SpeechEngine.stop();
+      state.view = "workspace";
+      syncViewVisibility();
       state.activityId = Number(actNum);
       [1, 2, 3, 4].forEach(n => {
         const panel = document.getElementById("panel-" + n);
-        if (panel) panel.classList.toggle("hidden", n !== state.activityId);
+        const isCurrent = n === state.activityId;
+        if (panel) {
+          panel.classList.toggle("hidden", !isCurrent);
+          panel.style.display = isCurrent ? "block" : "none";
+        }
         const tab = document.getElementById("tab-" + n);
         if (tab) {
-          tab.className = n === state.activityId
+          tab.className = isCurrent
             ? "p-3 rounded-2xl border-2 border-indigo-500 bg-indigo-50/90 text-left transition shadow-sm"
             : "p-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-left transition";
         }
@@ -1065,7 +1213,7 @@ window.SpeakUpApp = (function () {
       const unit = getCurrentUnit();
       const btn = document.getElementById("act1-play-btn");
       if (btn) btn.textContent = "🔊";
-      SpeechEngine.speak(`${unit.activity1.title}. ${unit.activity1.passage}`, {
+      window.SpeechEngine.speak(`${unit.activity1.title}. ${unit.activity1.passage}`, {
         onProgress: (pct) => {
           const bar = document.getElementById("act1-progress-bar");
           if (bar) bar.style.width = `${pct}%`;
@@ -1081,7 +1229,7 @@ window.SpeakUpApp = (function () {
       const unit = getCurrentUnit();
       const p = ensureUnitProgress(unit.id);
       if (!p.act1Unlocked) {
-        SoundFX.playUnlock();
+        safeSound("playUnlock");
       }
       p.act1Unlocked = true;
       p.act1Score = 100;
@@ -1092,13 +1240,13 @@ window.SpeakUpApp = (function () {
     speakPhraseIndex(idx) {
       const unit = getCurrentUnit();
       const phrase = unit.activity1.phrases[idx];
-      if (phrase) SpeechEngine.speak(phrase);
+      if (phrase) window.SpeechEngine.speak(phrase);
     },
 
     speakAct2Question(qIdx) {
       const unit = getCurrentUnit();
       const q = unit.activity2[qIdx];
-      if (q) SpeechEngine.speak(`Question ${qIdx + 1}. ${q.question}`);
+      if (q) window.SpeechEngine.speak(`Question ${qIdx + 1}. ${q.question}`);
     },
 
     answerAct2(qIdx, oIdx) {
@@ -1108,12 +1256,11 @@ window.SpeakUpApp = (function () {
       p.act2Answers[qIdx] = oIdx;
 
       if (oIdx === q.answerIndex) {
-        SoundFX.playCorrect();
+        safeSound("playCorrect");
       } else {
-        SoundFX.playWrong();
+        safeSound("playWrong");
       }
 
-      // Calculate Activity 2 percentage
       let correct = 0;
       unit.activity2.forEach((item, idx) => {
         if (p.act2Answers[idx] === item.answerIndex) correct++;
@@ -1130,9 +1277,9 @@ window.SpeakUpApp = (function () {
       p.act3Answers[stepIdx] = oIdx;
 
       if (oIdx === item.answerIndex) {
-        SoundFX.playCorrect();
+        safeSound("playCorrect");
       } else {
-        SoundFX.playWrong();
+        safeSound("playWrong");
       }
 
       let correct = 0;
@@ -1145,14 +1292,14 @@ window.SpeakUpApp = (function () {
     },
 
     jumpAct3Step(stepIdx) {
-      SoundFX.playClick();
+      safeSound("playClick");
       state.act3Step = stepIdx;
       renderActivity3();
     },
 
     switchAct4Part(part) {
-      SoundFX.playClick();
-      SpeechEngine.stop();
+      safeSound("playClick");
+      if (window.SpeechEngine) window.SpeechEngine.stop();
       state.act4Part = part;
       renderActivity4();
     },
@@ -1160,10 +1307,10 @@ window.SpeakUpApp = (function () {
     listenAndUnlockRed(itemKey, text) {
       const unit = getCurrentUnit();
       const p = ensureUnitProgress(unit.id);
-      SpeechEngine.speak(text, {
+      window.SpeechEngine.speak(text, {
         onEnd: () => {
           if (!p.redUnlocked[itemKey]) {
-            SoundFX.playUnlock();
+            safeSound("playUnlock");
             p.redUnlocked[itemKey] = true;
             saveState();
             renderActivity4();
@@ -1175,13 +1322,13 @@ window.SpeakUpApp = (function () {
     playPartBSequence(itemKey, question, sample) {
       const unit = getCurrentUnit();
       const p = ensureUnitProgress(unit.id);
-      SpeechEngine.speak(question, {
+      window.SpeechEngine.speak(question, {
         onEnd: () => {
-          SpeechEngine.speak(`Sample answer: ${sample}`, {
+          window.SpeechEngine.speak(`Sample answer: ${sample}`, {
             onEnd: () => {
-              SpeechEngine.speak(`Listen again: ${question}`, {
+              window.SpeechEngine.speak(`Listen again: ${question}`, {
                 onEnd: () => {
-                  SoundFX.playUnlock();
+                  safeSound("playUnlock");
                   p.redUnlocked[itemKey] = true;
                   saveState();
                   renderActivity4();
@@ -1196,7 +1343,7 @@ window.SpeakUpApp = (function () {
     recordItem(itemKey, targetText, keywords, mode) {
       const unit = getCurrentUnit();
       const p = ensureUnitProgress(unit.id);
-      p.redUnlocked[itemKey] = true; // Ensure visible when recording
+      p.redUnlocked[itemKey] = true;
 
       const btn = document.getElementById(`rec-btn-${itemKey}`);
       if (window.VoiceEvaluator.isRecording()) {
@@ -1228,18 +1375,24 @@ window.SpeakUpApp = (function () {
     },
 
     openModal(id) {
-      SoundFX.playClick();
+      safeSound("playClick");
       if (id === "qr-modal") renderQRModal();
       if (id === "score-modal") renderScoresModal();
       if (id === "diag-modal") renderDiagnosticsModal();
       const m = document.getElementById(id);
-      if (m) m.classList.remove("hidden");
+      if (m) {
+        m.classList.remove("hidden");
+        m.style.display = "flex";
+      }
     },
 
     closeModal(id) {
-      SoundFX.playClick();
+      safeSound("playClick");
       const m = document.getElementById(id);
-      if (m) m.classList.add("hidden");
+      if (m) {
+        m.classList.add("hidden");
+        m.style.display = "none";
+      }
     },
 
     updateRoomCode() {
@@ -1254,8 +1407,10 @@ window.SpeakUpApp = (function () {
     copyShareLink() {
       const urlInput = document.getElementById("qr-share-url");
       if (!urlInput) return;
-      navigator.clipboard.writeText(urlInput.value).catch(() => {});
-      SoundFX.playCorrect();
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(urlInput.value).catch(() => {});
+      }
+      safeSound("playCorrect");
       const msg = document.getElementById("qr-copy-feedback");
       if (msg) {
         msg.textContent = state.lang === "th" ? "✅ คัดลอกลิงก์เข้ากลุ่มเรียบร้อยแล้ว!" : "✅ Share link copied!";
@@ -1302,6 +1457,10 @@ window.SpeakUpApp = (function () {
   };
 })();
 
-document.addEventListener("DOMContentLoaded", () => {
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    window.SpeakUpApp.init();
+  });
+} else {
   window.SpeakUpApp.init();
-});
+}

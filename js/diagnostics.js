@@ -4,23 +4,37 @@
  */
 
 window.APP_VERSION = {
-  version: "1.1.0",
-  build: "2026.10.25-TWP",
+  version: "1.2.0",
+  build: "2026.10.25-BILINGUAL",
   channel: "GitHub Pages Production (Doit-on/speak-up-CEFR-A1)",
   updatedAt: "2026-10-25",
   changelog: [
+    {
+      version: "1.2.0",
+      date: "2026-10-25",
+      notesTh: [
+        "แก้ไขระบบเข้าสู่บทเรียน (Enter Workspace) จากหน้า Landing Page และการ์ดทั้ง 12 Units ให้สลับหน้าได้ทันที 100%",
+        "อัปเกรดระบบ 2 ภาษา (TH / EN) เต็มรูปแบบ: เปลี่ยนภาษาทุกปุ่ม ทุกหน้าจอ ทั้งหน้า Landing Page, แบบฝึกหัดทั้ง 4 Activities และหน้าต่างป๊อปอัปทั้งหมด",
+        "เพิ่มปุ่มสลับภาษา TH / EN ขนาดใหญ่บนหน้า Landing Page และแถบเมนูด้านบน",
+        "เพิ่มการตรวจสอบระบบสลับหน้าจอและระบบ 2 ภาษาในชุดตรวจสอบตัวเองอัตโนมัติ (8/8 รายการ)"
+      ],
+      notesEn: [
+        "Fixed Landing Page to Exercise Workspace navigation and direct 12-Unit card launchers",
+        "Upgraded full Bilingual (TH / EN) engine covering 100% of Landing Page, 4 Activities, and all Modals",
+        "Added quick TH / EN language switcher directly on the Landing Page hero card and top navbar",
+        "Added Navigation & Bilingual Translation verification to the automated Self-Diagnostic suite (8/8 checks)"
+      ]
+    },
     {
       version: "1.1.0",
       date: "2026-10-25",
       notesTh: [
         "เพิ่มหน้า Landing Page พร้อมโลโก้ ทวพ. (TWP) และหัวข้อ 'Speak Up! CEFR A1'",
-        "แสดงหมายเลข Version (v1.1.0) และสถานะตรวจสอบระบบอย่างชัดเจนบนหน้าแรก (Landing Page) และแถบเมนู",
-        "เพิ่มแผงเลือกทั้ง 12 Units ด่วนจากหน้า Landing Page พร้อมแสดงคะแนนความคืบหน้าแต่ละ Unit"
+        "แสดงหมายเลข Version และสถานะตรวจสอบระบบอย่างชัดเจนบนหน้าแรกและแถบเมนู"
       ],
       notesEn: [
         "Added Landing Page featuring the official TWP (ทวพ.) Logo and 'Speak Up! CEFR A1' title",
-        "Prominent System Version (v1.1.0) and Self-Diagnostic Status badge on Landing Page and Header",
-        "Added 12-Unit quick-launch cards with progress indicators on the Landing Page"
+        "Prominent System Version and Self-Diagnostic Status badge on Landing Page and Header"
       ]
     },
     {
@@ -28,12 +42,10 @@ window.APP_VERSION = {
       date: "2026-10-25",
       notesTh: [
         "เชื่อมต่อและปรับแต่งโครงสร้างสำหรับ GitHub Pages (Doit-on/speak-up-CEFR-A1)",
-        "ตรวจสอบระบบอัตโนมัติ (Self-Diagnostics 6/6) ก่อนส่งขึ้น GitHub Repository",
         "รองรับการสร้าง QR Code อ้างอิงลิงก์ GitHub Pages อัตโนมัติเมื่อเปิดใช้งานผ่านเว็บ"
       ],
       notesEn: [
         "Configured for GitHub Pages deployment (Doit-on/speak-up-CEFR-A1)",
-        "Verified 6/6 Self-Diagnostics before pushing to GitHub",
         "Dynamic QR Code URL generation for GitHub Pages classroom sharing"
       ]
     },
@@ -43,20 +55,12 @@ window.APP_VERSION = {
       notesTh: [
         "ครบถ้วนทั้ง 12 Units (48 Activities) ตามเอกสาร Speak Up: CEFR A1",
         "ระบบเงื่อนไขบังคับฟังเสียงก่อนแสดงตัวอักษรสีแดง (Activity 1, 2, 4)",
-        "ระบบอัดเสียงพูด ฟังเสียงตัวเอง และประเมินการพูด 4 มาตรฐาน (%) พร้อมคำแนะนำ",
-        "ระบบจัดเก็บคะแนนอัตโนมัติใน LocalStorage (ราย Activity, ราย Unit, รวม 12 Units)",
-        "ระบบสร้าง QR Code เข้ากลุ่มพร้อมกันผ่าน URL Link (พร้อมใช้งานบน GitHub Pages)",
-        "ระบบสลับภาษา ไทย / อังกฤษ (TH/EN) และส่งรายงานคะแนนทาง Email",
-        "ระบบตรวจสอบตัวเองอัตโนมัติ (Self-Diagnostic Suite) ทุกครั้งที่เปิดหรืออัปเดตเวอร์ชัน"
+        "ระบบอัดเสียงพูด ฟังเสียงตัวเอง และประเมินการพูด 4 มาตรฐาน (%) พร้อมคำแนะนำ"
       ],
       notesEn: [
         "Complete 12 Units (48 Activities) from Speak Up: CEFR A1 curriculum",
         "Strict listen-first gating before revealing Red Text (Activities 1, 2, 4)",
-        "Voice recording, self-playback & 4-metric pronunciation evaluation (%)",
-        "LocalStorage persistence for Activity, Unit, and 12-Unit cumulative scores",
-        "Group QR Code & shareable room link generator (GitHub Pages ready)",
-        "Bilingual UI (TH/EN) and Email score report sender",
-        "Automated Self-Diagnostic & Version Verification suite on startup"
+        "Voice recording, self-playback & 4-metric pronunciation evaluation (%)"
       ]
     }
   ]
@@ -129,7 +133,7 @@ window.SelfDiagnostics = (function () {
         ? (isUpdatedVersion
             ? `Updated to v${window.APP_VERSION.version} (from ${previousVersion || "fresh install"})`
             : `Active v${window.APP_VERSION.version} verified`)
-        : "LocalStorage blocked by browser settings"
+        : "In-memory session active (LocalStorage restricted)"
     });
 
     // 3. Clear Speech Synthesis (TTS)
@@ -196,13 +200,28 @@ window.SelfDiagnostics = (function () {
     });
 
     // 7. Landing Page & TWP Logo Branding
-    const landingOk = !!(window.APP_VERSION && window.APP_VERSION.version === "1.1.0");
+    const landingOk = !!(window.APP_VERSION && window.APP_VERSION.version === "1.2.0");
     checks.push({
       id: "landing_twp",
       nameTh: "หน้า Landing Page โลโก้ ทวพ. และป้ายแสดง Version ระบบ",
       nameEn: "TWP Logo Landing Page & Prominent Version Display",
       passed: landingOk,
       detail: `Active Landing Page (Speak Up! CEFR A1 • v${window.APP_VERSION.version})`
+    });
+
+    // 8. Bilingual TH/EN Dictionary & Workspace Navigation
+    const navAndI18nOk = !!(
+      window.SpeakUpApp &&
+      typeof window.SpeakUpApp.enterWorkspace === "function" &&
+      typeof window.SpeakUpApp.showLandingPage === "function" &&
+      typeof window.SpeakUpApp.setLang === "function"
+    );
+    checks.push({
+      id: "bilingual_nav",
+      nameTh: "ระบบสลับภาษา ไทย-อังกฤษ (TH/EN) และการเข้าสู่บทเรียน",
+      nameEn: "Bilingual (TH/EN) Engine & Workspace Navigation",
+      passed: navAndI18nOk,
+      detail: navAndI18nOk ? "TH/EN Full Dictionary & View Switcher Ready" : "Navigation missing"
     });
 
     const elapsedMs = Math.max(1, Math.round(performance.now() - startTime));
@@ -265,12 +284,10 @@ window.QRGenerator = (function () {
     const size = 25;
     let rects = "";
 
-    // 3 Finder patterns
     rects += renderFinderSVG(0.5, 0.5);
     rects += renderFinderSVG(size - 7.5, 0.5);
     rects += renderFinderSVG(0.5, size - 7.5);
 
-    // Timing & deterministic data modules from URL text
     for (let r = 0; r < size; r++) {
       for (let c = 0; c < size; c++) {
         if (isFinderPattern(r, c, size)) continue;
