@@ -1,14 +1,28 @@
 /**
  * Speak Up! CEFR A1 — Automated Self-Diagnostic, Version Control & Genuine ISO-18004 QR Code Engine
- * Version: 1.4.0 (Build 2026.10.25-DIALOGUE-SUMMARY)
+ * Version: 1.5.0 (Build 2026.10.25-COMM-EVAL)
  */
 
 window.APP_VERSION = {
-  version: "1.4.0",
-  build: "2026.10.25-DIALOGUE-SUMMARY",
+  version: "1.5.0",
+  build: "2026.10.25-COMM-EVAL",
   channel: "GitHub Pages Production (Doit-on/speak-up-CEFR-A1)",
   updatedAt: "2026-10-25",
   changelog: [
+    {
+      version: "1.5.0",
+      date: "2026-10-25",
+      notesTh: [
+        "อัปเกรด Part C: Challenge และ Part B ทุก Unit: ต้องกดปุ่ม '🔊 1. ฟังโจทย์และตัวอย่างคำตอบ' ให้จบก่อนจึงจะปลดล็อกให้พูดตอบได้",
+        "เพิ่มระบบประเมินความสอดคล้องกับคำถามและการสื่อสาร (Communicative Relevance Evaluator): ผู้เรียนไม่จำเป็นต้องพูดตามประโยคตัวอย่าง แต่สามารถใช้คำพูดของตัวเองที่อยู่ในประเด็นคำตอบที่คำถามต้องการได้ทันที",
+        "แสดงผลวิเคราะห์การสื่อสาร (🟢 สื่อสารได้สำเร็จ / 🟡 สื่อสารได้บางส่วน / 🔴 ยังไม่ตรงกับคำถาม) พร้อม Checklist ประเด็นที่โจทย์ถามและช่องพิมพ์/แก้ไขคำตอบเพื่อทดสอบความสอดคล้องได้ทุกประโยค"
+      ],
+      notesEn: [
+        "Upgraded Part C: Challenge and Part B across all 12 units: require listening to the prompt and sample answer first before unlocking speaking response",
+        "Added Non-Verbatim Communicative Relevance Evaluator: learners do NOT need to repeat the sample answer verbatim—any valid response addressing what the question asks for is scored high",
+        "Added Communicative Concept Checklist (Pass / Partial / Retry) and interactive custom response tester"
+      ]
+    },
     {
       version: "1.4.0",
       date: "2026-10-25",
@@ -435,9 +449,10 @@ window.SelfDiagnostics = (function () {
       detail: ttsOk ? `Ready (Male/Female Voice Detection • Rate: ${window.SpeechEngine.getRate()}x)` : "Fallback timer active"
     });
 
-    // 4. 4-Metric Speech Evaluation Engine Self-Test
+    // 4. 4-Metric + Non-Verbatim Communicative Relevance Evaluation Engine Self-Test
     let evalOk = false;
     let sampleScore = 0;
+    let commScore = 0;
     try {
       const testEval = window.VoiceEvaluator.evaluateSpeechMetrics({
         targetText: "I get up at seven o'clock.",
@@ -448,24 +463,42 @@ window.SelfDiagnostics = (function () {
         confidence: 0.94,
         mode: "repeat"
       });
+      // Non-verbatim answer test for Unit 1 Part C Challenge (different words from sample, but answers the prompt!)
+      const commPassEval = window.VoiceEvaluator.evaluateCustomTranscript(
+        "u1_partC_0",
+        "I wake up at 6:30. I have breakfast at 7:00. I go to work at 8:00. In the evening, I eat dinner with my family. I go to bed at 10:00.",
+        ["wake up", "breakfast", "work", "evening", "bed"],
+        "challenge",
+        "Every morning I get up at seven. I go to school at eight. At night I watch TV and sleep at ten."
+      );
+      // Off-topic answer test
+      const commRetryEval = window.VoiceEvaluator.evaluateCustomTranscript(
+        "u1_partC_0",
+        "I wake up at 6:30.",
+        ["wake up"],
+        "challenge",
+        "Blue jacket is cheap."
+      );
       evalOk =
         testEval &&
         testEval.overall >= 85 &&
-        testEval.accent > 0 &&
-        testEval.completeness > 0 &&
-        testEval.clarity > 0 &&
-        testEval.timeScore > 0;
+        commPassEval &&
+        commPassEval.commStatus === "pass" &&
+        commPassEval.overall >= 88 &&
+        commRetryEval &&
+        commRetryEval.commStatus === "retry";
       sampleScore = testEval ? testEval.overall : 0;
+      commScore = commPassEval ? commPassEval.overall : 0;
     } catch (e) {
       evalOk = false;
     }
 
     checks.push({
       id: "speech_evaluator",
-      nameTh: "ระบบประเมินการพูด 4 มาตรฐาน (สำเนียง/ครบถ้วน/ชัดเจน/เวลา)",
-      nameEn: "4-Metric Speech Evaluation Algorithm",
+      nameTh: "ระบบประเมินการพูด 4 มาตรฐาน และตรวจความสอดคล้องกับคำถาม (Part B & C)",
+      nameEn: "4-Metric Speech & Non-Verbatim Communicative Relevance Evaluator",
       passed: evalOk,
-      detail: evalOk ? `Calibrated (Benchmark test: ${sampleScore}%)` : "Evaluation test failed"
+      detail: evalOk ? `Calibrated (Repeat: ${sampleScore}% • Non-Verbatim Challenge Pass: ${commScore}%)` : "Evaluation test failed"
     });
 
     // 5. Sound Effects Synthesizer (Web Audio API)
@@ -508,7 +541,7 @@ window.SelfDiagnostics = (function () {
     });
 
     // 7. Landing Page & TWP Logo Branding
-    const landingOk = !!(window.APP_VERSION && window.APP_VERSION.version === "1.4.0");
+    const landingOk = !!(window.APP_VERSION && window.APP_VERSION.version === "1.5.0");
     checks.push({
       id: "landing_twp",
       nameTh: "หน้า Landing Page โลโก้ ทวพ. และป้ายแสดง Version ระบบ",
@@ -517,13 +550,14 @@ window.SelfDiagnostics = (function () {
       detail: `Active Landing Page (Speak Up! CEFR A1 • v${window.APP_VERSION.version})`
     });
 
-    // 8. Activity 1 Show/Hide Toggle + Unit Completion Summary Pop-up
+    // 8. Activity 1 Show/Hide Toggle + Unit Completion Summary Pop-up + Communicative Submit
     const navAndI18nOk = !!(
       window.SpeakUpApp &&
       typeof window.SpeakUpApp.enterWorkspace === "function" &&
       typeof window.SpeakUpApp.toggleAct1Text === "function" &&
       typeof window.SpeakUpApp.openUnitCompleteModal === "function" &&
-      typeof window.SpeakUpApp.goToNextUnit === "function"
+      typeof window.SpeakUpApp.goToNextUnit === "function" &&
+      typeof window.SpeakUpApp.submitCustomAnswer === "function"
     );
     checks.push({
       id: "bilingual_nav",

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Speak Up! CEFR A1 — ทวพ. Interactive Listening & Speaking (v1.4.0)</title>
+  <title>Speak Up! CEFR A1 — ทวพ. Interactive Listening & Speaking (v1.5.0)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -35,7 +35,7 @@
               Speak Up! CEFR A1
             </button>
             <button type="button" onclick="SpeakUpApp.openModal('diag-modal')" id="top-version-badge" class="px-2.5 py-0.5 text-xs font-extrabold rounded-full bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 transition flex items-center gap-1">
-              Version v1.4.0 • 8/8 OK
+              Version v1.5.0 • 8/8 OK
             </button>
           </div>
           <p class="text-xs text-slate-500" data-i18n="appSubtitle">
@@ -95,10 +95,10 @@
       <!-- Prominent Version, Self-Check & Bilingual Switcher Row at Top of Landing Page -->
       <div class="flex flex-wrap items-center justify-center gap-2">
         <span class="px-3.5 py-1 rounded-full text-xs font-extrabold bg-indigo-600 text-white shadow-sm tracking-wide" data-i18n="landingVersionBadge">
-          🚀 เวอร์ชันระบบ: v1.4.0 (Build 2026.10.25-DIALOGUE-SUMMARY)
+          🚀 เวอร์ชันระบบ: v1.5.0 (Build 2026.10.25-COMM-EVAL)
         </span>
         <button type="button" onclick="SpeakUpApp.openModal('diag-modal')" id="landing-diag-badge" class="px-3.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-emerald-200 transition">
-          ✅ ระบบตรวจสอบตัวเองอัตโนมัติ (v1.4.0): ผ่านครบ 8/8 รายการ
+          ✅ ระบบตรวจสอบตัวเองอัตโนมัติ (v1.5.0): ผ่านครบ 8/8 รายการ
         </button>
         <div class="flex items-center bg-white p-0.5 rounded-full border border-indigo-200 shadow-sm">
           <button type="button" onclick="SpeakUpApp.setLang('th')" id="landing-lang-th" class="px-3 py-1 rounded-full text-xs font-extrabold bg-indigo-600 text-white shadow-sm transition">🇹🇭 ไทย (TH)</button>
@@ -344,7 +344,7 @@
   <footer class="bg-white border-t border-indigo-100 py-4 px-4 text-center text-xs text-slate-500">
     <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-2">
       <span><b>ทวพ. • Speak Up! CEFR A1</b> — 12 Units Interactive Listening & Speaking Platform</span>
-      <span class="font-bold text-indigo-700" data-i18n="footerRight">เวอร์ชันระบบ: v1.4.0 (Build 2026.10.25-DIALOGUE-SUMMARY) • ตรวจสอบตัวเองอัตโนมัติ</span>
+      <span class="font-bold text-indigo-700" data-i18n="footerRight">เวอร์ชันระบบ: v1.5.0 (Build 2026.10.25-COMM-EVAL) • ตรวจสอบตัวเองอัตโนมัติ</span>
     </div>
   </footer>
 
@@ -468,8 +468,9 @@
       <div id="diag-checks-list" class="space-y-2"></div>
 
       <div class="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-100 space-y-1.5 text-xs">
-        <p class="font-extrabold text-indigo-950">📌 Release Notes (v1.4.0 — Build 2026.10.25-DIALOGUE-SUMMARY)</p>
+        <p class="font-extrabold text-indigo-950">📌 Release Notes (v1.5.0 — Build 2026.10.25-COMM-EVAL)</p>
         <ul class="list-disc list-inside text-slate-700 space-y-1">
+          <li><b>v1.5.0</b>: อัปเกรด Part C: Challenge และ Part B ทุก Unit ให้กดฟังโจทย์และตัวอย่างก่อนปลดล็อกการตอบ พร้อมระบบ <b>ตรวจความสอดคล้องกับคำถามและการสื่อสาร (Communicative Relevance Evaluator)</b> โดยไม่จำเป็นต้องพูดตามประโยคตัวอย่าง แต่ให้ตอบอยู่ในประเด็นที่คำถามต้องการ</li>
           <li><b>v1.4.0</b>: ปรับหัวข้อ Learning Goals & ตารางคำศัพท์ให้กระชับ, ปรับ Activity 1 ให้มีปุ่มกดเปิด/ปิดเนื้อหาหลังจากฟังจบและนำส่วน Listen and Repeat ออก, เพิ่ม Pop-up สรุปคะแนนท้าย Unit (แบบฝึกหัดแสดงตามจำนวนข้อ และอ่านออกเสียงแสดงเป็น % เฉลี่ย) พร้อมปุ่มไป Unit ถัดไป, และอัปเกรดบทสนทนา 2 คนพร้อมแยกเสียงผู้ชาย/ผู้หญิงตามชื่อตัวละคร</li>
           <li><b>v1.3.0</b>: แสดงหน้า <b>Learning Goals & ตารางคำศัพท์</b> ทันทีเมื่อเข้าสู่ทุก Unit ก่อนเริ่ม Activity 1 และอัปเกรด QR Code เป็นมาตรฐานสากล ISO/IEC 18004 สแกนใช้งานได้จริง</li>
           <li><b>v1.2.1</b>: ปรับปรุง Activity 1 ให้ซ่อนทั้งชื่อเรื่องและเนื้อหาทั้งหมดไว้ 100% จนกว่าจะฟังเสียงอ่านครบทุกประโยคตั้งแต่ต้นจนจบ</li>

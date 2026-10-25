@@ -1,7 +1,8 @@
 /**
- * Speak Up! CEFR A1 — Main Application Controller (v1.4.0)
+ * Speak Up! CEFR A1 — Main Application Controller (v1.5.0)
  * Supports 12 Units, Pre-Activity Learning Goals & Vocabulary Table (Step 0) + 4 Activities/Unit,
  * Activity 1 Show/Hide Text Toggle, Multi-Speaker Male/Female Dialogue Voices,
+ * Non-Verbatim Communicative Question-Answer Relevance Evaluator for Part B & Part C: Challenge,
  * Unit Completion Score Summary Pop-up (Item Counts + Speaking % Average),
  * Full Bilingual TH/EN, ISO/IEC 18004 Group QR Sync, Email Reporting & Self-Diagnostics.
  */
@@ -1066,63 +1067,165 @@ window.SpeakUpApp = (function () {
   }
 
   // =========================================================================
-  // RENDER ACTIVITY 4: SPEAK UP! (PARTS A, B, C + 4-METRIC EVALUATOR)
+  // RENDER ACTIVITY 4: SPEAK UP! (PARTS A, B, C + COMMUNICATIVE RELEVANCE)
   // =========================================================================
-  function renderSpeakingItemCard({ itemKey, titleLabel, listenText, redDisplayHtml, targetSpeechText, keywords, mode, extraButtonsHtml }) {
+  function renderSpeakingItemCard({ itemKey, titleLabel, listenText, redDisplayHtml, targetSpeechText, keywords, mode, extraButtonsHtml, promptTitle }) {
     const unit = getCurrentUnit();
     const p = ensureUnitProgress(unit.id);
     const isRedUnlocked = !!p.redUnlocked[itemKey];
     const ev = p.act4Evals[itemKey];
     const hasAudio = window.VoiceEvaluator.hasRecording(itemKey);
+    const isCommunicativeMode = (mode === "open" || mode === "challenge");
+    const requireListenBeforeSpeak = (mode === "challenge" || mode === "open");
+    const canSpeakNow = !requireListenBeforeSpeak || isRedUnlocked;
+
+    const conceptSlots = (window.VoiceEvaluator.QUESTION_CONCEPT_MAP && window.VoiceEvaluator.QUESTION_CONCEPT_MAP[itemKey])
+      ? window.VoiceEvaluator.QUESTION_CONCEPT_MAP[itemKey]
+      : null;
+
+    let commBadgeHtml = "";
+    if (ev && ev.commStatus) {
+      if (ev.commStatus === "pass") {
+        commBadgeHtml = `<span class="px-3 py-1 rounded-xl bg-emerald-100 text-emerald-800 border border-emerald-300 font-extrabold text-xs">🟢 ${state.lang === "th" ? "สื่อสารได้สำเร็จ (ตรงประเด็นคำถาม)" : "Communicative Pass (On-Topic)"}</span>`;
+      } else if (ev.commStatus === "partial") {
+        commBadgeHtml = `<span class="px-3 py-1 rounded-xl bg-amber-100 text-amber-800 border border-amber-300 font-extrabold text-xs">🟡 ${state.lang === "th" ? "สื่อสารได้บางส่วน (เพิ่มรายละเอียดได้อีก)" : "Partially Relevant"}</span>`;
+      } else {
+        commBadgeHtml = `<span class="px-3 py-1 rounded-xl bg-rose-100 text-rose-800 border border-rose-300 font-extrabold text-xs">🔴 ${state.lang === "th" ? "ยังไม่ตรงกับที่โจทย์ถาม" : "Not Yet Matching Prompt"}</span>`;
+      }
+    }
+
+    const listenBtnLabel = mode === "challenge"
+      ? (state.lang === "th" ? "🔊 1. ฟังโจทย์และตัวอย่างคำตอบ" : "🔊 1. Listen to Prompt & Sample")
+      : mode === "open"
+        ? (state.lang === "th" ? "🔊 1. ฟังคำถามและตัวอย่าง" : "🔊 1. Listen to Question & Sample")
+        : t("listenBtn");
+
+    const recordBtnLabel = (mode === "challenge" || mode === "open")
+      ? (state.lang === "th" ? "🎙️ 2. อัดเสียงพูดตอบ" : "🎙️ 2. Record Your Answer")
+      : t("recordBtn");
 
     return `
       <div class="p-4 rounded-2xl bg-slate-50/90 border border-slate-200 space-y-3 shadow-sm">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div class="flex items-center gap-2 flex-wrap">
             <span class="px-2.5 py-1 rounded-lg bg-indigo-100 text-indigo-800 text-xs font-bold">${titleLabel}</span>
-            <button type="button" onclick="SpeakUpApp.listenAndUnlockRed('${itemKey}', ${JSON.stringify(listenText).replace(/"/g, '&quot;')})" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-sm">
-              ${t("listenBtn")}
+            <button type="button" onclick="SpeakUpApp.listenAndUnlockRed('${itemKey}', ${JSON.stringify(listenText).replace(/"/g, '&quot;')})" class="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-sm cursor-pointer">
+              ${listenBtnLabel}
             </button>
             ${extraButtonsHtml || ""}
           </div>
 
-          <div class="flex items-center gap-2">
-            <button type="button" id="rec-btn-${itemKey}" onclick="SpeakUpApp.recordItem('${itemKey}', ${JSON.stringify(targetSpeechText).replace(/"/g, '&quot;')}, ${JSON.stringify(keywords || []).replace(/"/g, '&quot;')}, '${mode}')" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-sm flex items-center gap-1">
-              ${t("recordBtn")}
+          <div class="flex items-center gap-2 flex-wrap">
+            <button type="button" id="rec-btn-${itemKey}" ${!canSpeakNow ? "disabled" : ""} onclick="SpeakUpApp.recordItem('${itemKey}', ${JSON.stringify(targetSpeechText).replace(/"/g, '&quot;')}, ${JSON.stringify(keywords || []).replace(/"/g, '&quot;')}, '${mode}')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm flex items-center gap-1 transition ${canSpeakNow ? "bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer" : "bg-slate-200 text-slate-400 cursor-not-allowed"}">
+              ${recordBtnLabel}
             </button>
-            <button type="button" onclick="SpeakUpApp.playMyRecording('${itemKey}', ${JSON.stringify(ev ? ev.transcript : targetSpeechText).replace(/"/g, '&quot;')})" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-bold ${hasAudio || ev ? "" : "opacity-60"}">
+            <button type="button" onclick="SpeakUpApp.playMyRecording('${itemKey}', ${JSON.stringify(ev ? ev.transcript : targetSpeechText).replace(/"/g, '&quot;')})" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-bold ${hasAudio || ev ? "cursor-pointer" : "opacity-60"}">
               ${t("playMyVoiceBtn")}
             </button>
           </div>
         </div>
 
-        <!-- Condition: Listen first before showing Red Text -->
-        <div class="p-3 rounded-xl bg-white border ${isRedUnlocked ? "border-rose-200" : "border-dashed border-slate-200"}">
+        <!-- Condition: Listen first before showing Red Text & unlocking Answer -->
+        <div class="p-3.5 rounded-xl bg-white border ${isRedUnlocked ? "border-rose-200" : "border-dashed border-slate-200"}">
           ${isRedUnlocked ? `
-            <div class="fade-in space-y-1">
+            <div class="fade-in space-y-2.5">
               ${redDisplayHtml}
+
+              ${isCommunicativeMode && conceptSlots ? `
+                <div class="p-3 rounded-xl bg-indigo-50/70 border border-indigo-100 space-y-2">
+                  <div class="flex flex-wrap items-center justify-between gap-1">
+                    <span class="text-xs font-extrabold text-indigo-950">
+                      🎯 ${state.lang === "th"
+                        ? "ประเด็นที่คำถามต้องการ (ไม่จำเป็นต้องพูดตามประโยคตัวอย่าง ใช้คำพูดของคุณเองได้เลย):"
+                        : "What the question asks for (Answer in your own words—no need to copy the sample):"}
+                    </span>
+                  </div>
+                  <div class="flex flex-wrap gap-1.5">
+                    ${conceptSlots.map(slot => `
+                      <span class="px-2.5 py-1 rounded-lg bg-white border border-indigo-200 text-[11px] font-bold text-indigo-800">
+                        • ${state.lang === "th" ? slot.labelTh : slot.labelEn}
+                      </span>
+                    `).join("")}
+                  </div>
+
+                  <!-- Custom Answer Input Box for testing or editing spoken response -->
+                  <div class="pt-2 border-t border-indigo-100/80 space-y-1.5">
+                    <label class="block text-[11px] font-bold text-slate-600">
+                      ✍️ ${state.lang === "th"
+                        ? "พูดผ่านไมโครโฟนด้านบน หรือพิมพ์/แก้ไขคำตอบภาษาอังกฤษของคุณเองเพื่อตรวจความสอดคล้องกับโจทย์:"
+                        : "Speak with the microphone above, or type/edit your own English answer below to check communicative relevance:"}
+                    </label>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                      <input
+                        type="text"
+                        id="custom-ans-${itemKey}"
+                        value="${ev ? String(ev.transcript).replace(/"/g, '&quot;') : ""}"
+                        placeholder="${state.lang === "th" ? "พิมพ์คำตอบของคุณเองเป็นภาษาอังกฤษ (ไม่จำเป็นต้องเหมือนตัวอย่าง)..." : "Type your own English answer here (does not need to match the sample)..."}"
+                        class="flex-1 px-3 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm font-medium focus:outline-none focus:border-indigo-500 bg-white"
+                      />
+                      <button
+                        type="button"
+                        onclick="SpeakUpApp.submitCustomAnswer('${itemKey}', ${JSON.stringify(targetSpeechText).replace(/"/g, '&quot;')}, ${JSON.stringify(keywords || []).replace(/"/g, '&quot;')}, '${mode}')"
+                        class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm transition cursor-pointer whitespace-nowrap"
+                      >
+                        ✅ ${state.lang === "th" ? "ตรวจความสอดคล้อง & ให้คะแนน" : "Check Relevance & Score"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ` : ""}
             </div>
           ` : `
-            <p class="text-xs font-semibold text-slate-400 italic">
-              🔒 ${state.lang === "th" ? "กดปุ่ม 🔊 ฟังเสียงด้านบนให้จบก่อน จึงจะแสดงประโยคข้อความสีแดง" : "Click 🔊 Listen above first to reveal the Red Text sentence"}
+            <p class="text-xs font-semibold text-slate-500 italic">
+              🔒 ${mode === "challenge"
+                ? (state.lang === "th" ? "ขั้นตอนที่ 1: กรุณากดปุ่ม '🔊 1. ฟังโจทย์และตัวอย่างคำตอบ' ด้านบนให้จบก่อน ระบบจึงจะเปิดโจทย์และปลดล็อกให้คุณพูดตอบ" : "Step 1: Click '🔊 1. Listen to Prompt & Sample' above first to reveal the prompt and unlock answering")
+                : mode === "open"
+                  ? (state.lang === "th" ? "ขั้นตอนที่ 1: กรุณากดปุ่ม '🔊 1. ฟังคำถามและตัวอย่าง' ด้านบนให้จบก่อน จึงจะแสดงคำถามและเปิดให้คุณพูดตอบ" : "Step 1: Click '🔊 1. Listen to Question & Sample' above first to unlock answering")
+                  : (state.lang === "th" ? "กดปุ่ม 🔊 ฟังเสียงด้านบนให้จบก่อน จึงจะแสดงประโยคข้อความสีแดง" : "Click 🔊 Listen above first to reveal the Red Text sentence")}
             </p>
           `}
         </div>
 
-        <!-- 4-Standard Speech Evaluation Result (% from 100%) -->
+        <!-- 4-Standard Speech + Communicative Relevance Evaluation Result (% from 100%) -->
         ${ev ? `
           <div class="p-3.5 rounded-2xl bg-white border-2 border-indigo-100 space-y-3 fade-in">
             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
               <div>
                 <span class="text-xs font-bold text-indigo-900">${t("evalHeader")}</span>
-                <p class="text-xs text-slate-500">Transcript: <i class="text-slate-700 font-medium">"${ev.transcript}"</i></p>
+                <p class="text-xs text-slate-600 mt-0.5">
+                  ${state.lang === "th" ? "คำตอบของคุณ (Your Answer):" : "Your Answer:"}
+                  <i class="text-indigo-950 font-bold">"${ev.transcript}"</i>
+                </p>
               </div>
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
+                ${commBadgeHtml}
                 <span class="px-3 py-1 rounded-xl bg-indigo-600 text-white font-extrabold text-sm shadow-sm">
                   Total: ${ev.overall}%
                 </span>
               </div>
             </div>
+
+            ${ev.conceptChecks && ev.conceptChecks.length ? `
+              <div class="p-3 rounded-xl ${ev.commStatus === "pass" ? "bg-emerald-50/80 border border-emerald-200" : ev.commStatus === "partial" ? "bg-amber-50/80 border border-amber-200" : "bg-rose-50/80 border border-rose-200"} space-y-2">
+                <p class="text-xs font-extrabold ${ev.commStatus === "pass" ? "text-emerald-950" : ev.commStatus === "partial" ? "text-amber-950" : "text-rose-950"}">
+                  🗣️ ${state.lang === "th" ? "การตรวจสอบความสอดคล้องกับคำถาม (Communicative Concept Check):" : "Communicative Concept Check (Question-Answer Alignment):"}
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                  ${ev.conceptChecks.map(chk => `
+                    <div class="px-2.5 py-1.5 rounded-lg bg-white/90 border ${chk.matched ? "border-emerald-300 text-emerald-900" : "border-slate-200 text-slate-500"} text-xs flex items-center justify-between gap-2">
+                      <span class="font-semibold">
+                        ${chk.matched ? "✅" : "⚪"} ${state.lang === "th" ? chk.labelTh : chk.labelEn}
+                      </span>
+                      ${chk.matched && chk.matchedWord ? `
+                        <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[11px]">"${chk.matchedWord}"</span>
+                      ` : `
+                        <span class="text-[11px] italic text-slate-400">${state.lang === "th" ? "ยังไม่พบในคำตอบ" : "missing"}</span>
+                      `}
+                    </div>
+                  `).join("")}
+                </div>
+              </div>
+            ` : ""}
 
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5 text-xs">
               <div class="p-2.5 rounded-xl bg-indigo-50/60 border border-indigo-100">
@@ -1137,7 +1240,7 @@ window.SpeakUpApp = (function () {
 
               <div class="p-2.5 rounded-xl bg-emerald-50/60 border border-emerald-100">
                 <div class="flex justify-between font-bold text-emerald-900 mb-1">
-                  <span>${t("metricComplete")}</span>
+                  <span>${isCommunicativeMode ? (state.lang === "th" ? "2. ความตรงประเด็นคำถาม" : "2. Question Relevance") : t("metricComplete")}</span>
                   <span>${ev.completeness}%</span>
                 </div>
                 <div class="w-full h-2 bg-white rounded-full overflow-hidden">
@@ -1167,7 +1270,7 @@ window.SpeakUpApp = (function () {
             </div>
 
             <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-950">
-              💡 <b>${state.lang === "th" ? "คำแนะนำ:" : "Recommendation:"}</b> ${state.lang === "th" ? ev.feedbackTh : ev.feedbackEn}
+              💡 <b>${state.lang === "th" ? "ผลการวิเคราะห์การสื่อสาร:" : "Communicative Feedback:"}</b> ${state.lang === "th" ? ev.feedbackTh : ev.feedbackEn}
             </div>
           </div>
         ` : ""}
@@ -1208,18 +1311,30 @@ window.SpeakUpApp = (function () {
         <div class="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-200 space-y-1">
           <p class="text-xs sm:text-sm font-bold text-indigo-900">${t("partBTitle")}</p>
           <p class="text-xs red-voice-text font-semibold">${a4.partB.instruction}</p>
+          <p class="text-xs text-indigo-700 font-medium">
+            ✨ ${state.lang === "th"
+              ? "กดฟังคำถามและตัวอย่างก่อน แล้วพูดตอบด้วยข้อมูลจริงของคุณเอง (ไม่จำเป็นต้องพูดซ้ำประโยคตัวอย่าง ระบบจะตรวจว่าคำตอบตรงกับที่คำถามต้องการหรือไม่)"
+              : "Listen to the question & sample first, then answer with your own real information (no need to repeat the sample verbatim)."}
+          </p>
         </div>
         <div class="space-y-3">
           ${a4.partB.items.map((item, idx) => {
             const itemKey = `u${unit.id}_partB_${idx}`;
             const seqBtn = `
-              <button type="button" onclick="SpeakUpApp.playPartBSequence('${itemKey}', ${JSON.stringify(item.question).replace(/"/g, '&quot;')}, ${JSON.stringify(item.sample).replace(/"/g, '&quot;')})" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-sm">
+              <button type="button" onclick="SpeakUpApp.playPartBSequence('${itemKey}', ${JSON.stringify(item.question).replace(/"/g, '&quot;')}, ${JSON.stringify(item.sample).replace(/"/g, '&quot;')})" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-sm cursor-pointer">
                 ${t("partBAutoBtn")}
               </button>
             `;
             const redHtml = `
-              <p class="text-sm font-extrabold red-voice-text">Q${idx + 1}: ${item.question}</p>
-              <p class="text-xs sm:text-sm font-semibold red-voice-text">Example Answer: "${item.sample}"</p>
+              <div class="space-y-1.5">
+                <p class="text-sm sm:text-base font-extrabold red-voice-text">❓ ${state.lang === "th" ? "คำถาม (Question)" : "Question"} Q${idx + 1}: ${item.question}</p>
+                <div class="p-2.5 rounded-xl bg-rose-50/70 border border-rose-100">
+                  <p class="text-xs sm:text-sm font-semibold red-voice-text">💡 ${state.lang === "th" ? "ตัวอย่างแนวทางการตอบ (Sample Answer):" : "Sample Answer:"} "${item.sample}"</p>
+                  <p class="text-[11px] text-slate-600 mt-0.5">
+                    * ${state.lang === "th" ? "คุณไม่จำเป็นต้องพูดตามประโยคตัวอย่างนี้ สามารถใช้คำศัพท์หรือข้อมูลของคุณเองที่ตอบคำถามข้างต้นได้เลย" : "You do not need to repeat this sample verbatim—use your own words that answer the question."}
+                  </p>
+                </div>
+              </div>
             `;
             return renderSpeakingItemCard({
               itemKey,
@@ -1237,11 +1352,22 @@ window.SpeakUpApp = (function () {
     } else {
       partContentHtml = `
         <div class="p-4 rounded-2xl bg-rose-50/70 border border-rose-200 space-y-2">
-          <p class="text-xs sm:text-sm font-bold text-rose-800">${a4.partC.title}</p>
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <p class="text-xs sm:text-sm font-extrabold text-rose-800">🏆 ${a4.partC.title}</p>
+            <span class="px-2.5 py-1 rounded-full bg-rose-600 text-white text-[11px] font-bold">
+              ${state.lang === "th" ? "ประเมินการสื่อสารตามโจทย์ (Communicative Evaluation)" : "Communicative Relevance Evaluation"}
+            </span>
+          </div>
           <p class="text-xs sm:text-sm font-bold red-voice-text">${a4.partC.instruction}</p>
+          <p class="text-xs text-slate-700 font-medium bg-white/80 p-2.5 rounded-xl border border-rose-100">
+            📌 <b>${state.lang === "th" ? "กติกา Part C: Challenge:" : "How Part C: Challenge Works:"}</b>
+            ${state.lang === "th"
+              ? "1) กดปุ่ม <b>'🔊 1. ฟังโจทย์และตัวอย่างคำตอบ'</b> ให้จบก่อน • 2) ตอบด้วยประโยคของคุณเองตามที่โจทย์ถาม (<b>ไม่จำเป็นต้องพูดตามประโยคตัวอย่าง</b> แต่ต้องอยู่ในประเด็นคำตอบที่คำถามต้องการ) • 3) ระบบจะวิเคราะห์ว่าคุณสามารถสื่อสารได้ตรงตามโจทย์หรือไม่ พร้อมคำนวณคะแนน %"
+              : "1) Click <b>'🔊 1. Listen to Prompt & Sample'</b> first • 2) Answer in your own words addressing the prompt (<b>no need to copy the sample verbatim</b>) • 3) The system evaluates whether your response communicates what the question asks for."}
+          </p>
           ${a4.partC.prompts && a4.partC.prompts.length ? `
             <div class="p-3 rounded-xl bg-white/90 border border-rose-100 text-xs space-y-1">
-              <span class="font-bold text-slate-700">${state.lang === "th" ? "โครงสร้างประโยคช่วยพูด (Sentence Starters / Clues):" : "Sentence Starters / Prompts:"}</span>
+              <span class="font-bold text-slate-700">${state.lang === "th" ? "โครงสร้างประโยคช่วยพูด (Sentence Starters / Clues — เลือกปรับใช้ตามข้อมูลของคุณเอง):" : "Sentence Starters / Prompts (Adapt freely with your own details):"}</span>
               <ul class="list-disc list-inside text-slate-600 font-medium">
                 ${a4.partC.prompts.map(pr => `<li>${pr}</li>`).join("")}
               </ul>
@@ -1252,17 +1378,25 @@ window.SpeakUpApp = (function () {
           ${a4.partC.items.map((item, idx) => {
             const itemKey = `u${unit.id}_partC_${idx}`;
             const redHtml = `
-              <p class="text-xs sm:text-sm font-bold red-voice-text">${item.situation}</p>
-              <p class="text-xs sm:text-sm font-semibold red-voice-text mt-1">Example: "${item.sample}"</p>
+              <div class="space-y-2">
+                <div class="p-2.5 rounded-xl bg-rose-50 border border-rose-200">
+                  <span class="text-[11px] font-extrabold uppercase text-rose-700 block">🎯 ${state.lang === "th" ? "โจทย์ที่ต้องสื่อสาร (Challenge Prompt):" : "Challenge Prompt:"}</span>
+                  <p class="text-sm sm:text-base font-extrabold red-voice-text mt-0.5">${item.situation}</p>
+                </div>
+                <div class="p-2.5 rounded-xl bg-amber-50/70 border border-amber-200">
+                  <span class="text-[11px] font-extrabold uppercase text-amber-800 block">💡 ${state.lang === "th" ? "ตัวอย่างคำตอบ (Sample Answer — ใช้เป็นแนวทาง ไม่จำเป็นต้องพูดตามนี้):" : "Sample Answer (For reference only—answer in your own words):"}</span>
+                  <p class="text-xs sm:text-sm font-semibold red-voice-text mt-0.5">"${item.sample}"</p>
+                </div>
+              </div>
             `;
             return renderSpeakingItemCard({
               itemKey,
-              titleLabel: `Part C • #${idx + 1}`,
-              listenText: `${item.situation} ... Example: ${item.sample}`,
+              titleLabel: `Part C • Challenge #${idx + 1}`,
+              listenText: `Challenge prompt: ${a4.partC.instruction}. ${item.situation}. For example: ${item.sample}. Now it is your turn to answer in your own words.`,
               redDisplayHtml: redHtml,
               targetSpeechText: item.sample,
               keywords: item.keywords,
-              mode: "open"
+              mode: "challenge"
             });
           }).join("")}
         </div>
@@ -1887,6 +2021,10 @@ window.SpeakUpApp = (function () {
     recordItem(itemKey, targetText, keywords, mode) {
       const unit = getCurrentUnit();
       const p = ensureUnitProgress(unit.id);
+      if ((mode === "challenge" || mode === "open") && !p.redUnlocked[itemKey]) {
+        safeSound("playWrong");
+        return;
+      }
       p.redUnlocked[itemKey] = true;
 
       const btn = document.getElementById(`rec-btn-${itemKey}`);
@@ -1913,6 +2051,36 @@ window.SpeakUpApp = (function () {
           checkAndTriggerUnitCompletePopup(unit.id);
         }
       );
+    },
+
+    submitCustomAnswer(itemKey, targetText, keywords, mode) {
+      const unit = getCurrentUnit();
+      const p = ensureUnitProgress(unit.id);
+      const inputEl = document.getElementById(`custom-ans-${itemKey}`);
+      const customText = inputEl && inputEl.value.trim() ? inputEl.value.trim() : targetText;
+      p.redUnlocked[itemKey] = true;
+
+      const evalResult = window.VoiceEvaluator.evaluateCustomTranscript(
+        itemKey,
+        targetText,
+        keywords,
+        mode,
+        customText
+      );
+
+      if (evalResult.commStatus === "pass") {
+        safeSound("playCorrect");
+      } else if (evalResult.commStatus === "partial") {
+        safeSound("playUnlock");
+      } else {
+        safeSound("playWrong");
+      }
+
+      p.act4Evals[itemKey] = evalResult;
+      recalculateAct4Score(unit.id);
+      saveState();
+      renderActivity4();
+      checkAndTriggerUnitCompletePopup(unit.id);
     },
 
     playMyRecording(itemKey, fallbackText) {
