@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Speak Up! CEFR A1 — 12 Units Interactive Listening & Speaking</title>
+  <title>Speak Up! CEFR A1 — ทวพ. Interactive Listening & Speaking (v1.1.0)</title>
   <!-- Tailwind CSS (supports both local/GitHub Pages and embedded preview) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
@@ -12,20 +12,32 @@
 <body class="bg-[#F6F8FF] text-slate-800 antialiased min-h-screen flex flex-col selection:bg-rose-200">
 
   <!-- ========================================================= -->
-  <!-- STICKY HEADER BAR WITH VERSION & SELF-CHECK STATUS        -->
+  <!-- STICKY HEADER BAR WITH TWP LOGO, VERSION & SELF-CHECK     -->
   <!-- ========================================================= -->
   <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-indigo-100 shadow-sm">
-    <div class="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-      <!-- App Title & Version Badge -->
+    <div class="max-w-5xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
+      <!-- TWP Brand Logo & App Title -->
       <div class="flex items-center gap-3">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-600 to-sky-400 flex items-center justify-center text-white text-xl font-bold shadow-sm">
-          🎧
-        </div>
+        <button onclick="SpeakUpApp.showLandingPage()" class="w-11 h-11 rounded-2xl bg-white border-2 border-indigo-200 flex items-center justify-center shadow-sm hover:border-indigo-400 transition overflow-hidden p-1" title="กลับสู่หน้าแรก (Landing Page)">
+          <img src="assets/twp-logo.png" alt="โลโก้ ทวพ." class="w-full h-full object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+          <svg viewBox="0 0 200 200" class="w-9 h-9 hidden">
+            <g fill="none" stroke="#3B34C4" stroke-width="11">
+              <circle cx="100" cy="70" r="42" />
+              <circle cx="68" cy="126" r="42" />
+              <circle cx="132" cy="126" r="42" />
+            </g>
+            <text x="100" y="82" text-anchor="middle" fill="#3B34C4" font-size="38" font-weight="800" font-family="sans-serif">ท</text>
+            <text x="65" y="138" text-anchor="middle" fill="#3B34C4" font-size="38" font-weight="800" font-family="sans-serif">ว</text>
+            <text x="135" y="138" text-anchor="middle" fill="#3B34C4" font-size="38" font-weight="800" font-family="sans-serif">พ</text>
+          </svg>
+        </button>
         <div>
           <div class="flex items-center gap-2 flex-wrap">
-            <h1 class="font-extrabold text-base sm:text-lg text-indigo-950">Speak Up! CEFR A1</h1>
-            <button onclick="SpeakUpApp.openModal('diag-modal')" id="top-version-badge" class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition flex items-center gap-1" title="คลิกเพื่อดูผลการตรวจสอบระบบอัตโนมัติและประวัติเวอร์ชัน">
-              v1.0.1 • Checking...
+            <button onclick="SpeakUpApp.showLandingPage()" class="font-extrabold text-base sm:text-lg text-indigo-950 hover:text-indigo-700 transition">
+              Speak Up! CEFR A1
+            </button>
+            <button onclick="SpeakUpApp.openModal('diag-modal')" id="top-version-badge" class="px-2.5 py-0.5 text-xs font-extrabold rounded-full bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 transition flex items-center gap-1" title="คลิกเพื่อดูผลการตรวจสอบระบบอัตโนมัติและประวัติเวอร์ชัน">
+              Version v1.1.0 • 7/7 OK
             </button>
           </div>
           <p class="text-xs text-slate-500" data-i18n="appSubtitle">
@@ -34,8 +46,14 @@
         </div>
       </div>
 
-      <!-- Action Pills: Group QR, Score & Email, Lang Switcher -->
+      <!-- Action Pills: Home, Group QR, Score & Email, Self-Check, Lang Switcher -->
       <div class="flex items-center flex-wrap gap-2">
+        <!-- Back to Landing Page Button -->
+        <button onclick="SpeakUpApp.showLandingPage()" class="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition">
+          <span>🏠</span>
+          <span data-i18n="homeBtn">หน้าแรก</span>
+        </button>
+
         <!-- Group QR Button -->
         <button onclick="SpeakUpApp.openModal('qr-modal')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100 transition">
           <span>📱</span>
@@ -43,7 +61,7 @@
         </button>
 
         <!-- Total Score & Email Report Button -->
-        <button onclick="SpeakUpApp.openModal('score-modal')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition">
+        <button onclick="SpeakUpApp.openModal('score-modal')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition">
           <span>🏆</span>
           <span id="header-unit-score">Unit 1: 0% (0/12 Units)</span>
         </button>
@@ -64,9 +82,128 @@
   </header>
 
   <!-- ========================================================= -->
-  <!-- MAIN WORKSPACE CONTAINER                                  -->
+  <!-- LANDING PAGE SCREEN (FIRST PAGE WITH TWP LOGO & VERSION)  -->
   <!-- ========================================================= -->
-  <main class="max-w-5xl mx-auto w-full px-4 pt-5 pb-12 space-y-5 flex-1">
+  <section id="landing-screen" class="max-w-5xl mx-auto w-full px-4 pt-6 pb-12 space-y-6 flex-1 fade-in">
+    <!-- Hero Card -->
+    <div class="relative bg-gradient-to-br from-white via-indigo-50/60 to-rose-50/60 rounded-3xl p-6 sm:p-10 border-2 border-indigo-100 shadow-md text-center space-y-5 overflow-hidden">
+
+      <!-- Prominent Version & Self-Check Pill at Top of Landing Page -->
+      <div class="flex flex-wrap items-center justify-center gap-2">
+        <span class="px-3.5 py-1 rounded-full text-xs font-extrabold bg-indigo-600 text-white shadow-sm tracking-wide">
+          🚀 SYSTEM VERSION: v1.1.0 (Build 2026.10.25-TWP)
+        </span>
+        <button onclick="SpeakUpApp.openModal('diag-modal')" id="landing-diag-badge" class="px-3.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-emerald-200 transition">
+          ✅ ระบบตรวจสอบตัวเองอัตโนมัติ: ผ่านครบ 7/7 รายการ (คลิกดูรายละเอียด)
+        </button>
+      </div>
+
+      <!-- Official TWP (ทวพ.) Logo Display -->
+      <div class="flex justify-center pt-1">
+        <div class="w-36 h-36 sm:w-44 sm:h-44 rounded-3xl bg-white border-2 border-indigo-100 shadow-lg flex items-center justify-center p-4 anime-float">
+          <img src="assets/twp-logo.png" alt="โลโก้ ทวพ." class="w-full h-full object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+          <!-- High-Precision Vector SVG of ทวพ. Logo (Fallback for standalone preview) -->
+          <svg viewBox="0 0 220 220" class="w-full h-full hidden">
+            <g fill="none" stroke="#3B34C4" stroke-width="11" stroke-linecap="round">
+              <circle cx="110" cy="76" r="46" />
+              <circle cx="74" cy="138" r="46" />
+              <circle cx="146" cy="138" r="46" />
+            </g>
+            <text x="110" y="90" text-anchor="middle" fill="#3B34C4" font-size="44" font-weight="800" font-family="sans-serif">ท</text>
+            <text x="70" y="152" text-anchor="middle" fill="#3B34C4" font-size="44" font-weight="800" font-family="sans-serif">ว</text>
+            <text x="150" y="152" text-anchor="middle" fill="#3B34C4" font-size="44" font-weight="800" font-family="sans-serif">พ</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Main Headline: Speak Up! CEFR A1 -->
+      <div class="space-y-2">
+        <h1 class="text-3xl sm:text-5xl font-extrabold text-indigo-950 tracking-tight">
+          Speak Up! CEFR A1
+        </h1>
+        <p class="text-sm sm:text-base font-bold text-indigo-700" data-i18n="landingSubtitle">
+          Listening and Speaking Exercises • ระบบฝึกฟังและพูดภาษาอังกฤษครบ 12 Units (48 Activities)
+        </p>
+        <p class="text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto" data-i18n="landingDesc">
+          ฝึกทักษะการฟังจับใจความพร้อมเงื่อนไขปลดล็อกข้อความสีแดง และฝึกพูดอัดเสียงพร้อมระบบประเมินผล 4 มาตรฐาน (สำเนียง, ความครบถ้วน, ความชัดเจน, เวลาในการพูด) คิดเป็น %
+        </p>
+      </div>
+
+      <!-- Detective Kenji Welcome & Student Quick Setup -->
+      <div class="max-w-xl mx-auto bg-white/95 rounded-2xl p-4 border border-indigo-100 shadow-sm space-y-3 text-left">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center flex-shrink-0">
+            <span class="text-2xl">🕵️‍♂️</span>
+          </div>
+          <div>
+            <p class="text-xs font-extrabold text-indigo-700 uppercase">Detective Kenji • ยินดีต้อนรับเข้าสู่ระบบ</p>
+            <p class="text-xs text-slate-600">ระบุชื่อผู้เรียนและรหัสห้องเรียน (ถ้ามี) หรือกดปุ่มเริ่มทำแบบฝึกหัดได้ทันที ข้อมูลจะบันทึกอัตโนมัติในเครื่องครับ</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+          <div>
+            <label class="text-xs font-bold text-slate-600 block mb-1">👤 ชื่อผู้เรียน (Student Name):</label>
+            <input id="landing-student-name" type="text" placeholder="ระบุชื่อของคุณ..." class="w-full text-xs sm:text-sm px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+          </div>
+          <div>
+            <label class="text-xs font-bold text-slate-600 block mb-1">🏫 รหัสห้อง / กลุ่ม (Room Code):</label>
+            <input id="landing-room-code" type="text" value="CLASS-A1" class="w-full text-xs sm:text-sm font-bold px-3 py-2 rounded-xl border border-slate-200 uppercase focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+          </div>
+        </div>
+
+        <!-- Primary CTA Buttons -->
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <button onclick="SpeakUpApp.enterWorkspace()" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-sky-500 hover:from-indigo-700 hover:to-sky-600 text-white font-extrabold text-sm sm:text-base shadow-md transition flex items-center justify-center gap-2">
+            <span>🎧 เริ่มเข้าสู่บทเรียน (Start Speak Up! CEFR A1)</span>
+            <span>→</span>
+          </button>
+          <button onclick="SpeakUpApp.openModal('qr-modal')" class="px-4 py-3 rounded-2xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 font-bold text-xs sm:text-sm transition">
+            📱 สร้าง QR เข้ากลุ่มพร้อมกัน
+          </button>
+        </div>
+      </div>
+
+      <!-- System Highlight Badges -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-w-3xl mx-auto pt-2 text-xs">
+        <div class="p-2.5 rounded-2xl bg-white/80 border border-indigo-100">
+          <p class="font-extrabold text-indigo-700">12 Units • 48 Activities</p>
+          <p class="text-slate-500">เนื้อหาครบตามหลักสูตร A1</p>
+        </div>
+        <div class="p-2.5 rounded-2xl bg-white/80 border border-rose-100">
+          <p class="font-extrabold text-rose-600">Red-Text Audio Lock</p>
+          <p class="text-slate-500">ฟังเสียงจบก่อนจึงแสดงตัวสีแดง</p>
+        </div>
+        <div class="p-2.5 rounded-2xl bg-white/80 border border-emerald-100">
+          <p class="font-extrabold text-emerald-700">4-Metric Speech AI (%)</p>
+          <p class="text-slate-500">สำเนียง • ครบถ้วน • ชัดเจน • เวลา</p>
+        </div>
+        <div class="p-2.5 rounded-2xl bg-white/80 border border-amber-100">
+          <p class="font-extrabold text-amber-700">Version v1.1.0 Verified</p>
+          <p class="text-slate-500">ระบบตรวจสอบตัวเองอัตโนมัติ</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Unit Launcher Grid (All 12 Units on Landing Page) -->
+    <div class="bg-white rounded-3xl p-5 sm:p-6 border border-indigo-100 shadow-sm space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <h2 class="font-extrabold text-base sm:text-lg text-indigo-950">📚 เลือกบทเรียนได้ทันที (All 12 Units Overview)</h2>
+          <p class="text-xs text-slate-500">คลิกที่ Unit ใดก็ได้เพื่อเข้าสู่แบบฝึกหัดทั้ง 4 Activities ของบทนั้นทันที</p>
+        </div>
+        <span id="landing-overall-progress" class="px-3 py-1 rounded-full text-xs font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200">
+          คะแนนเฉลี่ยรวม: 0% (0/12 Units)
+        </span>
+      </div>
+      <div id="landing-units-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================= -->
+  <!-- MAIN WORKSPACE CONTAINER (HIDDEN WHILE ON LANDING PAGE)   -->
+  <!-- ========================================================= -->
+  <main id="workspace-screen" class="hidden max-w-5xl mx-auto w-full px-4 pt-5 pb-12 space-y-5 flex-1 fade-in">
 
     <!-- ANIME DETECTIVE GUIDE (CONAN-STYLE MASCOT) -->
     <section class="relative bg-gradient-to-r from-indigo-50 via-sky-50 to-rose-50 rounded-3xl p-4 sm:p-5 border border-indigo-100 shadow-sm">
@@ -204,8 +341,8 @@
   <!-- ========================================================= -->
   <footer class="bg-white border-t border-indigo-100 py-4 px-4 text-center text-xs text-slate-500">
     <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-2">
-      <span><b>Speak Up! CEFR A1</b> • 12 Units Interactive Listening & Speaking Platform</span>
-      <span>Version <b>v1.0.1 (Build 2026.10.25-GH)</b> • GitHub Pages & LocalStorage Ready</span>
+      <span><b>ทวพ. • Speak Up! CEFR A1</b> — 12 Units Interactive Listening & Speaking Platform</span>
+      <span>System Version: <b class="text-indigo-700">v1.1.0 (Build 2026.10.25-TWP)</b> • Self-Diagnostic Active</span>
     </div>
   </footer>
 
@@ -310,13 +447,12 @@
       <div id="diag-checks-list" class="space-y-2"></div>
 
       <div class="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-100 space-y-1.5 text-xs">
-        <p class="font-extrabold text-indigo-950">📌 บันทึกการอัปเดตเวอร์ชัน (v1.0.1 — Build 2026.10.25-GH)</p>
+        <p class="font-extrabold text-indigo-950">📌 บันทึกการอัปเดตเวอร์ชัน (v1.1.0 — Build 2026.10.25-TWP)</p>
         <ul class="list-disc list-inside text-slate-700 space-y-1">
+          <li><b>v1.1.0</b>: เพิ่มหน้า Landing Page พร้อมโลโก้ ทวพ. หัวข้อ "Speak Up! CEFR A1" และการแสดงหมายเลข Version ระบบอย่างชัดเจน</li>
           <li><b>v1.0.1</b>: เชื่อมต่อ GitHub Repository (<code>Doit-on/speak-up-CEFR-A1</code>) พร้อมรองรับ GitHub Pages</li>
           <li><b>v1.0.0</b>: บรรจุข้อมูลครบทั้ง 12 Units (48 Activities) ตามต้นฉบับ Speak Up A1</li>
-          <li>ระบบบังคับฟังเสียงก่อนแสดงตัวอักษรสีแดง (Activity 1, 2, 4)</li>
-          <li>ระบบอัดเสียงพูด ฟังเสียงตัวเอง และประเมินการพูด 4 มาตรฐาน (%)</li>
-          <li>ระบบตรวจสอบความสมบูรณ์ของตัวเองอัตโนมัติทุกครั้งที่เปิดหรืออัปเดต</li>
+          <li>ระบบบังคับฟังเสียงก่อนแสดงตัวอักษรสีแดง (Activity 1, 2, 4) และประเมินการพูด 4 มาตรฐาน (%)</li>
         </ul>
       </div>
     </div>

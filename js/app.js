@@ -9,6 +9,7 @@ window.SpeakUpApp = (function () {
 
   let state = {
     lang: "th",
+    view: "landing", // 'landing' | 'workspace'
     unitId: 1,
     activityId: 1,
     act3Step: 0,
@@ -22,6 +23,9 @@ window.SpeakUpApp = (function () {
 
   const I18N = {
     th: {
+      homeBtn: "หน้าแรก",
+      landingSubtitle: "Listening and Speaking Exercises • ระบบฝึกฟังและพูดภาษาอังกฤษครบ 12 Units (48 Activities)",
+      landingDesc: "ฝึกทักษะการฟังจับใจความพร้อมเงื่อนไขปลดล็อกข้อความสีแดง และฝึกพูดอัดเสียงพร้อมระบบประเมินผล 4 มาตรฐาน (สำเนียง, ความครบถ้วน, ความชัดเจน, เวลาในการพูด) คิดเป็น %",
       appSubtitle: "ระบบฝึกฟัง-พูดภาษาอังกฤษ 12 Units • สไตล์มินิมอลอนิเมะ (LocalStorage Edition)",
       storageStatus: "บันทึกอัตโนมัติ (LocalStorage)",
       groupBtn: "เข้ากลุ่ม (QR)",
@@ -67,6 +71,9 @@ window.SpeakUpApp = (function () {
       recPrompt: "กดปุ่มไมโครโฟนเพื่อเริ่มพูด ระบบจะประเมินคะแนนทั้ง 4 ด้านพร้อมคำแนะนำทันที"
     },
     en: {
+      homeBtn: "Home",
+      landingSubtitle: "Listening and Speaking Exercises • Complete 12-Unit Interactive Platform (48 Activities)",
+      landingDesc: "Practice listening comprehension with Red-Text unlock conditions and record your voice with 4-metric AI evaluation (Accent, Completeness, Clarity, Speaking Time in %).",
       appSubtitle: "12-Unit Interactive English Listening & Speaking Platform (LocalStorage Edition)",
       storageStatus: "Auto-Saved (LocalStorage)",
       groupBtn: "Group QR",
@@ -147,7 +154,10 @@ window.SpeakUpApp = (function () {
     const params = new URLSearchParams(window.location.search);
     if (params.get("unit")) {
       const u = parseInt(params.get("unit"), 10);
-      if (u >= 1 && u <= 12) state.unitId = u;
+      if (u >= 1 && u <= 12) {
+        state.unitId = u;
+        state.view = "workspace";
+      }
     }
     if (params.get("room")) {
       state.roomCode = params.get("room").toUpperCase();
@@ -254,8 +264,59 @@ window.SpeakUpApp = (function () {
   }
 
   // =========================================================================
-  // RENDER UNIT HEADER & VOCABULARY
+  // RENDER LANDING PAGE & UNIT HEADER
   // =========================================================================
+  function renderLandingPage() {
+    const landingScreen = document.getElementById("landing-screen");
+    const workspaceScreen = document.getElementById("workspace-screen");
+    if (landingScreen && workspaceScreen) {
+      landingScreen.classList.toggle("hidden", state.view !== "landing");
+      workspaceScreen.classList.toggle("hidden", state.view === "landing");
+    }
+
+    const nameEl = document.getElementById("landing-student-name");
+    if (nameEl && document.activeElement !== nameEl) {
+      nameEl.value = state.studentName || "";
+    }
+    const roomEl = document.getElementById("landing-room-code");
+    if (roomEl && document.activeElement !== roomEl) {
+      roomEl.value = state.roomCode || "CLASS-A1";
+    }
+
+    const summary = getAllUnitsSummary();
+    const overallBadge = document.getElementById("landing-overall-progress");
+    if (overallBadge) {
+      overallBadge.textContent = state.lang === "th"
+        ? `คะแนนเฉลี่ยรวม: ${summary.averageScore}% (${summary.completedUnits}/12 Units)`
+        : `Overall Average: ${summary.averageScore}% (${summary.completedUnits}/12 Units)`;
+    }
+
+    const grid = document.getElementById("landing-units-grid");
+    if (grid) {
+      grid.innerHTML = window.SPEAKUP_UNITS.map(u => {
+        const uScore = getUnitTotalScore(u.id);
+        const p = ensureUnitProgress(u.id);
+        return `
+          <button onclick="SpeakUpApp.enterWorkspace(${u.id})" class="p-4 rounded-2xl border border-slate-200 bg-slate-50/60 hover:bg-indigo-50/70 hover:border-indigo-300 text-left transition shadow-sm group flex flex-col justify-between gap-2">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-1">
+                <span class="text-xs font-extrabold text-indigo-600 uppercase">UNIT ${u.id}</span>
+                <span class="px-2 py-0.5 rounded-full text-xs font-bold ${uScore >= 80 ? "bg-emerald-100 text-emerald-800" : uScore > 0 ? "bg-amber-100 text-amber-800" : "bg-white text-slate-500 border border-slate-200"}">
+                  ${uScore}%
+                </span>
+              </div>
+              <p class="font-bold text-sm text-slate-900 group-hover:text-indigo-950">${u.themeIcon} ${u.title.replace(/^Unit \d+:\s*/, "")}</p>
+              <p class="text-xs text-slate-500 mt-0.5">${u.titleTh}</p>
+            </div>
+            <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden mt-1">
+              <div class="bg-indigo-600 h-full rounded-full" style="width: ${uScore}%"></div>
+            </div>
+          </button>
+        `;
+      }).join("");
+    }
+  }
+
   function renderUnitSelectorAndVocab() {
     const select = document.getElementById("unit-select");
     if (select) {
@@ -857,7 +918,13 @@ window.SpeakUpApp = (function () {
     const report = window.SelfDiagnostics.runSuite();
     const verBadge = document.getElementById("top-version-badge");
     if (verBadge) {
-      verBadge.innerHTML = `v${report.version} • ${report.passedCount}/${report.totalCount} OK`;
+      verBadge.innerHTML = `Version v${report.version} • ${report.passedCount}/${report.totalCount} OK`;
+    }
+    const landingDiag = document.getElementById("landing-diag-badge");
+    if (landingDiag) {
+      landingDiag.innerHTML = state.lang === "th"
+        ? `✅ ระบบตรวจสอบตัวเองอัตโนมัติ (v${report.version}): ผ่านครบ ${report.passedCount}/${report.totalCount} รายการ`
+        : `✅ Self-Diagnostic Suite (v${report.version}): ${report.passedCount}/${report.totalCount} Checks Passed`;
     }
 
     const listEl = document.getElementById("diag-checks-list");
@@ -888,6 +955,7 @@ window.SpeakUpApp = (function () {
       el.textContent = t(key);
     });
 
+    renderLandingPage();
     renderUnitSelectorAndVocab();
     updateGuideMessage();
     updateScoreBadges();
@@ -895,6 +963,7 @@ window.SpeakUpApp = (function () {
     renderActivity2();
     renderActivity3();
     renderActivity4();
+    renderDiagnosticsModal();
   }
 
   // =========================================================================
@@ -904,7 +973,27 @@ window.SpeakUpApp = (function () {
     init() {
       loadState();
       renderAll();
-      renderDiagnosticsModal();
+    },
+
+    showLandingPage() {
+      SoundFX.playClick();
+      SpeechEngine.stop();
+      state.view = "landing";
+      renderLandingPage();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+
+    enterWorkspace(targetUnitId) {
+      SoundFX.playUnlock();
+      const nameEl = document.getElementById("landing-student-name");
+      const roomEl = document.getElementById("landing-room-code");
+      if (nameEl && nameEl.value.trim()) state.studentName = nameEl.value.trim();
+      if (roomEl && roomEl.value.trim()) state.roomCode = roomEl.value.trim().toUpperCase();
+      if (targetUnitId) state.unitId = Number(targetUnitId);
+      state.view = "workspace";
+      saveState();
+      renderAll();
+      window.scrollTo({ top: 0, behavior: "smooth" });
     },
 
     setLang(lang) {

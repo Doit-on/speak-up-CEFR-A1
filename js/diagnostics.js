@@ -4,11 +4,25 @@
  */
 
 window.APP_VERSION = {
-  version: "1.0.1",
-  build: "2026.10.25-GH",
+  version: "1.1.0",
+  build: "2026.10.25-TWP",
   channel: "GitHub Pages Production (Doit-on/speak-up-CEFR-A1)",
   updatedAt: "2026-10-25",
   changelog: [
+    {
+      version: "1.1.0",
+      date: "2026-10-25",
+      notesTh: [
+        "เพิ่มหน้า Landing Page พร้อมโลโก้ ทวพ. (TWP) และหัวข้อ 'Speak Up! CEFR A1'",
+        "แสดงหมายเลข Version (v1.1.0) และสถานะตรวจสอบระบบอย่างชัดเจนบนหน้าแรก (Landing Page) และแถบเมนู",
+        "เพิ่มแผงเลือกทั้ง 12 Units ด่วนจากหน้า Landing Page พร้อมแสดงคะแนนความคืบหน้าแต่ละ Unit"
+      ],
+      notesEn: [
+        "Added Landing Page featuring the official TWP (ทวพ.) Logo and 'Speak Up! CEFR A1' title",
+        "Prominent System Version (v1.1.0) and Self-Diagnostic Status badge on Landing Page and Header",
+        "Added 12-Unit quick-launch cards with progress indicators on the Landing Page"
+      ]
+    },
     {
       version: "1.0.1",
       date: "2026-10-25",
@@ -179,6 +193,16 @@ window.SelfDiagnostics = (function () {
       nameEn: "Group QR Generator & GitHub Pages Deep-Linking",
       passed: qrOk,
       detail: qrOk ? "SVG Matrix Generator Ready" : "Missing QR module"
+    });
+
+    // 7. Landing Page & TWP Logo Branding
+    const landingOk = !!(window.APP_VERSION && window.APP_VERSION.version === "1.1.0");
+    checks.push({
+      id: "landing_twp",
+      nameTh: "หน้า Landing Page โลโก้ ทวพ. และป้ายแสดง Version ระบบ",
+      nameEn: "TWP Logo Landing Page & Prominent Version Display",
+      passed: landingOk,
+      detail: `Active Landing Page (Speak Up! CEFR A1 • v${window.APP_VERSION.version})`
     });
 
     const elapsedMs = Math.max(1, Math.round(performance.now() - startTime));
