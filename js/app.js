@@ -1,8 +1,9 @@
 /**
- * Speak Up! CEFR A1 — Main Application Controller (v1.5.0)
- * Supports 12 Units, Pre-Activity Learning Goals & Vocabulary Table (Step 0) + 4 Activities/Unit,
- * Activity 1 Show/Hide Text Toggle, Multi-Speaker Male/Female Dialogue Voices,
- * Non-Verbatim Communicative Question-Answer Relevance Evaluator for Part B & Part C: Challenge,
+ * Speak Up! CEFR A1 — Main Application Controller (v1.6.0)
+ * Synchronized 100% with the Official 29-Page Curriculum Document (Units 1–12):
+ * Pre-Activity Learning Goals & Vocabulary Table (Step 0) + 4 Activities/Unit,
+ * Activity 1 Show/Hide Text Toggle & Multi-Speaker Male/Female Voices,
+ * Activity 4 Part A (5 Repeat Items) & Part B (4 Open Q&A Items with Non-Verbatim Communicative Relevance),
  * Unit Completion Score Summary Pop-up (Item Counts + Speaking % Average),
  * Full Bilingual TH/EN, ISO/IEC 18004 Group QR Sync, Email Reporting & Self-Diagnostics.
  */
@@ -475,8 +476,8 @@ window.SpeakUpApp = (function () {
       0: `"ยินดีต้อนรับสู่ <b>${unit.title} (${unit.titleTh})</b> ครับ! ก่อนเริ่มทำแบบฝึกหัด มาดู <b>Learning Goals</b> และฝึกฟัง <b>ตารางคำศัพท์และประโยคตัวอย่าง</b> ด้านล่างกันก่อน เมื่อพร้อมแล้วกดปุ่ม <b>'ไปที่ Activity 1'</b> ได้เลยครับ!"`,
       1: `"ใน <b>Activity 1 (${unit.activity1.heading})</b> ระบบซ่อนเนื้อหาไว้ก่อน ให้กดปุ่ม ▶️ เพื่อฟังเสียงอ่านจนจบ (บทสนทนาจะแยกเสียงผู้ชาย/ผู้หญิงตามชื่อตัวละคร) เมื่อฟังจบแล้วสามารถกดปุ่ม <b>'แสดงเนื้อหา'</b> หรือกด <b>'ปิดเนื้อหา'</b> เพื่อฝึกฟังซ้ำได้ครับ!"`,
       2: `"ใน <b>Activity 2: Check Your Understanding</b> ให้กดฟังเสียงคำถามแล้ว <b>เลือกคำตอบ a, b หรือ c ก่อน</b> จากนั้นระบบจะแสดงโจทย์ตัวอักษร <b>สีแดง</b> พร้อมนับคะแนนตามจำนวนข้อ (เต็ม ${unit.activity2.length} ข้อ) ครับ!"`,
-      3: `"ใน <b>Activity 3: Listen Again & Complete</b> กดฟังเสียงอ่าน Passage แล้วเลือกคำตอบเติมในช่องว่าง <b>ทีละข้อ</b> (คะแนนเต็ม ${unit.activity3.length} ข้อ)"`,
-      4: `"ใน <b>Activity 4: Speak Up!</b> มีครบทั้ง <b>Part A, Part B และ Part C</b> กดฟังเสียงก่อนเพื่อเปิดข้อความสีแดง แล้วกดไมโครโฟนเพื่ออัดเสียงพูด คะแนนการอ่านออกเสียงจะคิดเป็น <b>% เฉลี่ยจากทุกข้อที่ทำ</b> และเมื่อทำครบจะมี Pop-up สรุปคะแนนทั้ง Unit พร้อมปุ่มไปทำ Unit ต่อไปครับ!"`
+      3: `"ใน <b>Activity 3: Listen Again & Complete</b> กดฟังเสียงอ่าน Passage แล้วเลือกคำตอบเติมในช่องว่าง <b>ทีละข้อ</b> โดยไม่ต้องอ่านโจทย์ซ้ำ (คะแนนเต็ม ${unit.activity3.length} ข้อ)"`,
+      4: `"ใน <b>Activity 4: Speak Up!</b> ประกอบด้วย <b>Part A: Listen & Repeat (5 ข้อ)</b> และ <b>Part B: Answer the Questions (4 ข้อ)</b> กดฟังเสียงก่อนเพื่อเปิดข้อความสีแดง แล้วกดไมโครโฟนเพื่อพูดตอบ (ใน Part B ไม่จำเป็นต้องพูดตามประโยคตัวอย่าง แต่ให้ตอบอยู่ในประเด็นที่คำถามต้องการ) คะแนนการอ่านออกเสียงจะคิดเป็น <b>% เฉลี่ยจากทุกข้อที่ทำ</b> ครับ!"`
     };
 
     const msgsEn = {
@@ -484,7 +485,7 @@ window.SpeakUpApp = (function () {
       1: `"In <b>Activity 1 (${unit.activity1.heading})</b>, listen to the passage until the end first (dialogues use Male and Female voices according to character names). Once finished, click <b>'Show Story Text'</b> to view the passage or <b>'Hide Story Text'</b> to practice listening!"`,
       2: `"In <b>Activity 2: Check Your Understanding</b>, listen to each question and <b>select your answer first</b> to reveal the <b>Red Question Text</b> (Scored out of ${unit.activity2.length} items)!"`,
       3: `"In <b>Activity 3: Listen Again & Complete</b>, listen to the passage and complete each sentence <b>step-by-step</b> (Scored out of ${unit.activity3.length} items)."`,
-      4: `"In <b>Activity 4: Speak Up! (Parts A, B, C)</b>, record your voice to get an <b>average % speaking score</b> across all completed items, then view your Unit Summary Pop-up and proceed to the next Unit!"`
+      4: `"In <b>Activity 4: Speak Up! (Part A: 5 Repeat Items & Part B: 4 Open Q&A Items)</b>, listen first, then record your answer in your own words to get an <b>average % speaking score</b> and communicative evaluation!"`
     };
 
     guideEl.innerHTML = state.lang === "th" ? (msgsTh[act] || msgsTh[0]) : (msgsEn[act] || msgsEn[0]);
@@ -1284,13 +1285,22 @@ window.SpeakUpApp = (function () {
     const container = document.getElementById("panel-4");
     if (!container) return;
 
+    if (state.act4Part !== "A" && state.act4Part !== "B") {
+      state.act4Part = "A";
+    }
+
     let partContentHtml = "";
 
     if (state.act4Part === "A") {
       partContentHtml = `
-        <div class="p-3.5 rounded-2xl bg-rose-50/70 border border-rose-200">
-          <p class="text-xs sm:text-sm font-bold text-rose-800">${t("partATitle")}</p>
-          <p class="text-xs text-slate-600 mt-0.5">${t("partASub")}</p>
+        <div class="p-3.5 rounded-2xl bg-rose-50/70 border border-rose-200 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <p class="text-xs sm:text-sm font-bold text-rose-800">${t("partATitle")}</p>
+            <p class="text-xs text-slate-600 mt-0.5">${t("partASub")}</p>
+          </div>
+          <button type="button" onclick="SpeakUpApp.switchAct4Part('B')" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-sm transition cursor-pointer">
+            ${state.lang === "th" ? "ไปทำ Part B: ถาม-ตอบ 4 ข้อ →" : "Go to Part B: Answer the Questions (4 Items) →"}
+          </button>
         </div>
         <div class="space-y-3">
           ${a4.partA.map((sentence, idx) =>
@@ -1298,7 +1308,7 @@ window.SpeakUpApp = (function () {
               itemKey: `u${unit.id}_partA_${idx}`,
               titleLabel: `Part A • #${idx + 1}`,
               listenText: sentence,
-              redDisplayHtml: `<p class="text-sm sm:text-base font-extrabold red-voice-text">"${sentence}"</p>`,
+              redDisplayHtml: `<p class="text-sm sm:text-base font-extrabold red-voice-text">${idx + 1}. "${sentence}"</p>`,
               targetSpeechText: sentence,
               keywords: sentence.split(" "),
               mode: "repeat"
@@ -1306,20 +1316,30 @@ window.SpeakUpApp = (function () {
           ).join("")}
         </div>
       `;
-    } else if (state.act4Part === "B") {
+    } else {
+      const partBHeading = a4.partB.title || t("partBTitle");
       partContentHtml = `
-        <div class="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-200 space-y-1">
-          <p class="text-xs sm:text-sm font-bold text-indigo-900">${t("partBTitle")}</p>
-          <p class="text-xs red-voice-text font-semibold">${a4.partB.instruction}</p>
-          <p class="text-xs text-indigo-700 font-medium">
-            ✨ ${state.lang === "th"
-              ? "กดฟังคำถามและตัวอย่างก่อน แล้วพูดตอบด้วยข้อมูลจริงของคุณเอง (ไม่จำเป็นต้องพูดซ้ำประโยคตัวอย่าง ระบบจะตรวจว่าคำตอบตรงกับที่คำถามต้องการหรือไม่)"
-              : "Listen to the question & sample first, then answer with your own real information (no need to repeat the sample verbatim)."}
+        <div class="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200 space-y-2">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <p class="text-xs sm:text-sm font-extrabold text-indigo-950">🗣️ ${partBHeading}</p>
+              <p class="text-xs sm:text-sm red-voice-text font-bold mt-0.5">${a4.partB.instruction}</p>
+            </div>
+            <button type="button" onclick="window.SpeechEngine.speak(${JSON.stringify(a4.partB.instruction).replace(/"/g, '&quot;')})" class="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-sm cursor-pointer">
+              🔊 ${state.lang === "th" ? "ฟังเสียงคำสั่ง" : "Listen to Instruction"}
+            </button>
+          </div>
+          <p class="text-xs text-slate-700 font-medium bg-white/85 p-2.5 rounded-xl border border-indigo-100">
+            📌 <b>${state.lang === "th" ? "ขั้นตอนการทำ Part B (4 ข้อ):" : "How Part B Works (4 Questions):"}</b>
+            ${state.lang === "th"
+              ? "1) กดปุ่ม <b>'🔊 1. ฟังคำถามและตัวอย่าง'</b> ให้จบก่อน • 2) พูดตอบด้วยข้อมูลของคุณเอง (<b>ไม่จำเป็นต้องพูดตามประโยคตัวอย่าง</b> แต่ให้ตอบอยู่ในประเด็นที่คำถามต้องการ) • 3) ระบบจะวิเคราะห์ว่าคำตอบของคุณสื่อสารตรงตามคำถามหรือไม่ พร้อมคำนวณคะแนน %"
+              : "1) Click <b>'🔊 1. Listen to Question & Sample'</b> first • 2) Answer in your own words (<b>no need to copy the sample verbatim</b>—just answer what the question asks) • 3) The system evaluates your communicative relevance and score."}
           </p>
         </div>
         <div class="space-y-3">
           ${a4.partB.items.map((item, idx) => {
             const itemKey = `u${unit.id}_partB_${idx}`;
+            const fullAudioLine = `${item.question} Sample answer: ${item.sample} Now your turn. You...`;
             const seqBtn = `
               <button type="button" onclick="SpeakUpApp.playPartBSequence('${itemKey}', ${JSON.stringify(item.question).replace(/"/g, '&quot;')}, ${JSON.stringify(item.sample).replace(/"/g, '&quot;')})" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-sm cursor-pointer">
                 ${t("partBAutoBtn")}
@@ -1327,11 +1347,14 @@ window.SpeakUpApp = (function () {
             `;
             const redHtml = `
               <div class="space-y-1.5">
-                <p class="text-sm sm:text-base font-extrabold red-voice-text">❓ ${state.lang === "th" ? "คำถาม (Question)" : "Question"} Q${idx + 1}: ${item.question}</p>
+                <p class="text-sm sm:text-base font-extrabold red-voice-text">
+                  ${idx + 1}. ${item.question} <span class="text-rose-700">Sample answer: ${item.sample}</span> <span class="italic underline">Now your turn. You…</span>
+                </p>
                 <div class="p-2.5 rounded-xl bg-rose-50/70 border border-rose-100">
-                  <p class="text-xs sm:text-sm font-semibold red-voice-text">💡 ${state.lang === "th" ? "ตัวอย่างแนวทางการตอบ (Sample Answer):" : "Sample Answer:"} "${item.sample}"</p>
-                  <p class="text-[11px] text-slate-600 mt-0.5">
-                    * ${state.lang === "th" ? "คุณไม่จำเป็นต้องพูดตามประโยคตัวอย่างนี้ สามารถใช้คำศัพท์หรือข้อมูลของคุณเองที่ตอบคำถามข้างต้นได้เลย" : "You do not need to repeat this sample verbatim—use your own words that answer the question."}
+                  <p class="text-[11px] text-slate-600">
+                    💡 ${state.lang === "th"
+                      ? "<b>หมายเหตุ:</b> ประโยค Sample answer เป็นเพียงแนวทาง คุณสามารถตอบด้วยข้อมูลจริงหรือคำศัพท์ของคุณเองที่ตรงกับคำถามข้อนี้ได้เลย"
+                      : "<b>Note:</b> The sample answer is just an example. Answer freely using your own words and information."}
                   </p>
                 </div>
               </div>
@@ -1339,64 +1362,12 @@ window.SpeakUpApp = (function () {
             return renderSpeakingItemCard({
               itemKey,
               titleLabel: `Part B • Q${idx + 1}`,
-              listenText: `${item.question} ... Example answer: ${item.sample} ... Now your turn: ${item.question}`,
+              listenText: fullAudioLine,
               redDisplayHtml: redHtml,
               targetSpeechText: item.sample,
               keywords: item.keywords,
               mode: "open",
               extraButtonsHtml: seqBtn
-            });
-          }).join("")}
-        </div>
-      `;
-    } else {
-      partContentHtml = `
-        <div class="p-4 rounded-2xl bg-rose-50/70 border border-rose-200 space-y-2">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <p class="text-xs sm:text-sm font-extrabold text-rose-800">🏆 ${a4.partC.title}</p>
-            <span class="px-2.5 py-1 rounded-full bg-rose-600 text-white text-[11px] font-bold">
-              ${state.lang === "th" ? "ประเมินการสื่อสารตามโจทย์ (Communicative Evaluation)" : "Communicative Relevance Evaluation"}
-            </span>
-          </div>
-          <p class="text-xs sm:text-sm font-bold red-voice-text">${a4.partC.instruction}</p>
-          <p class="text-xs text-slate-700 font-medium bg-white/80 p-2.5 rounded-xl border border-rose-100">
-            📌 <b>${state.lang === "th" ? "กติกา Part C: Challenge:" : "How Part C: Challenge Works:"}</b>
-            ${state.lang === "th"
-              ? "1) กดปุ่ม <b>'🔊 1. ฟังโจทย์และตัวอย่างคำตอบ'</b> ให้จบก่อน • 2) ตอบด้วยประโยคของคุณเองตามที่โจทย์ถาม (<b>ไม่จำเป็นต้องพูดตามประโยคตัวอย่าง</b> แต่ต้องอยู่ในประเด็นคำตอบที่คำถามต้องการ) • 3) ระบบจะวิเคราะห์ว่าคุณสามารถสื่อสารได้ตรงตามโจทย์หรือไม่ พร้อมคำนวณคะแนน %"
-              : "1) Click <b>'🔊 1. Listen to Prompt & Sample'</b> first • 2) Answer in your own words addressing the prompt (<b>no need to copy the sample verbatim</b>) • 3) The system evaluates whether your response communicates what the question asks for."}
-          </p>
-          ${a4.partC.prompts && a4.partC.prompts.length ? `
-            <div class="p-3 rounded-xl bg-white/90 border border-rose-100 text-xs space-y-1">
-              <span class="font-bold text-slate-700">${state.lang === "th" ? "โครงสร้างประโยคช่วยพูด (Sentence Starters / Clues — เลือกปรับใช้ตามข้อมูลของคุณเอง):" : "Sentence Starters / Prompts (Adapt freely with your own details):"}</span>
-              <ul class="list-disc list-inside text-slate-600 font-medium">
-                ${a4.partC.prompts.map(pr => `<li>${pr}</li>`).join("")}
-              </ul>
-            </div>
-          ` : ""}
-        </div>
-        <div class="space-y-3">
-          ${a4.partC.items.map((item, idx) => {
-            const itemKey = `u${unit.id}_partC_${idx}`;
-            const redHtml = `
-              <div class="space-y-2">
-                <div class="p-2.5 rounded-xl bg-rose-50 border border-rose-200">
-                  <span class="text-[11px] font-extrabold uppercase text-rose-700 block">🎯 ${state.lang === "th" ? "โจทย์ที่ต้องสื่อสาร (Challenge Prompt):" : "Challenge Prompt:"}</span>
-                  <p class="text-sm sm:text-base font-extrabold red-voice-text mt-0.5">${item.situation}</p>
-                </div>
-                <div class="p-2.5 rounded-xl bg-amber-50/70 border border-amber-200">
-                  <span class="text-[11px] font-extrabold uppercase text-amber-800 block">💡 ${state.lang === "th" ? "ตัวอย่างคำตอบ (Sample Answer — ใช้เป็นแนวทาง ไม่จำเป็นต้องพูดตามนี้):" : "Sample Answer (For reference only—answer in your own words):"}</span>
-                  <p class="text-xs sm:text-sm font-semibold red-voice-text mt-0.5">"${item.sample}"</p>
-                </div>
-              </div>
-            `;
-            return renderSpeakingItemCard({
-              itemKey,
-              titleLabel: `Part C • Challenge #${idx + 1}`,
-              listenText: `Challenge prompt: ${a4.partC.instruction}. ${item.situation}. For example: ${item.sample}. Now it is your turn to answer in your own words.`,
-              redDisplayHtml: redHtml,
-              targetSpeechText: item.sample,
-              keywords: item.keywords,
-              mode: "challenge"
             });
           }).join("")}
         </div>
@@ -1410,7 +1381,7 @@ window.SpeakUpApp = (function () {
     container.innerHTML = `
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
         <div>
-          <span class="text-xs font-bold text-rose-500 uppercase">Activity 4 • Speak Up! (Parts A, B, C)</span>
+          <span class="text-xs font-bold text-rose-500 uppercase">Activity 4 • Speak Up! (Part A & Part B)</span>
           <h2 class="text-lg font-bold text-slate-900">${state.lang === "th" ? "ฝึกพูด อัดเสียง ฟังเสียงตัวเอง และรับผลประเมิน (% เฉลี่ยจากทุกข้อที่ทำ)" : "Speak, Record, Self-Listen & Get Average % Evaluation"}</h2>
           <p class="text-xs font-semibold text-indigo-700 mt-0.5">
             🎙️ ${state.lang === "th"
@@ -1420,14 +1391,11 @@ window.SpeakUpApp = (function () {
         </div>
 
         <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-2xl">
-          <button type="button" onclick="SpeakUpApp.switchAct4Part('A')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition ${state.act4Part === "A" ? "bg-white text-indigo-700 shadow-sm" : "text-slate-600 hover:text-slate-900"}">
-            Part A: Repeat
+          <button type="button" onclick="SpeakUpApp.switchAct4Part('A')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${state.act4Part === "A" ? "bg-white text-indigo-700 shadow-sm" : "text-slate-600 hover:text-slate-900"}">
+            Part A: Listen & Repeat (${a4.partA.length})
           </button>
-          <button type="button" onclick="SpeakUpApp.switchAct4Part('B')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition ${state.act4Part === "B" ? "bg-white text-indigo-700 shadow-sm" : "text-slate-600 hover:text-slate-900"}">
-            Part B: Q&A
-          </button>
-          <button type="button" onclick="SpeakUpApp.switchAct4Part('C')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition ${state.act4Part === "C" ? "bg-white text-indigo-700 shadow-sm" : "text-slate-600 hover:text-slate-900"}">
-            Part C: Challenge
+          <button type="button" onclick="SpeakUpApp.switchAct4Part('B')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${state.act4Part === "B" ? "bg-white text-indigo-700 shadow-sm" : "text-slate-600 hover:text-slate-900"}">
+            Part B: Answer Questions (${a4.partB.items.length})
           </button>
         </div>
       </div>
@@ -2008,7 +1976,7 @@ window.SpeakUpApp = (function () {
     playPartBSequence(itemKey, question, sample) {
       const unit = getCurrentUnit();
       const p = ensureUnitProgress(unit.id);
-      window.SpeechEngine.speak([question, `Sample answer: ${sample}`, `Listen again: ${question}`], {
+      window.SpeechEngine.speak([question, `Sample answer: ${sample}`, `Now your turn. You...`], {
         onEnd: () => {
           safeSound("playUnlock");
           p.redUnlocked[itemKey] = true;

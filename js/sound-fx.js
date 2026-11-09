@@ -99,9 +99,9 @@ window.SpeechEngine = (function () {
   ]);
 
   const FEMALE_NAMES = new Set([
-    'emma', 'maya', 'sara', 'mia', 'lily', 'joy', 'tara', 'nina',
-    'anna', 'may', 'lisa', 'amy', 'kate', 'lucy', 'jane', 'sarah',
-    'girl', 'woman', 'mother', 'sister', 'ms', 'mrs', 'miss'
+    'emma', 'maya', 'sara', 'server', 'mia', 'lily', 'joy', 'tara', 'nina',
+    'anna', 'may', 'mary', 'lisa', 'amy', 'kate', 'lucy', 'jane', 'sarah',
+    'girl', 'woman', 'mother', 'sister', 'waitress', 'ms', 'mrs', 'miss'
   ]);
 
   function initVoices() {
@@ -192,11 +192,12 @@ window.SpeechEngine = (function () {
     if (gender === 'male') {
       pitch = 0.82; // Distinct masculine voice register
     } else if (gender === 'female') {
-      if (speaker && speaker.toLowerCase() === 'tara') {
+      const spkLower = speaker ? speaker.toLowerCase() : '';
+      if (spkLower === 'tara' || spkLower === 'server') {
         pitch = 1.26;
         isAltFemale = true;
       } else {
-        pitch = 1.18; // Distinct feminine voice register
+        pitch = 1.15; // Distinct feminine voice register
       }
     }
 
@@ -450,229 +451,269 @@ window.VoiceEvaluator = (function () {
   }
 
   // ============================================================================
-  // COMMUNICATIVE CONCEPT SLOTS (Question-Answer Relevance Map for Part B & C)
+  // COMMUNICATIVE CONCEPT SLOTS (Question-Answer Relevance Map for All 12 Units Part B)
   // Evaluates whether the learner's response answers what the question asks,
   // WITHOUT requiring verbatim words from the sample answer.
   // ============================================================================
-  const COMMON_TIME_WORDS = ['1','2','3','4','5','6','7','8','9','10','11','12','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirty','half','quarter','am','pm','oclock','morning','afternoon','evening','night','noon','midnight','early','late','at'];
-  const COMMON_FREQ_WORDS = ['always','usually','often','sometimes','rarely','never','every','daily','week','weekend','monday','tuesday','wednesday','thursday','friday','saturday','sunday','once','twice'];
-  const COMMON_OPINION_WORDS = ['like','love','enjoy','favorite','prefer','good','great','nice','fun','delicious','tasty','yummy','healthy','sweet','spicy','fresh','comfortable','beautiful','cool','best','awesome','interesting','exciting','relaxing'];
+  const COMMON_TIME_WORDS = ['1','2','3','4','5','6','7','8','9','10','11','12','13','15','20','30','40','45','50','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirty','half','quarter','am','pm','oclock','morning','afternoon','evening','night','noon','midnight','early','late','at','around'];
+  const COMMON_FREQ_WORDS = ['always','usually','often','sometimes','rarely','never','every','daily','week','weekend','weekends','monday','tuesday','wednesday','thursday','friday','saturday','sunday','once','twice','after','before'];
+  const COMMON_MONEY_WORDS = ['10','20','30','40','50','60','70','80','90','100','150','200','250','300','350','400','500','1000','ten','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety','hundred','thousand','baht','dollar','dollars','money','cheap','expensive','around','about'];
 
   const QUESTION_CONCEPT_MAP = {
-    // ---------------- UNIT 1: Daily Routine ----------------
+    // ---------------- UNIT 1: Ben's Daily Routine ----------------
+    // Q1: What time do you get up? (Sample: I get up at 6 o'clock.)
     u1_partB_0: [
-      { labelTh: 'กริยาตื่นนอน (Wake up / Get up)', labelEn: 'Wake up action', words: ['wake','get','up','awake','rise'] },
-      { labelTh: 'เวลาหรือช่วงเวลา (Time / Morning)', labelEn: 'Time expression', words: COMMON_TIME_WORDS }
+      { labelTh: 'กริยาตื่นนอน (Get up / Wake up)', labelEn: 'Get up / Wake up action', words: ['get','wake','up','awake','rise'] },
+      { labelTh: 'เวลาที่ตื่นนอน (Time expression)', labelEn: 'Time expression', words: COMMON_TIME_WORDS }
     ],
+    // Q2: What time do you get to school? (Sample: I get to school at 7.30.)
     u1_partB_1: [
-      { labelTh: 'กิจกรรมยามเช้า (Morning activity)', labelEn: 'Morning routine action', words: ['brush','wash','shower','bath','eat','have','drink','breakfast','dress','dressed','exercise','walk','run','make','read','pray','coffee','tea','milk','water','toast','eggs','rice'] },
-      { labelTh: 'รูปประโยคเล่าเรื่อง (I + Verb / Time)', labelEn: 'First-person statement', words: ['i','my','then','after','first','usually','always','every','morning'] }
+      { labelTh: 'การไปถึงหรือเดินทางไปโรงเรียน/ที่ทำงาน (Get to / Go to school)', labelEn: 'Get to / Go to school or work', words: ['get','go','arrive','reach','leave','start','school','work','office','class','college','university','to'] },
+      { labelTh: 'เวลาที่ไปถึง (Time expression)', labelEn: 'Time expression', words: COMMON_TIME_WORDS }
     ],
+    // Q3: What do you do after school? (Sample: I do my homework after school.)
     u1_partB_2: [
-      { labelTh: 'การเดินทางไปทำงาน/เรียน (Go to work/school)', labelEn: 'Go / Leave / Start', words: ['go','leave','start','walk','drive','take','ride','bus','car','train','bts','mrt','taxi','bike','work','school','office','university','college','study','class'] },
-      { labelTh: 'การระบุเวลา (Time)', labelEn: 'Time expression', words: COMMON_TIME_WORDS }
+      { labelTh: 'กิจกรรมหลังเลิกเรียน/เลิกงาน (After-school activity)', labelEn: 'Activity after school/work', words: ['do','homework','study','read','play','games','game','sport','sports','football','basketball','badminton','watch','tv','movie','youtube','listen','music','eat','snack','dinner','help','relax','rest','go','home','exercise','run','walk','draw','cook'] },
+      { labelTh: 'รูปประโยคหรือบริบทเวลา (I + Verb / After school)', labelEn: 'First-person or time context', words: ['i','my','after','school','work','class','home','evening','afternoon','usually','often','sometimes','with','friends','family'] }
     ],
+    // Q4: What do you do before going to bed? (Sample: I take a shower.)
     u1_partB_3: [
-      { labelTh: 'กิจกรรมช่วงเย็น/หลังเลิกงาน (Evening activity)', labelEn: 'Evening activity', words: ['dinner','eat','have','cook','watch','tv','television','movie','youtube','read','book','play','game','music','relax','rest','talk','family','exercise','gym','homework','shower'] },
-      { labelTh: 'คำเชื่อมหรือช่วงเวลาเย็น (Evening / After)', labelEn: 'Evening context', words: ['evening','night','after','home','usually','often','sometimes','with','my','i'] }
-    ],
-    u1_partB_4: [
-      { labelTh: 'การเข้านอน (Go to bed / Sleep)', labelEn: 'Sleep / Go to bed', words: ['sleep','bed','asleep','rest','night'] },
-      { labelTh: 'การระบุเวลาเข้านอน (Time)', labelEn: 'Time expression', words: COMMON_TIME_WORDS }
-    ],
-    u1_partC_0: [
-      { labelTh: '1. กิจกรรมช่วงเช้าและการตื่นนอน (Morning / Wake up)', labelEn: 'Morning routine', words: ['wake','get','up','morning','breakfast','shower','brush','wash','coffee','eat'] },
-      { labelTh: '2. กิจกรรมระหว่างวัน/ทำงาน/เรียน (Daytime / Work / Study)', labelEn: 'Daytime / Work or School', words: ['go','work','school','study','office','lunch','start','class','drive','bus','train','afternoon'] },
-      { labelTh: '3. กิจกรรมช่วงเย็นและการเข้านอน (Evening / Dinner / Bedtime)', labelEn: 'Evening & Bedtime', words: ['dinner','evening','home','watch','tv','read','relax','sleep','bed','night'] },
-      { labelTh: '4. การระบุเวลาหรือลำดับเหตุการณ์ (Time & Sequence)', labelEn: 'Time or Sequence markers', words: [...COMMON_TIME_WORDS, 'then','after','next','finally','usually','every'] }
+      { labelTh: 'กิจกรรมก่อนเข้านอน (Bedtime routine action)', labelEn: 'Activity before bed', words: ['take','shower','bath','wash','brush','teeth','face','read','book','comics','watch','tv','movie','phone','listen','music','pray','drink','milk','water',' homework','prepare','skin','sleep','bed'] },
+      { labelTh: 'โครงสร้างผู้พูดหรือเวลาก่อนนอน (I + Verb / Before bed)', labelEn: 'First-person or before-bed context', words: ['i','my','before','bed','going','sleep','night','usually','always','every'] }
     ],
 
-    // ---------------- UNIT 2: Food & Drinks ----------------
+    // ---------------- UNIT 2: Meeting a New Friend ----------------
+    // Q1: What is your name? (Sample: My name is May.)
     u2_partB_0: [
-      { labelTh: 'การบอกความชอบ (Favorite / Like / Love)', labelEn: 'Preference expression', words: ['favorite','like','love','prefer','enjoy','best','food','dish','meal','eat'] },
-      { labelTh: 'ชื่ออาหาร (Food item)', labelEn: 'Food vocabulary', words: ['rice','fried','chicken','pork','beef','fish','seafood','shrimp','noodles','noodle','pasta','spaghetti','pizza','burger','salad','soup','curry','pad','thai','tom','yum','som','tam','papaya','sushi','steak','egg','omelet','bread','sandwich','fruit','meat','vegetable'] }
+      { labelTh: 'การแนะนำชื่อตัวเอง (My name is ... / I am ...)', labelEn: 'Name introduction structure', words: ['my','name','is','im','i','am','call','me'] }
     ],
+    // Q2: How old are you? (Sample: I am 12 years old.)
     u2_partB_1: [
-      { labelTh: 'ชื่อเครื่องดื่ม (Drink / Beverage)', labelEn: 'Beverage vocabulary', words: ['water','coffee','tea','milk','juice','orange','apple','smoothie','soda','cola','coke','lemonade','iced','hot','green','thai','drink','drinking'] },
-      { labelTh: 'การบอกความชอบหรือเวลาที่ดื่ม (Preference / Meal context)', labelEn: 'Preference or context', words: ['like','love','prefer','favorite','usually','every','morning','lunch','dinner','day','with','cold','warm','sweet','fresh'] }
+      { labelTh: 'ระบุตัวเลขอายุ (Age number)', labelEn: 'Age number', words: ['6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','25','30','35','40','45','50','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty','thirty','forty','fifty'] },
+      { labelTh: 'โครงสร้างบอกอายุ (I am / years old)', labelEn: 'Age sentence structure', words: ['i','am','im','years','year','old'] }
     ],
+    // Q3: What is the best friend's name? (Sample: My best friend's name is Mary.)
     u2_partB_2: [
-      { labelTh: 'ความถี่หรือการทำอาหาร (Cooking & Frequency)', labelEn: 'Cooking & Frequency', words: ['cook','make','prepare','kitchen','home','yes','no','sometimes','often','always','usually','never','rarely','every','weekend','day','buy','eat','out'] },
-      { labelTh: 'รายละเอียดอาหารหรือมื้ออาหาร (Meal / Food detail)', labelEn: 'Meal or food detail', words: ['breakfast','lunch','dinner','food','meal','rice','egg','noodles','soup','salad','family','myself','mom','mother','wife','husband','easy','simple','delicious'] }
+      { labelTh: 'การกล่าวถึงเพื่อนสนิทหรือชื่อเพื่อน (Best friend / Name / He / She is)', labelEn: 'Best friend reference', words: ['my','best','friend','friends','name','is','he','she','his','her','called'] }
     ],
-    u2_partC_0: [
-      { labelTh: 'ระบุอาหารเช้า (Breakfast food/drink)', labelEn: 'Breakfast item', words: ['breakfast','morning','eat','have','drink','bread','toast','egg','eggs','milk','coffee','tea','rice','porridge','soup','cereal','sandwich','fruit','banana','yogurt','water','juice'] },
-      { labelTh: 'บอกเหตุผลหรือความรู้สึก (Reason / Quality)', labelEn: 'Reason or description', words: ['because','good','healthy','easy','fast','quick','delicious','tasty','yummy','energy','warm','fresh','full','like','love','favorite'] }
-    ],
-    u2_partC_1: [
-      { labelTh: 'ระบุอาหารหรือเครื่องดื่มที่ชอบ (Favorite food/drink)', labelEn: 'Food or drink item', words: ['food','drink','rice','chicken','noodles','pizza','salad','soup','curry','fish','meat','fruit','coffee','tea','juice','milk','water','smoothie','pad','thai','sushi','steak','burger'] },
-      { labelTh: 'อธิบายรสชาติหรือเหตุผลที่ชอบ (Taste / Reason)', labelEn: 'Taste or reason why', words: ['because','delicious','tasty','yummy','sweet','spicy','sour','salty','fresh','healthy','good','great','refreshing','cold','hot','love','like','favorite','make','feel'] }
+    // Q4: What do you usually do with your friend at school? (Sample: I usually study with my friend at school.)
+    u2_partB_3: [
+      { labelTh: 'กิจกรรมที่ทำกับเพื่อน (Activity with friend)', labelEn: 'Activity with friend', words: ['study','read','play','games','sport','sports','football','basketball','badminton','eat','have','lunch','snack','talk','chat','walk','do','homework','help','laugh','draw','listen','music','sit','learn'] },
+      { labelTh: 'การระบุว่าทำกับเพื่อนหรือที่โรงเรียน (With friend / At school / We)', labelEn: 'Friend or school context', words: ['with','my','friend','friends','together','we','at','school','class','canteen','playground','usually','always','often','every'] }
     ],
 
-    // ---------------- UNIT 3: Shopping & Clothes ----------------
+    // ---------------- UNIT 3: Animals with Superpowers ----------------
+    // Q1: What animal do you think is interesting? (Sample: An octopus.)
     u3_partB_0: [
-      { labelTh: 'ระบุเสื้อผ้าที่สวมใส่ (Clothing items)', labelEn: 'Clothing vocabulary', words: ['wear','wearing','shirt','tshirt','blouse','pants','trousers','jeans','shorts','skirt','dress','jacket','coat','sweater','uniform','suit','shoes','sneakers','sandals','hat','cap','glasses','socks'] },
-      { labelTh: 'ระบุสีหรือลักษณะ (Color / Style)', labelEn: 'Color or description', words: ['white','black','blue','red','green','yellow','pink','brown','gray','grey','purple','orange','navy','dark','light','cotton','comfortable','casual','formal','new','nice','favorite','today','now'] }
+      { labelTh: 'ระบุชื่อสัตว์ที่สนใจ (Animal name)', labelEn: 'Animal name', words: ['octopus','bat','bats','gecko','geckos','dog','dogs','cat','cats','bird','birds','eagle','owl','lion','tiger','elephant','monkey','dolphin','whale','shark','snake','frog','chameleon','cheetah','horse','rabbit','panda','bear','penguin','bee','butterfly','spider','fish','turtle','dinosaur','animal'] }
     ],
+    // Q2: Why do you think that? (Sample: Because they can hide.)
     u3_partB_1: [
-      { labelTh: 'ระบุสีที่ชอบ (Favorite color)', labelEn: 'Color name', words: ['blue','red','green','black','white','yellow','pink','purple','orange','brown','gray','grey','gold','silver','navy','sky','light','dark','color','colour'] },
-      { labelTh: 'บอกความชอบหรือเหตุผล (Preference / Feeling)', labelEn: 'Preference expression', words: ['favorite','like','love','prefer','bright','calm','cool','nice','beautiful','clean','good','happy','relaxing','match','wear'] }
+      { labelTh: 'คำเชื่อมบอกเหตุผลหรือความสามารถ (Because / Can / It is)', labelEn: 'Reason or ability marker', words: ['because','can','it','they','is','are','has','have','very','so','think'] },
+      { labelTh: 'ความสามารถหรือลักษณะเด่นของสัตว์ (Ability or trait)', labelEn: 'Animal ability or trait', words: ['hide','change','color','climb','stick','fly','swim','run','jump','fast','strong','smart','clever','cute','beautiful','big','small','tall','see','dark','sound','sounds','survive','live','water','trees','night','interesting','amazing','cool','special'] }
     ],
+    // Q3: What special ability would you like to have? (Sample: I would like to fly.)
     u3_partB_2: [
-      { labelTh: 'บอกความชอบเรื่องการช้อปปิ้ง (Shopping preference)', labelEn: 'Shopping attitude', words: ['yes','no','like','love','enjoy','sometimes','often','usually','shopping','shop','buy','buying'] },
-      { labelTh: 'สถานที่หรือสิ่งที่ซื้อ (Place / Items / Frequency)', labelEn: 'Where, when, or what you buy', words: ['mall','market','online','store','shop','department','weekend','saturday','sunday','month','clothes','shoes','food','things','friends','family','sale','discount','cheap'] }
+      { labelTh: 'โครงสร้างบอกความต้องการ (Would like to / Want to / Can)', labelEn: 'Desire expression (would like / want)', words: ['i','would','like','want','love','wish','to','have','be','can'] },
+      { labelTh: 'ระบุความสามารถพิเศษ (Superpower / Special ability)', labelEn: 'Special ability or superpower', words: ['fly','flying','invisible','hide','change','color','climb','walls','swim','fast','run','speed','super','strength','strong','jump','high','teleport','time','travel','read','minds','talk','animals','see','dark','breathe','underwater','heal','magic'] }
     ],
-    u3_partC_0: [
-      { labelTh: '1. สอบถามเสื้อผ้า/สี/ขนาด (Item, Color, or Size)', labelEn: 'Item, color, or size', words: ['shirt','tshirt','jacket','dress','pants','jeans','shoes','skirt','sweater','coat','size','small','medium','large','xl','color','blue','black','white','red','green','have','looking','want','need','try','on'] },
-      { labelTh: '2. สอบถามราคาหรือการชำระเงิน (Price / How much / Buy)', labelEn: 'Price or buying expression', words: ['how','much','price','cost','baht','dollars','cheap','expensive','discount','sale','take','buy','pay','card','cash','thank','please','excuse'] }
+    // Q4: Why would you like to have that ability? (Sample: I would not need a car to go to school.)
+    u3_partB_3: [
+      { labelTh: 'เหตุผลหรือประโยชน์ของความสามารถนั้น (Reason / Benefit)', labelEn: 'Reason or benefit', words: ['because','would','can','could','not','need','car','bus','traffic','go','travel','school','work','world','anywhere','fast','quickly','easy','easily','help','people','save','time','money','fun','cool','free','sky','clouds','see','everything','hide','safe'] }
     ],
 
-    // ---------------- UNIT 4: Places & Directions ----------------
+    // ---------------- UNIT 4: My Family and Our Weekends ----------------
+    // Q1: Who do you live with? (Sample: I live with my parents and my brother.)
     u4_partB_0: [
-      { labelTh: 'ระบุสถานที่ใกล้บ้าน (Places near home)', labelEn: 'Neighborhood places', words: ['near','around','close','next','by','home','house','condo','apartment','park','supermarket','market','mall','store','shop','seven','eleven','school','hospital','clinic','bank','station','restaurant','cafe','coffee','temple','street','road'] },
-      { labelTh: 'โครงสร้างการบอกสิ่งที่มีอยู่ (There is / There are / Have)', labelEn: 'Existence structure', words: ['there','is','are','have','has','many','some','two','three','big','small','convenient','quiet','nice'] }
+      { labelTh: 'กริยาอาศัยอยู่กับ (Live with / My family)', labelEn: 'Live with structure', words: ['live','living','stay','with','my','in','family','alone','myself'] },
+      { labelTh: 'ระบุสมาชิกในครอบครัว (Family members)', labelEn: 'Family members', words: ['parents','father','dad','mother','mom','brother','brothers','sister','sisters','grandmother','grandma','grandfather','grandpa','grandparents','uncle','aunt','cousin','husband','wife','son','daughter','children','kids','dog','cat','pet','friends','alone','myself'] }
     ],
+    // Q2: What do you usually do with your family on weekends? (Sample: We usually watch movies together.)
     u4_partB_1: [
-      { labelTh: 'ระบุสถานที่ที่ชอบไปในเมือง (Favorite place)', labelEn: 'Place in town', words: ['park','mall','shopping','center','cafe','coffee','shop','library','cinema','movie','theater','beach','market','night','restaurant','museum','gym','temple','river','zoo','place'] },
-      { labelTh: 'บอกกิจกรรมหรือเหตุผลที่ชอบ (Activity / Reason)', labelEn: 'Activity or reason', words: ['like','love','favorite','go','visit','walk','relax','read','eat','drink','watch','buy','meet','friends','family','quiet','beautiful','fun','cool','air','fresh','nice','because'] }
+      { labelTh: 'กิจกรรมที่ทำร่วมกับครอบครัว (Weekend family activity)', labelEn: 'Family weekend activity', words: ['watch','movie','movies','tv','eat','have','dinner','lunch','breakfast','food','cook','go','out','shopping','mall','park','beach','market','temple','ride','bike','bikes','walk','play','games','talk','relax','clean','house','travel','visit','stay','home'] },
+      { labelTh: 'คำบอกความถี่หรือการทำร่วมกัน (We / Usually / Together / On weekends)', labelEn: 'Family or frequency context', words: ['we','i','usually','often','sometimes','always','together','with','my','family','parents','on','weekend','weekends','saturday','sunday'] }
     ],
+    // Q3: What is your favorite family activity? (Sample: My favorite family activity is eating at the restaurant.)
     u4_partB_2: [
-      { labelTh: 'ระบุสถานที่ที่ไปสุดสัปดาห์ (Weekend destination)', labelEn: 'Weekend place', words: ['weekend','saturday','sunday','go','visit','stay','home','mall','market','park','cafe','restaurant','cinema','beach','temple','countryside','province','parents','friends','gym','supermarket'] },
-      { labelTh: 'บอกกิจกรรมที่ทำหรือคนที่ไปด้วย (Activity / Companion)', labelEn: 'Activity or companion', words: ['with','family','friends','my','eat','shop','shopping','watch','movie','relax','rest','clean','cook','play','exercise','walk','drive','usually','often','sometimes'] }
+      { labelTh: 'การบอกความชอบ (Favorite activity / Like / Love / Enjoy)', labelEn: 'Preference marker', words: ['favorite','like','love','enjoy','best','family','activity','is','our','my','we'] },
+      { labelTh: 'ระบุกิจกรรมครอบครัว (Activity detail)', labelEn: 'Family activity', words: ['eat','eating','dinner','lunch','food','restaurant','out','cook','cooking','watch','watching','movie','movies','tv','travel','traveling','trip','go','going','beach','park','mall','camping','play','playing','games','sport','ride','riding','bike','talk','talking','shopping','picnic'] }
     ],
-    u4_partC_0: [
-      { labelTh: '1. คำบอกทิศทางและการเดิน (Direction verbs)', labelEn: 'Direction commands', words: ['go','walk','straight','turn','left','right','pass','past','cross','follow','along','down','up','take','first','second'] },
-      { labelTh: '2. คำบุพบทบอกตำแหน่ง/จุดสังเกต (Prepositions & Landmarks)', labelEn: 'Location prepositions & landmarks', words: ['next','to','opposite','across','from','between','behind','front','near','corner','street','road','block','light','traffic','intersection','bank','park','school','station','supermarket','hospital','building','left','right','side'] }
+    // Q4: What place do you like to go with your family? (Sample: I like to go to the beach with my family.)
+    u4_partB_3: [
+      { labelTh: 'การบอกความชอบไปสถานที่ (Like to go / Visit)', labelEn: 'Go / Visit preference', words: ['like','love','enjoy','want','usually','go','going','visit','travel','to','the','with','my','family','we'] },
+      { labelTh: 'ระบุสถานที่ที่ไปกับครอบครัว (Place / Destination)', labelEn: 'Destination or place', words: ['beach','sea','park','mall','shopping','center','restaurant','cafe','market','night','cinema','movie','theater','mountain','mountains','temple','zoo','museum','countryside','province','chiang','mai','phuket','pattaya','hua','hin','hotel','resort','grandparents','home','garden'] }
     ],
 
-    // ---------------- UNIT 5: Free Time & Hobbies ----------------
+    // ---------------- UNIT 5: At a Café ----------------
+    // Q1: What would you like to drink? (Sample: I would like an iced tea, please.)
     u5_partB_0: [
-      { labelTh: 'ระบุงานอดิเรก/กิจกรรมยามว่าง (Hobby / Free-time activity)', labelEn: 'Hobby or activity', words: ['free','time','hobby','hobbies','like','love','enjoy','read','reading','book','books','watch','watching','movie','movies','tv','series','youtube','listen','listening','music','songs','play','playing','game','games','sport','sports','cook','cooking','draw','paint','travel','garden','walk','run','exercise','sleep','rest','shop','photo'] }
+      { labelTh: 'โครงสร้างการสั่งหรือบอกความต้องการ (Would like / Can I have / Want)', labelEn: 'Ordering phrase', words: ['would','like','id','can','have','want','drink','please','i'] },
+      { labelTh: 'ระบุชื่อเครื่องดื่ม (Drink / Beverage)', labelEn: 'Beverage item', words: ['iced','tea','lemonade','coffee','latte','cappuccino','americano','espresso','milk','thai','green','water','juice','orange','apple','smoothie','soda','cola','coke','cocoa','chocolate','hot','cold','cup','glass','bottle'] }
     ],
+    // Q2: What snack would you like to order? (Sample: I would like a chocolate cake, please.)
     u5_partB_1: [
-      { labelTh: 'ระบุชนิดกีฬาหรือการออกกำลังกาย (Sport / Exercise)', labelEn: 'Sport or exercise', words: ['sport','football','soccer','basketball','badminton','tennis','table','ping','pong','volleyball','swimming','swim','running','run','jogging','cycling','bike','yoga','gym','fitness','walk','walking','golf','boxing','aerobics','dance'] },
-      { labelTh: 'การบอกความชอบหรือความถี่ (Preference / Frequency)', labelEn: 'Preference or frequency', words: ['favorite','like','love','play','watch','do','go','every','weekend','week','day','sometimes','often','usually','with','friends','healthy','fun','exciting','dont'] }
+      { labelTh: 'โครงสร้างการสั่งอาหารว่าง (Would like / Order / Have)', labelEn: 'Ordering phrase', words: ['would','like','id','can','have','order','eat','want','please','i'] },
+      { labelTh: 'ระบุชื่อขนมหรืออาหารว่าง (Snack / Food item)', labelEn: 'Snack item', words: ['cake','chocolate','sandwich','cheese','tuna','ham','egg','bread','toast','croissant','cookie','cookies','biscuit','pie','donut','waffle','pancake','ice','cream','french','fries','chips','burger','pizza','salad','fruit','snack','pastry','brownie'] }
     ],
+    // Q3: How much money do you have for a snack and a drink? (Sample: I have 100 baht.)
     u5_partB_2: [
-      { labelTh: 'ระบุแนวเพลง/ภาพยนตร์/รายการที่ชอบ (Music / Movie / Show)', labelEn: 'Music or movie genre', words: ['music','song','songs','pop','rock','jazz','classical','country','thai','korean','kpop','hip','hop','dance','easy','listening','movie','movies','film','action','comedy','romance','horror','sci','fi','drama','cartoon','anime','series','show','news','youtube','netflix','listen','watch','like','love','favorite'] }
+      { labelTh: 'กริยาบอกจำนวนเงินที่มี (I have / Bring / Got)', labelEn: 'Possession verb (I have)', words: ['i','have','got','bring','carry','spend','my','budget','is','only'] },
+      { labelTh: 'ระบุจำนวนเงินและหน่วยเงิน (Amount & Baht/Money)', labelEn: 'Money amount', words: COMMON_MONEY_WORDS }
     ],
-    u5_partC_0: [
-      { labelTh: '1. ระบุงานอดิเรกที่ชอบทำ (Hobby / Activity)', labelEn: 'Hobby or activity', words: ['hobby','free','time','like','love','enjoy','favorite','read','book','watch','movie','tv','listen','music','play','game','sport','football','badminton','run','swim','cook','bake','travel','photo','draw','plant','garden','yoga','exercise'] },
-      { labelTh: '2. บอกความถี่หรือช่วงเวลาที่ทำ (When / How often)', labelEn: 'Time or frequency', words: [...COMMON_TIME_WORDS, ...COMMON_FREQ_WORDS, 'after','work','school','holiday','free','time','home','park','gym','with','friends','family','alone'] },
-      { labelTh: '3. บอกเหตุผลหรือความรู้สึก (Why you like it)', labelEn: 'Reason or feeling', words: ['because','make','makes','feel','happy','relax','relaxed','relaxing','fun','interesting','healthy','strong','good','great','easy','stress','learn','new','enjoy','exciting'] }
+    // Q4: Where do you usually go for snacks? (Sample: I usually go to KFC.)
+    u5_partB_3: [
+      { labelTh: 'การบอกการเดินทางไปซื้อขนม (Go to / Buy at / Usually)', labelEn: 'Go to / Buy context', words: ['i','we','usually','often','sometimes','always','go','to','buy','eat','at','near','after'] },
+      { labelTh: 'ระบุชื่อร้านหรือสถานที่ (Café / Shop / Place)', labelEn: 'Place or shop name', words: ['kfc','cafe','coffee','shop','seven','eleven','711','mall','shopping','market','supermarket','canteen','school','store','bakery','restaurant','mcdonalds','starbucks','amazon','street','home','near'] }
     ],
 
-    // ---------------- UNIT 6: Family & Friends ----------------
+    // ---------------- UNIT 6: Weather Around the World ----------------
+    // Q1: What's the weather in your area like today? (Sample: It's hot and sunny today.)
     u6_partB_0: [
-      { labelTh: 'ระบุจำนวนสมาชิกในครอบครัว (Number of people)', labelEn: 'Number of family members', words: ['1','2','3','4','5','6','7','8','9','10','one','two','three','four','five','six','seven','eight','nine','ten','small','big','large','people','persons','members','family','there','are','have'] },
-      { labelTh: 'ระบุสมาชิกในครอบครัว (Family members)', labelEn: 'Family member nouns', words: ['father','dad','mother','mom','parents','brother','sister','son','daughter','children','kids','husband','wife','grandmother','grandma','grandfather','grandpa','grandparents','uncle','aunt','cousin','me','myself','and'] }
+      { labelTh: 'ระบุสภาพอากาศ (Weather condition)', labelEn: 'Weather description', words: ['hot','sunny','warm','cool','cold','rainy','raining','rain','cloudy','windy','stormy','dry','humid','wet','nice','good','clear','freezing','degrees','weather','today','now','its','it','is'] }
     ],
+    // Q2: What's your favorite season? (Sample: My favorite season is winter.)
     u6_partB_1: [
-      { labelTh: 'การพูดถึงพี่น้องหรือสมาชิกครอบครัว (Siblings / Family)', labelEn: 'Brothers, sisters, or family', words: ['yes','no','have','dont','only','child','brother','brothers','sister','sisters','older','younger','big','little','one','two','three','four','none','single','son','daughter','parents','family'] }
+      { labelTh: 'ระบุฤดูกาลที่ชอบ (Season name)', labelEn: 'Season name', words: ['winter','summer','rainy','spring','autumn','fall','cold','cool','hot','season'] },
+      { labelTh: 'การบอกความชอบ (My favorite season / I like)', labelEn: 'Preference phrase', words: ['my','favorite','season','is','i','like','love','prefer','best'] }
     ],
+    // Q3: What do you usually wear in your favorite season? (Sample: I usually wear a jacket.)
     u6_partB_2: [
-      { labelTh: 'ระบุเพื่อนสนิทหรือลักษณะนิสัย (Best friend / Personality)', labelEn: 'Friend & personality/description', words: ['friend','best','name','is','he','she','we','kind','nice','friendly','funny','smart','clever','helpful','good','polite','quiet','talkative','happy','tall','short','work','school','together','like','love','help','talk','play'] }
+      { labelTh: 'กริยาการสวมใส่ (Wear / Put on)', labelEn: 'Wearing verb', words: ['i','usually','often','always','wear','wearing','put','on','like','to'] },
+      { labelTh: 'ระบุเครื่องแต่งกาย (Clothing item)', labelEn: 'Clothing item', words: ['jacket','coat','sweater','hoodie','scarf','gloves','hat','cap','tshirt','shirt','blouse','shorts','pants','trousers','jeans','skirt','dress','raincoat','boots','shoes','sneakers','sandals','sunglasses','umbrella','warm','light','comfortable','clothes'] }
     ],
-    u6_partC_0: [
-      { labelTh: '1. แนะนำสมาชิกในครอบครัวหรือเพื่อน (Who they are)', labelEn: 'Family member or friend', words: ['family','father','dad','mother','mom','parents','brother','sister','husband','wife','son','daughter','friend','people','there','are','have','my','name','is','he','she','they'] },
-      { labelTh: '2. บอกลักษณะ อาชีพ หรือกิจกรรมที่ทำร่วมกัน (Details / Jobs / Activities)', labelEn: 'Characteristics, jobs, or shared activities', words: ['kind','nice','friendly','funny','helpful','good','happy','love','like','work','teacher','doctor','nurse','engineer','office','business','student','cook','eat','dinner','travel','watch','talk','together','weekend','home','years','old','live'] }
+    // Q4: What do you do on a hot day? (Sample: I stay inside.)
+    u6_partB_3: [
+      { labelTh: 'กิจกรรมที่ทำในวันที่อากาศร้อน (Hot-day activity)', labelEn: 'Activity on a hot day', words: ['stay','inside','home','room','turn','on','air','conditioner','ac','fan','drink','cold','water','ice','iced','tea','coffee','juice','smoothie','eat','cream','watermelon','fruit','go','swim','swimming','pool','beach','mall','shopping','take','shower','wear','shorts','tshirt','rest','relax'] }
     ],
 
-    // ---------------- UNIT 7: Weather & Seasons ----------------
+    // ---------------- UNIT 7: My Favorite Sport ----------------
+    // Q1: What's your favorite sport? (Sample: My favorite sport is football.)
     u7_partB_0: [
-      { labelTh: 'ระบุสภาพอากาศ (Weather condition)', labelEn: 'Weather vocabulary', words: ['sunny','hot','warm','cool','cold','rainy','raining','rain','cloudy','windy','stormy','clear','nice','good','bad','humid','dry','weather','today','now','outside','sky','sun','degrees'] }
+      { labelTh: 'การบอกกีฬาที่ชอบ (My favorite sport is / I like)', labelEn: 'Favorite sport phrase', words: ['my','favorite','sport','is','i','like','love','play','playing','best'] },
+      { labelTh: 'ระบุชื่อกีฬา (Sport name)', labelEn: 'Sport name', words: ['football','soccer','basketball','badminton','tennis','table','ping','pong','volleyball','swimming','swim','running','run','cycling','bike','golf','boxing','muay','thai','yoga','gymnastics','baseball','rugby','skating','skate','esports'] }
     ],
+    // Q2: Who do you play sports with? (Sample: I play sports with my friends.)
     u7_partB_1: [
-      { labelTh: 'ระบุฤดูกาลหรือสภาพอากาศที่ชอบ (Season / Weather)', labelEn: 'Season or weather type', words: ['winter','summer','rainy','spring','autumn','fall','cool','cold','warm','hot','sunny','season','weather'] },
-      { labelTh: 'บอกความชอบหรือเหตุผล (Preference / Reason)', labelEn: 'Preference or reason', words: ['favorite','like','love','prefer','enjoy','because','nice','comfortable','fresh','air','travel','holiday','beach','mountain','wear','sweater','jacket','eat','ice','cream','rain','trees','green','flowers'] }
+      { labelTh: 'กริยาการเล่นกีฬาด้วยกัน (Play with)', labelEn: 'Play with structure', words: ['i','we','usually','play','sports','sport','it','with','my','together'] },
+      { labelTh: 'ระบุคนที่เล่นกีฬาด้วย (Friends / Family / Classmates)', labelEn: 'Companion (friends/family)', words: ['friends','friend','classmates','schoolmates','teammates','team','brother','brothers','sister','sisters','father','dad','mother','mom','parents','family','cousin','neighbors','club','alone','myself'] }
     ],
+    // Q3: When do you play this sport? (Sample: I usually play it on Saturday.)
     u7_partB_2: [
-      { labelTh: 'ระบุกิจกรรมหรือสิ่งที่ทำเมื่อฝนตก (Rainy day activity)', labelEn: 'Rainy day action', words: ['rain','rainy','raining','when','stay','home','inside','umbrella','raincoat','read','book','watch','movie','tv','series','sleep','nap','rest','drink','hot','coffee','tea','chocolate','soup','cook','eat','listen','music','play','game'] }
+      { labelTh: 'กริยาการเล่นกีฬา (Play / Practice / Exercise)', labelEn: 'Play action', words: ['i','we','usually','often','always','sometimes','play','it','sport','practice','go'] },
+      { labelTh: 'ระบุวันหรือช่วงเวลาที่เล่น (Day or Time expression)', labelEn: 'Day or time expression', words: [...COMMON_FREQ_WORDS, ...COMMON_TIME_WORDS, 'school','class','work','holiday','free','time'] }
     ],
-    u7_partC_0: [
-      { labelTh: '1. บรรยายสภาพอากาศหรือฤดูกาล (Weather / Season)', labelEn: 'Weather or season description', words: ['weather','today','season','sunny','hot','warm','cool','cold','rainy','rain','cloudy','windy','nice','clear','sky','summer','winter','rainy','spring','autumn'] },
-      { labelTh: '2. บอกเสื้อผ้าที่ใส่หรือสิ่งที่พกพา (Clothes / Items for weather)', labelEn: 'Clothing or weather gear', words: ['wear','wearing','put','on','take','bring','carry','tshirt','shirt','shorts','hat','cap','sunglasses','jacket','coat','sweater','scarf','pants','jeans','umbrella','raincoat','boots','shoes','comfortable','light','warm'] },
-      { labelTh: '3. บอกกิจกรรมที่ทำในสภาพอากาศนั้น (Activities)', labelEn: 'Activities for that weather', words: ['go','walk','park','beach','swim','travel','outside','stay','home','inside','drink','cold','hot','water','coffee','tea','ice','cream','read','watch','movie','play','exercise','relax','enjoy','like','love'] }
+    // Q4: What other sports do you like to play? (Sample: I like to play tennis.)
+    u7_partB_3: [
+      { labelTh: 'การบอกความชอบกีฬาอื่น (I like to play / Also like)', labelEn: 'Preference phrase', words: ['i','also','like','love','enjoy','want','would','to','play','playing','do','go','other','sport','sports','is'] },
+      { labelTh: 'ระบุชื่อกีฬาอื่น (Other sport name)', labelEn: 'Sport name', words: ['tennis','badminton','football','soccer','basketball','volleyball','swimming','swim','running','run','jogging','cycling','bike','table','ping','pong','golf','boxing','yoga','aerobics','bowling','skate','climbing'] }
     ],
 
-    // ---------------- UNIT 8: Health & Body ----------------
+    // ---------------- UNIT 8: Asking for Directions ----------------
+    // Q1: How do you usually go to school? (Sample: I go to school by bus.)
     u8_partB_0: [
-      { labelTh: 'บอกอาการหรือความรู้สึกวันนี้ (How you feel today)', labelEn: 'Health or feeling state', words: ['feel','feeling','am','im','good','great','fine','well','okay','ok','healthy','happy','strong','fresh','tired','sleepy','sick','ill','not','bad','headache','cold','fever','stomachache','sore','pain','today','now','very'] }
+      { labelTh: 'กริยาการเดินทางไปเรียน/ทำงาน (Go to school/work)', labelEn: 'Go to school/work', words: ['i','usually','always','go','get','travel','to','school','work','office','class','by','on','take','ride','drive'] },
+      { labelTh: 'ระบุวิธีเดินทางหรือยานพาหนะ (Transportation mode)', labelEn: 'Mode of transport', words: ['bus','car','van','train','bts','mrt','skytrain','subway','taxi','motorcycle','motorbike','bike','bicycle','scooter','boat','walk','walking','foot','parents','dad','mom'] }
     ],
+    // Q2: What places are near your home? (Sample: A supermarket and a bank.)
     u8_partB_1: [
-      { labelTh: 'วิธีดูแลตัวเองเมื่อไม่สบาย (What you do when sick/cold)', labelEn: 'Remedy or self-care action', words: ['when','sick','cold','ill','fever','headache','take','medicine','pill','pills','vitamin','drink','warm','hot','water','tea','soup','rest','sleep','bed','stay','home','see','visit','go','doctor','hospital','clinic','pharmacy','mask'] }
+      { labelTh: 'ระบุสถานที่ใกล้บ้าน (Places near home)', labelEn: 'Places near home', words: ['supermarket','bank','park','market','seven','eleven','711','shop','store','mall','shopping','cafe','coffee','restaurant','bakery','school','hospital','clinic','pharmacy','temple','church','mosque','station','bus','stop','post','office','library','gym','police','hotel','bookshop','bookstore'] }
     ],
+    // Q3: How do you get to a supermarket from your home? (Sample: I walk for 5 minutes and turn left at the bank.)
     u8_partB_2: [
-      { labelTh: 'วิธีรักษาสุขภาพให้แข็งแรง (Healthy habits)', labelEn: 'Healthy lifestyle habits', words: ['healthy','health','keep','stay','eat','good','food','vegetables','fruit','fruits','salad','drink','water','milk','exercise','run','walk','jog','swim','sport','gym','yoga','sleep','early','enough','hours','rest','wash','hands','dont','smoke'] }
+      { labelTh: 'วิธีการเดินทางหรือคำบอกทิศทาง (Walk / Drive / Go straight / Turn)', labelEn: 'Travel method or direction verb', words: ['walk','go','drive','ride','take','straight','turn','left','right','along','across','past','pass','by','car','bus','bike','motorcycle','from','home'] },
+      { labelTh: 'ระยะเวลาหรือจุดสังเกตระหว่างทาง (Time / Distance / Landmark)', labelEn: 'Minutes, distance, or landmark', words: ['minute','minutes','near','close','far','corner','street','road','soi','intersection','light','bank','park','school','cafe','shop','seven','eleven','market','mall','next','to','opposite','at','the','for','about','1','2','3','4','5','10','15','20','five','ten','fifteen','twenty'] }
     ],
-    u8_partC_0: [
-      { labelTh: '1. บอกอาการเจ็บป่วยหรือไม่สบาย (Symptoms / Illness)', labelEn: 'Symptom or health problem', words: ['have','feel','got','sick','ill','headache','fever','cold','cough','sore','throat','stomachache','toothache','backache','pain','hurt','hurts','tired','weak','dizzy','runny','nose','temperature','body','head','stomach','throat','doctor'] },
-      { labelTh: '2. การขอคำแนะนำหรือวิธีดูแลรักษา (Advice / Treatment / Rest)', labelEn: 'Treatment, medicine, or rest', words: ['should','need','can','what','do','take','medicine','pill','aspirin','vitamin','drink','water','warm','rest','sleep','stay','bed','home','see','doctor','hospital','clinic','help','better','days','since','yesterday','today'] }
+    // Q4: What places are next to your school? (Sample: A coffeeshop and a post office.)
+    u8_partB_3: [
+      { labelTh: 'ระบุสถานที่ที่อยู่ติดกับโรงเรียน/ที่ทำงาน (Places next to school/work)', labelEn: 'Nearby places', words: ['coffee','coffeeshop','cafe','post','office','bank','park','supermarket','market','seven','eleven','shop','store','bookshop','bookstore','library','hospital','clinic','temple','restaurant','bakery','mall','bus','stop','station','hotel','house','building','next','to','near','school'] }
     ],
 
-    // ---------------- UNIT 9: Past Experiences ----------------
+    // ---------------- UNIT 9: Healthy Food for Healthy Body ----------------
+    // Q1: What's your favorite fruit? (Sample: My favorite fruit is mango.)
     u9_partB_0: [
-      { labelTh: 'บอกกิจกรรมที่ทำเมื่อวานนี้ (Yesterday activity)', labelEn: 'Past action / Yesterday context', words: ['yesterday','last','went','worked','studied','stayed','watched','played','cooked','ate','had','saw','met','visited','walked','cleaned','read','bought','did','was','were','home','work','school','office','market','mall','movie','tv','dinner','lunch','friends','family'] }
+      { labelTh: 'การบอกผลไม้ที่ชอบ (My favorite fruit is / I like)', labelEn: 'Preference structure', words: ['my','favorite','fruit','is','i','like','love','eat','eating','best'] },
+      { labelTh: 'ระบุชื่อผลไม้ (Fruit name)', labelEn: 'Fruit vocabulary', words: ['mango','mangoes','apple','apples','banana','bananas','orange','oranges','watermelon','strawberry','strawberries','grape','grapes','pineapple','papaya','durian','rambutan','mangosteen','lychee','kiwi','pear','peach','cherry','melon','coconut','guava','pomelo','avocado','berry'] }
     ],
+    // Q2: What do you usually eat for breakfast? (Sample: I usually eat eggs and bread.)
     u9_partB_1: [
-      { labelTh: 'บอกสถานที่หรือกิจกรรมช่วงสุดสัปดาห์ที่ผ่านมา (Last weekend)', labelEn: 'Last weekend place or activity', words: ['last','weekend','saturday','sunday','went','stayed','visited','was','were','had','ate','watched','played','shopped','cleaned','rested','slept','drove','traveled','home','mall','park','market','beach','cafe','restaurant','temple','cinema','movie','family','friends','parents'] }
+      { labelTh: 'กริยาการรับประทานมื้อเช้า (Eat / Have for breakfast)', labelEn: 'Breakfast action', words: ['i','usually','always','often','eat','have','drink','for','breakfast','morning'] },
+      { labelTh: 'ระบุอาหารหรือเครื่องดื่มมื้อเช้า (Breakfast food/drink)', labelEn: 'Breakfast food or drink', words: ['egg','eggs','omelet','fried','boiled','bread','toast','sandwich','rice','porridge','soup','congee','cereal','milk','coffee','tea','juice','water','fruit','banana','apple','salad','yogurt','sausage','ham','chicken','pork','noodles','pancake','waffle'] }
     ],
+    // Q3: What kind of healthy food would you like to make? (Sample: I would like to make a salad.)
     u9_partB_2: [
-      { labelTh: 'เล่าเรื่องทริปหรือการเดินทางที่ผ่านมา (Last trip / Holiday)', labelEn: 'Past trip details', words: ['trip','holiday','vacation','last','year','month','went','traveled','visited','flew','drove','took','stayed','saw','ate','bought','was','were','had','fun','good','great','beautiful','nice','happy','beach','sea','mountain','chiang','mai','phuket','bangkok','pattaya','hua','hin','krabi','japan','hotel','food','photos','family','friends'] }
+      { labelTh: 'โครงสร้างบอกสิ่งที่อยากทำ (Would like to make / Cook)', labelEn: 'Desire to make/cook', words: ['i','would','like','want','love','to','make','cook','prepare','eat','healthy','food'] },
+      { labelTh: 'ระบุเมนูอาหารเพื่อสุขภาพ (Healthy dish/food)', labelEn: 'Healthy food or dish', words: ['salad','vegetable','vegetables','fruit','soup','chicken','breast','fish','salmon','tuna','egg','eggs','boiled','steamed','grilled','rice','brown','sandwich','wrap','smoothie','yogurt','oatmeal','tofu','beans','spicy','thai','som','tam'] }
     ],
-    u9_partC_0: [
-      { labelTh: '1. ระบุสถานที่หรือช่วงเวลาในอดีต (Where & When in the past)', labelEn: 'Past time & destination', words: ['last','yesterday','weekend','month','year','holiday','vacation','trip','summer','winter','ago','went','traveled','visited','stayed','beach','sea','mountain','park','temple','city','province','chiang','mai','phuket','pattaya','hua','hin','bangkok','hotel','country','with','family','friends'] },
-      { labelTh: '2. เล่าสิ่งที่ทำด้วยกริยาช่อง 2 (Past tense actions)', labelEn: 'Past activities (saw, ate, took, etc.)', words: ['went','saw','ate','had','took','bought','walked','swam','played','watched','visited','stayed','drove','flew','rode','met','talked','relaxed','enjoyed','photos','pictures','food','seafood','shopping','market','view','weather'] },
-      { labelTh: '3. บอกความรู้สึกต่อประสบการณ์นั้น (Feelings / Impression)', labelEn: 'Past feeling (was/were + adjective)', words: ['was','were','felt','had','good','great','fun','wonderful','amazing','awesome','beautiful','nice','happy','excited','relaxed','delicious','fantastic','memorable','best','time','loved','liked','enjoyed'] }
+    // Q4: What do you drink when you're thirsty? (Sample: I drink water.)
+    u9_partB_3: [
+      { labelTh: 'กริยาการดื่ม (I drink / Have)', labelEn: 'Drinking verb', words: ['i','usually','always','drink','have','when','thirsty','like'] },
+      { labelTh: 'ระบุเครื่องดื่มดับกระหาย (Water / Beverage)', labelEn: 'Beverage name', words: ['water','cold','plain','mineral','juice','orange','apple','fruit','coconut','milk','tea','iced','green','lemonade','soda','smoothie','electrolyte','sport','drink'] }
     ],
 
-    // ---------------- UNIT 10: Future Plans ----------------
+    // ---------------- UNIT 10: My Free Time ----------------
+    // Q1: What do you like doing in your free time? (Sample: I like playing games.)
     u10_partB_0: [
-      { labelTh: 'โครงสร้างการบอกแผนในอนาคต (Going to / Will / Tonight)', labelEn: 'Future expression or tonight context', words: ['going','to','will','plan','want','tonight','evening','after','work','school','home','im','i'] },
-      { labelTh: 'กิจกรรมที่จะทำคืนนี้ (Evening activity)', labelEn: 'Planned activity', words: ['eat','have','cook','dinner','watch','movie','tv','series','youtube','read','book','study','do','homework','exercise','play','game','talk','call','family','friends','relax','rest','sleep','early','shower'] }
+      { labelTh: 'การบอกความชอบในเวลาว่าง (I like / Enjoy / In my free time)', labelEn: 'Free-time preference', words: ['i','like','love','enjoy','prefer','doing','to','in','my','free','time','hobby','is'] },
+      { labelTh: 'ระบุกิจกรรมยามว่างหรืองานอดิเรก (Hobby / Activity)', labelEn: 'Hobby or activity', words: ['play','playing','games','game','read','reading','book','books','comics','comic','draw','drawing','paint','painting','pictures','listen','listening','music','songs','watch','watching','movie','movies','tv','youtube','series','anime','take','taking','photos','pictures','cook','cooking','bake','sport','sports','football','badminton','run','swim','sleep','shopping','travel'] }
     ],
+    // Q2: When do you usually do your favorite activity? (Sample: I usually play games after school. I like playing games.)
     u10_partB_1: [
-      { labelTh: 'โครงสร้างอนาคตหรือช่วงสุดสัปดาห์หน้า (Next weekend / Going to / Will)', labelEn: 'Future weekend marker', words: ['going','to','will','plan','next','this','weekend','saturday','sunday','tomorrow','want','would','like'] },
-      { labelTh: 'กิจกรรมหรือสถานที่ที่จะไป (Planned place or action)', labelEn: 'Planned activity or destination', words: ['go','visit','stay','home','clean','wash','cook','eat','shop','shopping','mall','market','park','beach','cafe','restaurant','cinema','movie','see','meet','parents','family','friends','travel','rest','relax','exercise','play'] }
+      { labelTh: 'กริยาการทำกิจกรรมและความถี่ (I usually do / Play / Read)', labelEn: 'Activity & frequency marker', words: ['i','usually','often','always','sometimes','do','play','read','draw','listen','watch','take','it','my','favorite','activity','hobby'] },
+      { labelTh: 'ระบุช่วงเวลาหรือวันที่ทำ (After school / On weekends / In the evening)', labelEn: 'Time or day expression', words: [...COMMON_FREQ_WORDS, ...COMMON_TIME_WORDS, 'school','work','class','homework','free','time','holiday'] }
     ],
+    // Q3: Who do you spend your free time with? (Sample: I spend my free time with my friends.)
     u10_partB_2: [
-      { labelTh: 'ระบุเป้าหมายหรือสถานที่ที่อยากไปในอนาคต (Future goal / Dream trip)', labelEn: 'Future goal or travel wish', words: ['want','would','like','hope','plan','going','to','will','future','next','year','someday','visit','travel','go','see','learn','study','speak','english','buy','house','car','save','money','healthy','new','job','japan','korea','europe','america','china','chiang','mai','phuket','beach','mountain'] }
+      { labelTh: 'โครงสร้างการใช้เวลาร่วมกับ (Spend time with / Do with)', labelEn: 'Spend time with structure', words: ['i','usually','spend','my','free','time','play','do','go','with','together'] },
+      { labelTh: 'ระบุบุคคลที่ใช้เวลาว่างด้วย (Friends / Family / Alone)', labelEn: 'Companion (friends/family/alone)', words: ['friends','friend','best','family','parents','mother','mom','father','dad','brother','brothers','sister','sisters','cousin','classmates','dog','cat','pet','alone','myself'] }
     ],
-    u10_partC_0: [
-      { labelTh: '1. ใช้โครงสร้างบอกแผนในอนาคต (Going to / Will / Plan to / Want to)', labelEn: 'Future grammar marker', words: ['going','to','will','plan','planning','want','would','like','hope','tomorrow','tonight','next','this','weekend','week','month','year','holiday','vacation','future'] },
-      { labelTh: '2. ระบุกิจกรรมหรือสถานที่ที่วางแผนไว้ (Planned activities & places)', labelEn: 'Planned activities or places', words: ['go','visit','travel','stay','meet','see','eat','cook','watch','play','study','learn','work','buy','clean','relax','rest','exercise','home','family','parents','friends','beach','mountain','park','mall','market','temple','cafe','movie','trip','english'] },
-      { labelTh: '3. บอกเหตุผลหรือความตั้งใจ (Reason / Feeling / Goal)', labelEn: 'Reason, companion, or expectation', words: ['because','with','my','family','friends','fun','happy','relax','relaxing','excited','exciting','good','great','nice','beautiful','delicious','important','improve','better','enjoy','time','together'] }
+    // Q4: What other hobbies would you like to try? (Sample: I would like to try painting.)
+    u10_partB_3: [
+      { labelTh: 'โครงสร้างบอกสิ่งที่อยากลอง (Would like to try / Want to learn)', labelEn: 'Would like to try structure', words: ['i','would','like','want','love','hope','to','try','learn','do','start','new','other','hobby'] },
+      { labelTh: 'ระบุงานอดิเรกใหม่ที่อยากลอง (New hobby / Activity)', labelEn: 'Hobby to try', words: ['painting','paint','drawing','draw','cooking','cook','baking','bake','swimming','swim','dancing','dance','singing','sing','playing','play','guitar','piano','music','drums','violin','photography','taking','photos','camping','hiking','traveling','gardening','yoga','tennis','badminton','golf','skate','coding','knitting','fishing'] }
     ],
 
-    // ---------------- UNIT 11: Work & Jobs ----------------
+    // ---------------- UNIT 11: A Day at the Shopping Mall ----------------
+    // Q1: What clothes do you like to wear? (Sample: I like to wear T-shirts and jeans.)
     u11_partB_0: [
-      { labelTh: 'ระบุอาชีพหรือสถานที่ทำงาน (Job / Occupation / Workplace)', labelEn: 'Job title or workplace', words: ['am','work','working','job','my','as','in','at','for','company','office','school','hospital','bank','store','shop','factory','hotel','restaurant','government','officer','staff','employee','worker','manager','engineer','teacher','student','doctor','nurse','accountant','sales','driver','chef','cook','it','computer','business','owner','freelance','telecom','nt','twp'] }
+      { labelTh: 'กริยาการสวมใส่เสื้อผ้าที่ชอบ (I like to wear)', labelEn: 'Like to wear phrase', words: ['i','usually','like','love','prefer','to','wear','wearing','my','favorite','clothes'] },
+      { labelTh: 'ระบุชนิดเสื้อผ้า (Clothing items)', labelEn: 'Clothing items', words: ['tshirt','tshirts','shirt','shirts','blouse','jeans','pants','trousers','shorts','skirt','skirts','dress','dresses','jacket','coat','sweater','hoodie','suit','uniform','sportswear','shoes','sneakers','comfortable','casual'] }
     ],
+    // Q2: What is your favorite color for clothes? (Sample: My favorite color is pink.)
     u11_partB_1: [
-      { labelTh: 'ระบุเวลาเริ่มงานหรือเลิกงาน (Work / Study hours)', labelEn: 'Start/finish work & time', words: ['start','begin','finish','end','leave','work','working','office','school','study','class','from','to','until','at','around','hour','hours','day', ...COMMON_TIME_WORDS] }
+      { labelTh: 'การบอกสีที่ชอบ (My favorite color is / I like)', labelEn: 'Favorite color structure', words: ['my','favorite','color','colour','for','clothes','is','i','like','love','prefer','wear'] },
+      { labelTh: 'ระบุชื่อสี (Color name)', labelEn: 'Color name', words: ['pink','blue','black','white','red','green','yellow','purple','orange','brown','gray','grey','navy','beige','cream','gold','silver','pastel','dark','light'] }
     ],
+    // Q3: Where do you usually buy clothes? (Sample: I usually buy clothes at the shopping mall.)
     u11_partB_2: [
-      { labelTh: 'บอกสิ่งที่ชอบเกี่ยวกับงานหรือการเรียน (What you like about work/study)', labelEn: 'Positive aspect of work/study', words: ['like','love','enjoy','best','good','great','nice','interesting','fun','happy','job','work','study','because','colleagues','coworkers','friends','team','boss','manager','people','customers','help','helping','learn','learning','new','things','skills','office','near','home','salary','environment'] }
+      { labelTh: 'กริยาการซื้อเสื้อผ้า (Buy clothes / Shop at)', labelEn: 'Buy / Shop verb', words: ['i','usually','often','always','sometimes','buy','buying','shop','shopping','get','my','clothes','at','in','from','on'] },
+      { labelTh: 'ระบุสถานที่หรือช่องทางที่ซื้อ (Shopping mall / Market / Online)', labelEn: 'Shopping place or channel', words: ['shopping','mall','department','store','market','night','flea','chatuchak','online','internet','shopee','lazada','tiktok','shop','shops','boutique','uniqlo','hm','zara','lotus','big','c','supermarket','near','home','city','center'] }
     ],
-    u11_partC_0: [
-      { labelTh: '1. แนะนำอาชีพและสถานที่ทำงาน (Job title & Workplace)', labelEn: 'Job & workplace', words: ['am','work','working','job','occupation','company','office','department','hospital','school','bank','store','hotel','factory','government','nt','twp','officer','employee','staff','manager','engineer','teacher','doctor','nurse','accountant','technician','sales','service','student'] },
-      { labelTh: '2. อธิบายหน้าที่หรือสิ่งที่ทำในงาน (Daily duties & tasks)', labelEn: 'Job duties or schedule', words: ['do','make','help','check','write','send','email','emails','call','talk','speak','meet','customers','clients','people','team','computer','report','reports','data','system','project','manage','fix','teach','care','sell','service','start','finish','every','day'] },
-      { labelTh: '3. บอกความรู้สึกต่ออาชีพหรืองานที่ทำ (Feelings about the job)', labelEn: 'Attitude toward the job', words: ['like','love','enjoy','proud','happy','good','great','interesting','important','useful','helpful','nice','friendly','colleagues','team','learn','because'] }
+    // Q4: How much money do you usually spend on your clothes? (Sample: I usually spend 200 baht on my clothes.)
+    u11_partB_3: [
+      { labelTh: 'กริยาการใช้จ่ายเงินซื้อเสื้อผ้า (Spend / Pay / Cost)', labelEn: 'Spend / Pay verb', words: ['i','usually','often','spend','pay','use','buy','cost','costs','on','for','my','clothes','shirt'] },
+      { labelTh: 'ระบุจำนวนเงินและสกุลเงิน (Amount in Baht / Money)', labelEn: 'Money amount', words: COMMON_MONEY_WORDS }
     ],
 
-    // ---------------- UNIT 12: Skills & Abilities ----------------
+    // ---------------- UNIT 12: Going to the Concert Hall ----------------
+    // Q1: How would you get from your home to school? (Sample: I would take a bus.)
     u12_partB_0: [
-      { labelTh: 'การใช้ Can/Can\'t เพื่อบอกความสามารถ (Can + Skill/Ability)', labelEn: 'Ability marker (can) + verb', words: ['can','able','know','how','good','at','well','swim','cook','bake','drive','ride','car','bike','motorcycle','speak','english','thai','chinese','japanese','play','football','badminton','tennis','guitar','piano','music','sing','dance','draw','paint','use','computer','type','fix','run'] }
+      { labelTh: 'โครงสร้างการเดินทาง (I would take / Go by / Walk)', labelEn: 'Travel structure (would take / go by)', words: ['i','would','will','usually','take','go','get','travel','walk','ride','drive','by','from','home','to','school','work'] },
+      { labelTh: 'ระบุยานพาหนะหรือวิธีเดินทาง (Transportation mode)', labelEn: 'Mode of transport', words: ['bus','car','van','train','bts','mrt','skytrain','subway','taxi','grab','motorcycle','motorbike','bike','bicycle','scooter','boat','walk','walking','foot'] }
     ],
+    // Q2: What place would you like to go in your town? (Sample: I would like to go to the bookstore.)
     u12_partB_1: [
-      { labelTh: 'ตอบรับหรือปฏิเสธเรื่องการทำอาหาร/ว่ายน้ำ (Cook / Swim ability)', labelEn: 'Yes/No + can/can\'t + cook/swim', words: ['yes','no','can','cant','cannot','cook','swim','both','little','bit','very','well','good','food','rice','egg','noodles','pool','sea','water','learn','but'] }
+      { labelTh: 'โครงสร้างบอกสถานที่ที่อยากไป (I would like to go to / Visit)', labelEn: 'Would like to go structure', words: ['i','would','like','want','love','to','go','visit','in','my','town','city','the'] },
+      { labelTh: 'ระบุสถานที่ในเมือง (Place in town)', labelEn: 'Place in town', words: ['bookstore','bookshop','library','park','mall','shopping','center','cinema','movie','theater','concert','hall','cafe','coffee','shop','restaurant','market','night','supermarket','museum','zoo','beach','temple','stadium','gym','pool','game','center'] }
     ],
+    // Q3: How would you get there? (Sample: I would walk.)
     u12_partB_2: [
-      { labelTh: 'ระบุทักษะที่อยากเรียนรู้เพิ่มเติม (Skill you want to learn)', labelEn: 'Want to learn + new skill', words: ['want','would','like','hope','plan','learn','study','practice','improve','how','to','speak','english','chinese','japanese','korean','language','cook','bake','swim','drive','play','guitar','piano','music','dance','sing','computer','coding','ai','photo','draw','tennis','golf','yoga'] }
+      { labelTh: 'โครงสร้างบอกวิธีเดินทางไปที่นั่น (I would ... / By ...)', labelEn: 'Travel method structure', words: ['i','we','would','will','can','take','go','get','there','walk','ride','drive','by','on'] },
+      { labelTh: 'ระบุวิธีเดินทางหรือยานพาหนะ (Walk / Bus / Car / Train)', labelEn: 'Transport or walking', words: ['walk','walking','foot','bus','car','van','train','bts','mrt','skytrain','subway','taxi','grab','motorcycle','motorbike','bike','bicycle','scooter','boat'] }
     ],
-    u12_partC_0: [
-      { labelTh: '1. บอกสิ่งที่สามารถทำได้ดี (What you CAN do well)', labelEn: 'Things you can do (can + verb)', words: ['can','good','at','well','able','cook','swim','drive','ride','speak','english','use','computer','play','sport','football','badminton','guitar','piano','sing','dance','draw','work','help','make','fix'] },
-      { labelTh: '2. บอกสิ่งที่ยังทำไม่ได้หรือทักษะที่อยากฝึกเพิ่ม (What you CAN\'T do or WANT to learn)', labelEn: 'Cannot do or want to learn', words: ['cant','cannot','not','very','good','but','want','would','like','learn','practice','improve','try','study','future','better','more','how','to','speak','swim','cook','drive','play','piano','guitar','english','language','new','skill'] }
+    // Q4: When would you go there? (Sample: I would go this Friday.)
+    u12_partB_3: [
+      { labelTh: 'โครงสร้างบอกเวลาที่จะไป (I would go ...)', labelEn: 'Future/conditional go structure', words: ['i','we','would','will','like','to','go','visit','there','on','this','next','in','at','after'] },
+      { labelTh: 'ระบุวันหรือช่วงเวลาที่จะไป (Day / Weekend / Time)', labelEn: 'Day or time expression', words: [...COMMON_FREQ_WORDS, ...COMMON_TIME_WORDS, 'tomorrow','holiday','vacation','school','work','free','time'] }
     ]
   };
 
@@ -706,8 +747,8 @@ window.VoiceEvaluator = (function () {
     const totalSlots = conceptChecks.length;
     const slotRatio = totalSlots > 0 ? (matchedSlots / totalSlots) : 1;
 
-    // Minimum meaningful words check
-    const minWordsRequired = mode === 'challenge' ? 5 : 3;
+    // Allow concise natural answers (e.g., "An octopus" or "I stay inside")
+    const minWordsRequired = Math.min(3, Math.max(2, targetWords.length));
     const lengthFactor = Math.min(1, spokenWords.length / minWordsRequired);
 
     let commStatus = 'retry';

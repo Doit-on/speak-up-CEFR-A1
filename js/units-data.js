@@ -1,17 +1,17 @@
 /**
  * Speak Up: Listening and Speaking Exercises (CEFR A1)
- * Complete 12 Units Dataset — Extracted from "Speak Up A1.pdf"
- * Version: 1.0.0
+ * Complete 12 Units Dataset — Synchronized 100% with the Official 29-Page Curriculum Document
+ * Version: 1.6.0
  */
 
 window.SPEAKUP_UNITS = [
   // =========================================================================
-  // UNIT 1: My Daily Routine
+  // UNIT 1: Ben's Daily Routine
   // =========================================================================
   {
     id: 1,
-    title: "Unit 1: My Daily Routine",
-    titleTh: "บทที่ 1: กิจวัตรประจำวันของฉัน",
+    title: "Unit 1: Ben's Daily Routine",
+    titleTh: "บทที่ 1: กิจวัตรประจำวันของ Ben",
     themeIcon: "☀️",
     learningGoals: [
       "Understand a short story about daily routines.",
@@ -33,7 +33,7 @@ window.SPEAKUP_UNITS = [
     activity1: {
       type: "story",
       heading: "Listen to the Story",
-      headingTh: "ฟังเรื่องราวของ Ben (ฟังให้จบก่อนจึงจะเห็นบทอ่านสีแดง)",
+      headingTh: "ฟังเรื่องของ Ben โดยยังไม่เห็นบทอ่าน (ฟังจบแล้วกดปุ่มเพื่อแสดงเนื้อหา)",
       title: "Ben's Daily Routine",
       passage: "My name is Ben. I get up at seven o'clock every morning. I brush my teeth and get dressed. Then I have breakfast with my family. I go to school at eight o'clock. After school, I do my homework and watch TV. I go to bed at nine thirty.",
       phrases: [
@@ -99,39 +99,28 @@ window.SPEAKUP_UNITS = [
         "I go to bed at nine thirty."
       ],
       partB: {
+        title: "Part B: Talk About Yourself",
         instruction: "Listen to the questions and sample answers then give your own answers.",
         items: [
           {
             question: "What time do you get up?",
-            sample: "I get up at six o'clock.",
-            keywords: ["get up", "at", "o'clock", "six", "seven", "five", "eight", "morning"]
+            sample: "I get up at 6 o'clock.",
+            keywords: ["get up", "wake up", "at", "o'clock", "six", "seven", "five", "eight", "morning"]
+          },
+          {
+            question: "What time do you get to school?",
+            sample: "I get to school at 7.30.",
+            keywords: ["get", "go", "school", "work", "at", "seven", "eight", "thirty"]
           },
           {
             question: "What do you do after school?",
             sample: "I do my homework after school.",
-            keywords: ["I", "after school", "homework", "play", "watch", "read", "games"]
+            keywords: ["after school", "homework", "play", "watch", "read", "games", "sport"]
           },
           {
-            question: "What time do you go to bed?",
-            sample: "I go to bed at ten.",
-            keywords: ["go to bed", "at", "nine", "ten", "eight", "eleven", "thirty", "o'clock"]
-          }
-        ]
-      },
-      partC: {
-        title: "My Daily Routine",
-        instruction: "Talk about your daily routine in 3–4 sentences.",
-        prompts: [
-          "I get up at ...",
-          "I have breakfast at ...",
-          "I go to school at ...",
-          "I go to bed at ..."
-        ],
-        items: [
-          {
-            situation: "Talk about your daily routine in 3–4 sentences.",
-            sample: "I get up at six thirty. I have breakfast at seven. I go to school at eight. I go to bed at ten.",
-            keywords: ["get up", "breakfast", "school", "bed", "at"]
+            question: "What do you do before going to bed?",
+            sample: "I take a shower.",
+            keywords: ["take", "shower", "brush", "teeth", "read", "watch", "pray", "sleep", "bed"]
           }
         ]
       }
@@ -166,8 +155,8 @@ window.SPEAKUP_UNITS = [
     activity1: {
       type: "conversation",
       heading: "Listen to the Conversation",
-      headingTh: "ฟังบทสนทนาระหว่าง Emma และ Jack (ฟังจบจึงแสดงตัวอักษรสีแดง)",
-      title: "A New Friend",
+      headingTh: "ฟังบทสนทนาระหว่าง Jack (เสียงชาย) และ Emma (เสียงหญิง)",
+      title: "Meeting a New Friend",
       passage: "Emma: Hi! My name is Emma. What's your name?\nJack: Hello, Emma. I'm Jack. Nice to meet you.\nEmma: Nice to meet you, too. How old are you?\nJack: I'm thirteen. How about you?\nEmma: I'm twelve. Are you in class 1?\nJack: Yes, I am. What about you?\nEmma: Me, too! Let's be friends.\nJack: Great!",
       phrases: [
         "Emma: Hi! My name is Emma. What's your name?",
@@ -233,54 +222,28 @@ window.SPEAKUP_UNITS = [
         "Let's be friends!"
       ],
       partB: {
+        title: "Part B: Talk About Yourself",
         instruction: "Listen to the questions and sample answers then give your own answers.",
         items: [
           {
-            question: "What's your name?",
+            question: "What is your name?",
             sample: "My name is May.",
             keywords: ["my", "name", "is", "I'm", "am"]
           },
           {
             question: "How old are you?",
-            sample: "I'm twelve years old.",
-            keywords: ["I'm", "am", "years", "old", "twelve", "thirteen", "eleven", "ten"]
+            sample: "I am 12 years old.",
+            keywords: ["am", "I'm", "years", "old", "twelve", "thirteen", "eleven"]
           },
           {
-            question: "What class are you in?",
-            sample: "I'm in grade 1.",
-            keywords: ["in", "class", "grade", "one", "two", "three"]
-          }
-        ]
-      },
-      partC: {
-        title: "Mini Conversation — Speak by Yourself",
-        instruction: "Imagine you are meeting a new friend. Listen to the questions and answer aloud. Use your own information.",
-        prompts: [
-          "Q1: Hi! What's your name?",
-          "Q2: Nice to meet you! How old are you?",
-          "Q3: What class are you in?",
-          "Q4: Nice! Let's be friends!"
-        ],
-        items: [
-          {
-            situation: "Question 1: Hi! What's your name?",
-            sample: "Hi! My name is Alex. Nice to meet you.",
-            keywords: ["name", "hi", "hello", "my", "is"]
+            question: "What is the best friend's name?",
+            sample: "My best friend's name is Mary.",
+            keywords: ["friend", "name", "is", "my", "best", "his", "her"]
           },
           {
-            situation: "Question 2: Nice to meet you! How old are you?",
-            sample: "Nice to meet you too! I am twelve years old.",
-            keywords: ["old", "years", "am", "twelve", "thirteen", "nice"]
-          },
-          {
-            situation: "Question 3: What class are you in?",
-            sample: "I am in class 1.",
-            keywords: ["class", "grade", "in", "am"]
-          },
-          {
-            situation: "Question 4: Nice! Let's be friends!",
-            sample: "Great! Let's be friends!",
-            keywords: ["great", "sure", "friends", "yes", "ok"]
+            question: "What do you usually do with your friend at school?",
+            sample: "I usually study with my friend at school.",
+            keywords: ["study", "play", "eat", "talk", "read", "walk", "friend", "school", "usually"]
           }
         ]
       }
@@ -314,7 +277,7 @@ window.SPEAKUP_UNITS = [
     activity1: {
       type: "facts",
       heading: "Listen to the Fun Facts",
-      headingTh: "ฟังเกร็ดความรู้เรื่องสัตว์ (ฟังจบจึงแสดงตัวอักษรสีแดง)",
+      headingTh: "ฟังเกร็ดความรู้เรื่องสัตว์ที่มีความสามารถพิเศษ",
       title: "Animals with Superpowers",
       passage: "Some animals have amazing abilities. An octopus can change its color to hide from danger. Bats can find their way in the dark. They use sounds to help them find things around them. Geckos can climb walls because their feet can stick to many surfaces. These animals use their special abilities to live and survive in nature.",
       phrases: [
@@ -379,38 +342,28 @@ window.SPEAKUP_UNITS = [
         "Their feet can stick to surfaces."
       ],
       partB: {
+        title: "Part B: Answer the Questions",
         instruction: "Listen to the question and answer aloud.",
         items: [
           {
-            question: "What can an octopus do?",
-            sample: "An octopus can change its color to hide from danger.",
-            keywords: ["octopus", "can", "change", "color", "hide"]
+            question: "What animal do you think is interesting?",
+            sample: "An octopus.",
+            keywords: ["octopus", "bat", "gecko", "dog", "cat", "bird", "lion", "tiger", "elephant", "dolphin", "monkey", "animal"]
           },
           {
-            question: "How do bats find their way in the dark?",
-            sample: "Bats use sounds to find their way in the dark.",
-            keywords: ["bats", "use", "sounds", "sound", "dark", "find"]
+            question: "Why do you think that?",
+            sample: "Because they can hide.",
+            keywords: ["because", "can", "hide", "change", "fly", "climb", "swim", "run", "fast", "smart", "cute", "strong"]
           },
           {
-            question: "What can geckos do?",
-            sample: "Geckos can climb walls and stick to surfaces.",
-            keywords: ["geckos", "can", "climb", "walls", "stick", "surfaces"]
-          }
-        ]
-      },
-      partC: {
-        title: "Mini Challenge: My Animal Superpower",
-        instruction: "Choose an animal and speak three sentences about its special ability.",
-        prompts: [
-          "My animal is a/an ___.",
-          "It can ___.",
-          "It uses this ability to ___."
-        ],
-        items: [
+            question: "What special ability would you like to have?",
+            sample: "I would like to fly.",
+            keywords: ["would", "like", "want", "to", "fly", "swim", "run", "invisible", "hide", "climb", "jump", "telepath"]
+          },
           {
-            situation: "Choose an animal and speak three sentences about its special ability.",
-            sample: "My animal is an octopus. It can change its color. It uses this ability to hide from danger.",
-            keywords: ["animal", "can", "ability", "octopus", "bat", "gecko", "hide", "climb"]
+            question: "Why would you like to have that ability?",
+            sample: "I would not need a car to go to school.",
+            keywords: ["because", "would", "can", "go", "travel", "help", "fast", "school", "fun", "save", "need", "car"]
           }
         ]
       }
@@ -418,12 +371,12 @@ window.SPEAKUP_UNITS = [
   },
 
   // =========================================================================
-  // UNIT 4: My Family
+  // UNIT 4: My Family and Our Weekends
   // =========================================================================
   {
     id: 4,
-    title: "Unit 4: My Family",
-    titleTh: "บทที่ 4: ครอบครัวของฉัน",
+    title: "Unit 4: My Family and Our Weekends",
+    titleTh: "บทที่ 4: ครอบครัวของฉันและวันหยุดสุดสัปดาห์",
     themeIcon: "👨‍👩‍👧‍👦",
     learningGoals: [
       "Understand a short story about family life.",
@@ -445,7 +398,7 @@ window.SPEAKUP_UNITS = [
     activity1: {
       type: "story",
       heading: "Listen to the Story",
-      headingTh: "ฟังเรื่องครอบครัวของ Troy (ฟังจบจึงแสดงตัวอักษรสีแดง)",
+      headingTh: "ฟังเรื่องครอบครัวของ Troy และกิจกรรมวันสุดสัปดาห์",
       title: "My Family and Our Weekends",
       passage: "My name is Troy, and I live with my parents and my older sister, Maya. My parents are busy on weekdays, so we usually spend more time together on weekends. On Saturday mornings, my sister and I ride our bikes in the park. In the afternoon, we sometimes watch a movie at home. On Sundays, we often have dinner together and talk about our week. I enjoy these moments because we can relax and have fun as a family.",
       phrases: [
@@ -510,6 +463,7 @@ window.SPEAKUP_UNITS = [
         "We enjoy having dinner together."
       ],
       partB: {
+        title: "B. Answer the Questions",
         instruction: "Listen to each question. Pause the audio and answer aloud using your own information.",
         items: [
           {
@@ -520,29 +474,17 @@ window.SPEAKUP_UNITS = [
           {
             question: "What do you usually do with your family on weekends?",
             sample: "We usually watch movies together.",
-            keywords: ["we", "usually", "together", "watch", "eat", "go", "play", "park", "movies"]
+            keywords: ["we", "usually", "together", "watch", "eat", "go", "play", "park", "movies", "dinner"]
           },
           {
             question: "What is your favorite family activity?",
-            sample: "My favorite family activity is eating out.",
-            keywords: ["favorite", "activity", "eating", "watching", "playing", "cooking", "dinner"]
-          }
-        ]
-      },
-      partC: {
-        title: "Mini Challenge: My Family Time",
-        instruction: "Speak for 3–4 sentences about your family. Use the sentence starters to help you.",
-        prompts: [
-          "I live with ...",
-          "On weekends, we usually ...",
-          "We enjoy ...",
-          "I like spending time with my family because ..."
-        ],
-        items: [
+            sample: "My favorite family activity is eating at the restaurant.",
+            keywords: ["favorite", "activity", "eating", "restaurant", "watching", "playing", "cooking", "dinner", "traveling"]
+          },
           {
-            situation: "Speak for 3–4 sentences about your family.",
-            sample: "I live with my parents and my younger brother. On weekends, we usually eat out. We enjoy watching movies together. I like spending time with my family because we have fun.",
-            keywords: ["live", "with", "weekends", "enjoy", "family", "because", "fun"]
+            question: "What place do you like to go with your family?",
+            sample: "I like to go to the beach with my family.",
+            keywords: ["like", "go", "to", "beach", "park", "mall", "restaurant", "mountain", "cinema", "family"]
           }
         ]
       }
@@ -575,19 +517,20 @@ window.SPEAKUP_UNITS = [
     activity1: {
       type: "conversation",
       heading: "Listen to the Conversation",
-      headingTh: "ฟังบทสนทนาระหว่าง Sara และ Dan ที่ร้าน Sunny Café (ฟังจบแล้วกดปุ่มเพื่อแสดงเนื้อหา)",
-      title: "After-School Café",
-      passage: "Sara: Hi, Dan! Welcome to Sunny Café. Here's the menu.\nDan: Thanks, Sara. Can I have a cheese sandwich and a lemonade, please?\nSara: Sure. Anything else?\nDan: No, that's all for me. What would you like, Sara?\nSara: I'd like a chocolate cake and an iced tea, please.\nDan: All right. That's one sandwich, one lemonade, one cake, and one iced tea. How much is it?\nSara: It's 150 baht altogether.\nDan: Here you are.\nSara: Thank you! Our order will be ready soon.",
+      headingTh: "ฟังบทสนทนาที่ร้านคาเฟ่ (เสียงชาย Dan / เสียงหญิง Server & Sara)",
+      title: "At a Café",
+      passage: "Server: Hi! Welcome to Sunny Café. Here's the menu.\nDan: Thanks. Can I have a cheese sandwich and a lemonade, please?\nServer: Sure. Anything else?\nDan: No, that's all for me. Sara, what would you like?\nSara: I'd like a chocolate cake and an iced tea, please.\nServer: All right. That's one sandwich, one lemonade, one cake, and one iced tea.\nSara: How much is it?\nServer: It's 150 baht altogether.\nDan: Here you are.\nServer: Thank you! Your order will be ready soon.",
       phrases: [
-        "Sara: Hi, Dan! Welcome to Sunny Café. Here's the menu.",
-        "Dan: Thanks, Sara. Can I have a cheese sandwich and a lemonade, please?",
-        "Sara: Sure. Anything else?",
-        "Dan: No, that's all for me. What would you like, Sara?",
+        "Server: Hi! Welcome to Sunny Café. Here's the menu.",
+        "Dan: Thanks. Can I have a cheese sandwich and a lemonade, please?",
+        "Server: Sure. Anything else?",
+        "Dan: No, that's all for me. Sara, what would you like?",
         "Sara: I'd like a chocolate cake and an iced tea, please.",
-        "Dan: All right. That's one sandwich, one lemonade, one cake, and one iced tea. How much is it?",
-        "Sara: It's 150 baht altogether.",
+        "Server: All right. That's one sandwich, one lemonade, one cake, and one iced tea.",
+        "Sara: How much is it?",
+        "Server: It's 150 baht altogether.",
         "Dan: Here you are.",
-        "Sara: Thank you! Our order will be ready soon."
+        "Server: Thank you! Your order will be ready soon."
       ]
     },
     activity2: [
@@ -602,8 +545,8 @@ window.SPEAKUP_UNITS = [
         answerIndex: 0
       },
       {
-        question: "What do Dan and Sara order altogether?",
-        options: ["a) Only two cups of coffee", "b) Burgers and french fries", "c) A sandwich, a lemonade, a cake, and an iced tea"],
+        question: "What does the server do in this conversation?",
+        options: ["a) Teaches the friends how to cook", "b) Asks the friends about their school", "c) Takes the friends' order"],
         answerIndex: 2
       }
     ],
@@ -624,7 +567,7 @@ window.SPEAKUP_UNITS = [
         answerIndex: 2
       },
       {
-        sentence: "4. Sara asks, \"Anything ___?\"",
+        sentence: "4. The server asks, \"Anything ___?\"",
         options: ["a) else", "b) more", "c) again"],
         answerIndex: 0
       },
@@ -643,48 +586,28 @@ window.SPEAKUP_UNITS = [
         "How much is it?"
       ],
       partB: {
+        title: "B. Answer the Questions",
         instruction: "Listen to each question. Pause the audio and answer aloud using your own ideas.",
         items: [
           {
             question: "What would you like to drink?",
-            sample: "I'd like an iced tea, please.",
-            keywords: ["like", "have", "iced tea", "lemonade", "water", "milk", "juice", "please"]
+            sample: "I would like an iced tea, please.",
+            keywords: ["would", "like", "have", "iced tea", "lemonade", "water", "milk", "juice", "coffee", "please"]
           },
           {
             question: "What snack would you like to order?",
-            sample: "I'd like a chocolate cake, please.",
-            keywords: ["like", "cake", "sandwich", "bread", "cookie", "please"]
+            sample: "I would like a chocolate cake, please.",
+            keywords: ["would", "like", "order", "cake", "sandwich", "bread", "cookie", "ice cream", "please"]
           },
           {
             question: "How much money do you have for a snack and a drink?",
             sample: "I have 100 baht.",
-            keywords: ["have", "baht", "hundred", "fifty", "twenty"]
-          }
-        ]
-      },
-      partC: {
-        title: "Mini Challenge: Ask Questions at a Café",
-        instruction: "Imagine you are at a café. Listen to each situation, then make a question and say it aloud.",
-        prompts: [
-          "1. Ask the price of a sandwich -> How much is the sandwich?",
-          "2. Ask what drinks are available -> What drinks do you have?",
-          "3. Ask to see the menu -> Can I see the menu, please?"
-        ],
-        items: [
-          {
-            situation: "1. You want to know the price of a sandwich. (Server: The sandwich is 100 baht.)",
-            sample: "How much is the sandwich?",
-            keywords: ["how", "much", "is", "sandwich"]
+            keywords: ["have", "baht", "hundred", "fifty", "twenty", "two hundred", "money"]
           },
           {
-            situation: "2. You want to know what drinks are available. (Server: We have orange juice and lemonade.)",
-            sample: "What drinks do you have?",
-            keywords: ["what", "drinks", "do", "you", "have"]
-          },
-          {
-            situation: "3. You want to know if you can see the menu. (Server: Here is the menu.)",
-            sample: "Can I see the menu, please?",
-            keywords: ["can", "see", "menu", "please"]
+            question: "Where do you usually go for snacks?",
+            sample: "I usually go to KFC.",
+            keywords: ["go", "to", "usually", "cafe", "kfc", "seven", "eleven", "mall", "market", "shop", "canteen"]
           }
         ]
       }
@@ -718,7 +641,7 @@ window.SPEAKUP_UNITS = [
     activity1: {
       type: "facts",
       heading: "Listen to the Fun Facts",
-      headingTh: "ฟังเกร็ดความรู้เรื่องสภาพอากาศรอบโลก (ฟังจบจึงแสดงตัวอักษรสีแดง)",
+      headingTh: "ฟังเกร็ดความรู้เรื่องสภาพอากาศรอบโลก",
       title: "Weather Around the World",
       passage: "The weather is different around the world. In Bangkok, Thailand, it is often hot, and the temperature can reach 40 degrees Celsius. In Oymyakon, Russia, winter is extremely cold, and temperatures can fall below minus 40 degrees. In Cairo, Egypt, the weather is usually hot and dry, with very little rain. However, in London, England, rainy days are common. These different weather conditions affect what people wear and what they do every day.",
       phrases: [
@@ -783,10 +706,11 @@ window.SPEAKUP_UNITS = [
         "My favorite season is winter."
       ],
       partB: {
+        title: "B. Answer the Questions",
         instruction: "Listen to each question. Pause the audio and answer aloud using your own ideas.",
         items: [
           {
-            question: "What's the weather like today?",
+            question: "What's the weather in your area like today?",
             sample: "It's hot and sunny today.",
             keywords: ["it's", "it", "is", "hot", "sunny", "rainy", "cold", "warm", "cloudy", "today"]
           },
@@ -796,25 +720,14 @@ window.SPEAKUP_UNITS = [
             keywords: ["favorite", "season", "is", "winter", "summer", "rainy", "spring"]
           },
           {
-            question: "What do you usually do on rainy days?",
-            sample: "I usually stay home and watch movies.",
-            keywords: ["stay", "home", "watch", "read", "sleep", "play", "usually"]
-          }
-        ]
-      },
-      partC: {
-        title: "Mini Challenge: Talk About the Weather",
-        instruction: "Speak for 3–4 sentences about the weather in your city.",
-        prompts: [
-          "The weather in my city is ...",
-          "I have to wear ...",
-          "I like to ..."
-        ],
-        items: [
+            question: "What do you usually wear in your favorite season?",
+            sample: "I usually wear a jacket.",
+            keywords: ["wear", "jacket", "sweater", "shirt", "t-shirt", "shorts", "coat", "dress", "usually"]
+          },
           {
-            situation: "Speak for 3–4 sentences about the weather in your city.",
-            sample: "The weather in my city is very hot in the summer. I have to wear a T-shirt and shorts. I like to stay inside until the evening.",
-            keywords: ["weather", "city", "hot", "cold", "wear", "like"]
+            question: "What do you do on a hot day?",
+            sample: "I stay inside.",
+            keywords: ["stay", "inside", "home", "swim", "drink", "water", "ice cream", "mall", "air conditioner"]
           }
         ]
       }
@@ -848,8 +761,8 @@ window.SPEAKUP_UNITS = [
     activity1: {
       type: "story",
       heading: "Listen to the Story",
-      headingTh: "ฟังเรื่องกีฬาบาสเกตบอลหลังเลิกเรียน (ฟังจบจึงแสดงตัวอักษรสีแดง)",
-      title: "Basketball After School",
+      headingTh: "ฟังเรื่องกีฬาโปรด (My Favorite Sport)",
+      title: "My Favorite Sport",
       passage: "My favorite sport is basketball. I started playing it two years ago with my friends at school. We play every Tuesday and Thursday after class. I like throwing the ball and trying to score points. Sometimes our team wins, but sometimes we lose. That's OK! I can try again and get better. Basketball helps me stay healthy, and I have fun playing with my team.",
       phrases: [
         "My favorite sport is basketball.",
@@ -914,48 +827,28 @@ window.SPEAKUP_UNITS = [
         "Sports help me stay healthy."
       ],
       partB: {
+        title: "B. Answer the Questions",
         instruction: "Listen to each question. Pause the audio and answer aloud using your own ideas.",
         items: [
           {
             question: "What's your favorite sport?",
             sample: "My favorite sport is football.",
-            keywords: ["favorite", "sport", "is", "football", "basketball", "swimming", "tennis", "badminton"]
+            keywords: ["favorite", "sport", "is", "football", "basketball", "swimming", "tennis", "badminton", "volleyball"]
           },
           {
             question: "Who do you play sports with?",
             sample: "I play sports with my friends.",
-            keywords: ["play", "with", "friends", "family", "brother", "classmates"]
+            keywords: ["play", "with", "friends", "family", "brother", "sister", "classmates"]
           },
           {
             question: "When do you play this sport?",
             sample: "I usually play it on Saturday.",
-            keywords: ["play", "on", "after school", "weekend", "saturday", "sunday", "every"]
-          }
-        ]
-      },
-      partC: {
-        title: "Mini Challenge: Guess the Sport",
-        instruction: "Listen to each clue and guess the sport. Pause the audio and say your answer aloud.",
-        prompts: [
-          "Clue 1: Kick a ball and score goals -> Football",
-          "Clue 2: Use a racket to hit a small ball over a net -> Tennis",
-          "Clue 3: Go in a pool and move through the water -> Swimming"
-        ],
-        items: [
-          {
-            situation: "1. You use your feet to kick a ball. You try to score goals.",
-            sample: "Football! My answer is football.",
-            keywords: ["football", "soccer"]
+            keywords: ["play", "on", "after school", "weekend", "saturday", "sunday", "every", "evening"]
           },
           {
-            situation: "2. You use a racket to hit a small ball over a net.",
-            sample: "Tennis! My answer is tennis.",
-            keywords: ["tennis", "badminton"]
-          },
-          {
-            situation: "3. You go in a pool and move your arms and legs through the water.",
-            sample: "Swimming! My answer is swimming.",
-            keywords: ["swimming", "swim"]
+            question: "What other sports do you like to play?",
+            sample: "I like to play tennis.",
+            keywords: ["like", "play", "tennis", "badminton", "football", "basketball", "swimming", "running", "volleyball"]
           }
         ]
       }
@@ -988,8 +881,8 @@ window.SPEAKUP_UNITS = [
     activity1: {
       type: "conversation",
       heading: "Listen to the Conversation",
-      headingTh: "ฟังบทสนทนาการถามทางไปร้านหนังสือ (ฟังจบจึงแสดงตัวอักษรสีแดง)",
-      title: "Giving Direction",
+      headingTh: "ฟังบทสนทนาการถามทาง (เสียงชาย Tom / เสียงหญิง Mia)",
+      title: "Asking for Direction",
       passage: "Mia: Excuse me. Can you help me?\nTom: Sure. What are you looking for?\nMia: I'm looking for the bookshop. Is it near here?\nTom: Yes. Go straight and turn left at the corner.\nMia: Turn left at the corner. OK.\nTom: The bookshop is next to the café, across from the park.\nMia: Great! Is it far from here?\nTom: No, it's only a five-minute walk.\nMia: Thank you for your help!\nTom: You're welcome!",
       phrases: [
         "Mia: Excuse me. Can you help me?",
@@ -1057,48 +950,28 @@ window.SPEAKUP_UNITS = [
         "Thank you for your help!"
       ],
       partB: {
+        title: "B. Answer the Questions",
         instruction: "Listen to each question. Pause the audio and answer aloud using your own ideas.",
         items: [
           {
-            question: "Is there a café near your school?",
-            sample: "Yes, there is.",
-            keywords: ["yes", "no", "there", "is", "near", "school"]
-          },
-          {
-            question: "How do you usually get to school?",
+            question: "How do you usually go to school?",
             sample: "I go to school by bus.",
-            keywords: ["go", "school", "by", "bus", "car", "walk", "train"]
+            keywords: ["go", "school", "by", "bus", "car", "walk", "train", "bike", "motorcycle"]
           },
           {
-            question: "What place do you often go on weekends?",
-            sample: "I often go to the shopping mall.",
-            keywords: ["go", "to", "park", "mall", "shopping", "café", "library"]
-          }
-        ]
-      },
-      partC: {
-        title: "Mini Challenge: Help a Visitor!",
-        instruction: "Listen to each situation. Imagine you are a local person helping a visitor. Pause the audio and give directions aloud.",
-        prompts: [
-          "1. Library -> The library is next to the school.",
-          "2. Park -> The park is across from the café.",
-          "3. Train station -> The train station is about a ten-minute walk."
-        ],
-        items: [
-          {
-            situation: "1. A visitor wants to go to the library. It is next to the school. Tell the visitor where it is.",
-            sample: "The library is next to the school.",
-            keywords: ["library", "next", "to", "school"]
+            question: "What places are near your home?",
+            sample: "A supermarket and a bank.",
+            keywords: ["supermarket", "bank", "park", "seven", "eleven", "market", "mall", "school", "hospital", "cafe", "shop"]
           },
           {
-            situation: "2. A visitor is at the café and wants to go to the park. The park is across from the café. Explain where to go.",
-            sample: "The park is across from the café.",
-            keywords: ["park", "across", "from", "café"]
+            question: "How do you get to a supermarket from your home?",
+            sample: "I walk for 5 minutes and turn left at the bank.",
+            keywords: ["walk", "go", "straight", "turn", "left", "right", "by", "car", "bus", "minutes", "near"]
           },
           {
-            situation: "3. A visitor asks if the train station is far away. It takes ten minutes to walk there.",
-            sample: "The train station is about a ten-minute walk.",
-            keywords: ["train", "station", "ten", "minute", "walk"]
+            question: "What places are next to your school?",
+            sample: "A coffeeshop and a post office.",
+            keywords: ["coffee", "coffeeshop", "cafe", "post", "office", "park", "bank", "supermarket", "shop", "market", "hospital", "temple"]
           }
         ]
       }
@@ -1106,12 +979,12 @@ window.SPEAKUP_UNITS = [
   },
 
   // =========================================================================
-  // UNIT 9: Healthy Food
+  // UNIT 9: Healthy Food for Healthy Body
   // =========================================================================
   {
     id: 9,
-    title: "Unit 9: Healthy Food",
-    titleTh: "บทที่ 9: อาหารเพื่อสุขภาพ",
+    title: "Unit 9: Healthy Food for Healthy Body",
+    titleTh: "บทที่ 9: อาหารเพื่อสุขภาพสำหรับร่างกายที่แข็งแรง",
     themeIcon: "🥗",
     learningGoals: [
       "Understand simple information about healthy food and the body.",
@@ -1131,7 +1004,7 @@ window.SPEAKUP_UNITS = [
     activity1: {
       type: "facts",
       heading: "Listen to the Fun Facts",
-      headingTh: "ฟังเกร็ดความรู้เรื่องอาหารเพื่อสุขภาพ (ฟังจบจึงแสดงตัวอักษรสีแดง)",
+      headingTh: "ฟังเกร็ดความรู้เรื่องอาหารเพื่อสุขภาพ",
       title: "Healthy Food for Healthy Body",
       passage: "Our bodies need different kinds of food to stay healthy. Fruit and vegetables give us important vitamins. Foods like rice, bread, and potatoes give us energy to study, play, and exercise. Eggs, fish, and beans help our bodies grow and build strong muscles. We also need to drink enough water every day, especially when the weather is hot. Eating different foods and drinking water help us feel good and stay active.",
       phrases: [
@@ -1196,38 +1069,28 @@ window.SPEAKUP_UNITS = [
         "A healthy meal helps me stay active."
       ],
       partB: {
+        title: "B. Answer the Questions",
         instruction: "Listen to each question. Pause the audio and answer aloud using your own ideas.",
         items: [
           {
             question: "What's your favorite fruit?",
             sample: "My favorite fruit is mango.",
-            keywords: ["favorite", "fruit", "is", "mango", "apple", "banana", "orange", "watermelon"]
+            keywords: ["favorite", "fruit", "is", "mango", "apple", "banana", "orange", "watermelon", "strawberry", "grape"]
           },
           {
             question: "What do you usually eat for breakfast?",
             sample: "I usually eat eggs and bread.",
-            keywords: ["eat", "eggs", "bread", "rice", "milk", "breakfast", "usually"]
+            keywords: ["eat", "have", "eggs", "bread", "rice", "milk", "cereal", "porridge", "sandwich", "breakfast"]
+          },
+          {
+            question: "What kind of healthy food would you like to make?",
+            sample: "I would like to make a salad.",
+            keywords: ["would", "like", "make", "cook", "salad", "soup", "vegetable", "fish", "chicken", "egg", "healthy"]
           },
           {
             question: "What do you drink when you're thirsty?",
             sample: "I drink water.",
-            keywords: ["drink", "water", "juice", "milk"]
-          }
-        ]
-      },
-      partC: {
-        title: "Mini Challenge: Plan a Healthy Lunch",
-        instruction: "Talk about what you like to eat and why you like them in 3–4 sentences.",
-        prompts: [
-          "I like to eat ... for lunch.",
-          "I like them because ...",
-          "Sometimes I have ... after lunch."
-        ],
-        items: [
-          {
-            situation: "Talk about what you like to eat and why you like them in 3–4 sentences.",
-            sample: "I like to eat rice and fried eggs for lunch. I like them because they are delicious and healthy. Sometimes I have some fruits after lunch.",
-            keywords: ["like", "eat", "lunch", "because", "healthy", "delicious", "fruit", "rice"]
+            keywords: ["drink", "water", "juice", "milk", "coconut"]
           }
         ]
       }
@@ -1235,12 +1098,12 @@ window.SPEAKUP_UNITS = [
   },
 
   // =========================================================================
-  // UNIT 10: Free Time Activities
+  // UNIT 10: My Free Time
   // =========================================================================
   {
     id: 10,
-    title: "Unit 10: Free Time Activities",
-    titleTh: "บทที่ 10: กิจกรรมยามว่าง",
+    title: "Unit 10: My Free Time",
+    titleTh: "บทที่ 10: เวลาว่างของฉัน",
     themeIcon: "🎨",
     learningGoals: [
       "Understand a short story about free-time activities.",
@@ -1260,7 +1123,7 @@ window.SPEAKUP_UNITS = [
     activity1: {
       type: "story",
       heading: "Listen to a Story",
-      headingTh: "ฟังเรื่องกิจกรรมยามว่างของ Lily (ฟังจบจึงแสดงตัวอักษรสีแดง)",
+      headingTh: "ฟังเรื่องเวลาว่างและงานอดิเรกของ Lily",
       title: "My Free Time",
       passage: "My name is Lily. After school, I like doing different hobbies in my free time. I often listen to music while I do my homework. When I finish, I sometimes draw pictures or read comics. At weekends, I like taking photos with my phone, especially when I visit the park with my family. My brother enjoys playing games, but I prefer drawing. I think free time is important because it helps us relax and have fun.",
       phrases: [
@@ -1325,48 +1188,28 @@ window.SPEAKUP_UNITS = [
         "Free time helps me relax."
       ],
       partB: {
+        title: "B. Answer the Questions",
         instruction: "Listen to each question. Pause the audio and answer aloud using your own ideas.",
         items: [
           {
             question: "What do you like doing in your free time?",
             sample: "I like playing games.",
-            keywords: ["like", "playing", "games", "drawing", "reading", "listening", "music", "photos"]
+            keywords: ["like", "playing", "games", "drawing", "reading", "listening", "music", "photos", "movies", "sports"]
           },
           {
             question: "When do you usually do your favorite activity?",
-            sample: "I usually play games after school.",
-            keywords: ["usually", "after school", "weekend", "evening", "free time"]
+            sample: "I usually play games after school. I like playing games.",
+            keywords: ["usually", "after school", "weekend", "evening", "free time", "saturday", "sunday"]
           },
           {
-            question: "Who do you enjoy spending your free time with?",
-            sample: "I enjoy spending time with my friends.",
-            keywords: ["enjoy", "with", "friends", "family", "brother", "sister"]
-          }
-        ]
-      },
-      partC: {
-        title: "Mini Challenge: Guess the Hobby",
-        instruction: "Listen to each clue. Pause and say the name of the hobby aloud.",
-        prompts: [
-          "1. Pencil and paper to make pictures -> Drawing",
-          "2. Use your phone to capture pictures -> Taking photos",
-          "3. Use a controller or keyboard to play on a screen -> Playing games"
-        ],
-        items: [
-          {
-            situation: "1. You use a pencil and paper to make pictures.",
-            sample: "Drawing! My hobby is drawing.",
-            keywords: ["drawing", "draw"]
+            question: "Who do you spend your free time with?",
+            sample: "I spend my free time with my friends.",
+            keywords: ["spend", "with", "friends", "family", "brother", "sister", "parents", "alone"]
           },
           {
-            situation: "2. You use your phone to capture pictures of people or places.",
-            sample: "Taking photos!",
-            keywords: ["taking", "photos", "photo", "pictures"]
-          },
-          {
-            situation: "3. You use a controller or keyboard to play on a screen.",
-            sample: "Playing games!",
-            keywords: ["playing", "games", "game"]
+            question: "What other hobbies would you like to try?",
+            sample: "I would like to try painting.",
+            keywords: ["would", "like", "try", "painting", "drawing", "cooking", "swimming", "photography", "dancing", "singing", "music"]
           }
         ]
       }
@@ -1399,8 +1242,8 @@ window.SPEAKUP_UNITS = [
     activity1: {
       type: "conversation",
       heading: "Listen to a Conversation",
-      headingTh: "ฟังบทสนทนาการเลือกซื้อเสื้อยืด (ฟังจบจึงแสดงตัวอักษรสีแดง)",
-      title: "Buying a T-shirt",
+      headingTh: "ฟังบทสนทนาการเลือกซื้อเสื้อผ้า (เสียงผู้หญิงสองคน: Joy และ Tara)",
+      title: "A Day at the Shopping Mall",
       passage: "Joy: Look at this T-shirt, Tara. I like the color!\nTara: The blue one? It looks nice.\nJoy: Yes. How much is it?\nTara: It says 250 baht.\nJoy: That's a good price. Can I try it on?\nTara: The fitting room is over there.\nJoy: It fits well! I'll buy it.\nTara: Great! Do you want to look at the shoes, too?\nJoy: Maybe later. Let's pay for this first.",
       phrases: [
         "Joy: Look at this T-shirt, Tara. I like the color!",
@@ -1467,48 +1310,28 @@ window.SPEAKUP_UNITS = [
         "I'll buy it."
       ],
       partB: {
+        title: "B. Answer the Questions",
         instruction: "Listen to each question. Pause the audio and answer aloud using your own ideas.",
         items: [
           {
             question: "What clothes do you like to wear?",
             sample: "I like to wear T-shirts and jeans.",
-            keywords: ["like", "wear", "T-shirt", "T-shirts", "jeans", "shorts", "dress", "shirt"]
+            keywords: ["like", "wear", "T-shirt", "T-shirts", "jeans", "shorts", "dress", "shirt", "skirt", "pants"]
           },
           {
             question: "What is your favorite color for clothes?",
             sample: "My favorite color is pink.",
-            keywords: ["favorite", "color", "is", "pink", "blue", "black", "white", "red", "green"]
+            keywords: ["favorite", "color", "is", "pink", "blue", "black", "white", "red", "green", "yellow"]
           },
           {
             question: "Where do you usually buy clothes?",
             sample: "I usually buy clothes at the shopping mall.",
-            keywords: ["buy", "clothes", "shopping", "mall", "market", "online"]
-          }
-        ]
-      },
-      partC: {
-        title: "Mini Challenge: Ask Questions in a Clothes Shop",
-        instruction: "Listen to each situation. Pause and make a question aloud.",
-        prompts: [
-          "1. Price of a jacket -> How much is this jacket?",
-          "2. Smaller size -> Do you have a smaller size?",
-          "3. Fitting room location -> Where is the fitting room?"
-        ],
-        items: [
-          {
-            situation: "1. You want to know the price of a jacket.",
-            sample: "How much is this jacket?",
-            keywords: ["how", "much", "is", "this", "jacket"]
+            keywords: ["buy", "clothes", "shopping", "mall", "market", "online", "store", "shop"]
           },
           {
-            situation: "2. You want to know if the shop has a smaller size.",
-            sample: "Do you have a smaller size?",
-            keywords: ["do", "you", "have", "smaller", "size"]
-          },
-          {
-            situation: "3. You want to know where the fitting room is.",
-            sample: "Where is the fitting room?",
-            keywords: ["where", "is", "fitting", "room"]
+            question: "How much money do you usually spend on your clothes?",
+            sample: "I usually spend 200 baht on my clothes.",
+            keywords: ["spend", "baht", "hundred", "two", "three", "five", "clothes", "money", "usually"]
           }
         ]
       }
@@ -1516,12 +1339,12 @@ window.SPEAKUP_UNITS = [
   },
 
   // =========================================================================
-  // UNIT 12: Getting Around Town
+  // UNIT 12: Going to the Concert Hall
   // =========================================================================
   {
     id: 12,
-    title: "Unit 12: Getting Around Town",
-    titleTh: "บทที่ 12: การเดินทางในเมือง",
+    title: "Unit 12: Going to the Concert Hall",
+    titleTh: "บทที่ 12: การเดินทางไปฮอลล์คอนเสิร์ต",
     themeIcon: "🚌",
     learningGoals: [
       "Understand a simple conversation about traveling to a place.",
@@ -1540,7 +1363,7 @@ window.SPEAKUP_UNITS = [
     activity1: {
       type: "conversation",
       heading: "Listen to a Conversation",
-      headingTh: "ฟังบทสนทนาการเดินทางไป Concert Hall (ฟังจบจึงแสดงตัวอักษรสีแดง)",
+      headingTh: "ฟังบทสนทนาการเดินทางไป Concert Hall (เสียงชาย Max / เสียงหญิง Nina)",
       title: "Going to the Concert Hall",
       passage: "Max: How are we going to the concert hall, Nina?\nNina: Let's take the bus. It's easy.\nMax: Where is the bus stop?\nNina: It's next to the supermarket.\nMax: How long does it take to get there?\nNina: About twenty minutes.\nMax: Great! Do we need tickets?\nNina: Yes. We can buy them on the bus.\nMax: OK. Let's go! I hope we arrive on time.\nNina: Wait! I need to get my bag first.",
       phrases: [
@@ -1609,48 +1432,28 @@ window.SPEAKUP_UNITS = [
         "We can buy the tickets on the bus."
       ],
       partB: {
+        title: "B. Answer the Questions",
         instruction: "Listen to each question. Pause the audio and answer aloud using your own ideas.",
         items: [
           {
-            question: "How do you usually go to school?",
-            sample: "I usually walk to school.",
-            keywords: ["walk", "bus", "car", "train", "bike", "school", "usually"]
+            question: "How would you get from your home to school?",
+            sample: "I would take a bus.",
+            keywords: ["would", "take", "go", "walk", "bus", "car", "train", "bike", "motorcycle"]
           },
           {
-            question: "What place would you like to visit by bus?",
-            sample: "I'd like to go to the bookstore by bus.",
-            keywords: ["like", "go", "to", "park", "bookstore", "mall", "by", "bus"]
+            question: "What place would you like to go in your town?",
+            sample: "I would like to go to the bookstore.",
+            keywords: ["would", "like", "go", "to", "bookstore", "bookshop", "park", "mall", "cafe", "cinema", "market"]
           },
           {
-            question: "Who do you usually travel with?",
-            sample: "I usually travel with my family.",
-            keywords: ["travel", "with", "family", "friends", "parents", "usually"]
-          }
-        ]
-      },
-      partC: {
-        title: "Mini Challenge: Choose Your Transportation",
-        instruction: "Listen to each situation. Pause and say which transportation you would choose.",
-        prompts: [
-          "1. Long distance between two cities -> I'd take a train.",
-          "2. A shop near your home -> I'd walk.",
-          "3. Travel around town without driving -> I'd take the bus."
-        ],
-        items: [
-          {
-            situation: "1. You need to travel a long distance between two cities.",
-            sample: "I'd take a train.",
-            keywords: ["take", "train", "airplane", "bus"]
+            question: "How would you get there?",
+            sample: "I would walk.",
+            keywords: ["would", "walk", "take", "by", "bus", "car", "train", "taxi", "bike", "motorcycle"]
           },
           {
-            situation: "2. You want to go to a shop near your home.",
-            sample: "I'd walk.",
-            keywords: ["walk", "bike", "bicycle"]
-          },
-          {
-            situation: "3. You want to travel around town without driving.",
-            sample: "I'd take the bus.",
-            keywords: ["take", "bus", "taxi", "train"]
+            question: "When would you go there?",
+            sample: "I would go this Friday.",
+            keywords: ["would", "go", "on", "this", "friday", "saturday", "sunday", "weekend", "tomorrow", "after school", "morning", "afternoon"]
           }
         ]
       }

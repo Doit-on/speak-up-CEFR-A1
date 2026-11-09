@@ -1,21 +1,21 @@
 # 🎧 Speak Up! CEFR A1 — Interactive Listening & Speaking Platform (12 Units)
 
-**Version:** `v1.5.0 (Build 2026.10.25-COMM-EVAL)`  
+**Version:** `v1.6.0 (Build 2026.11.09-CURRICULUM-SYNC)`  
 **Live GitHub Pages URL:** [https://doit-on.github.io/speak-up-CEFR-A1/](https://doit-on.github.io/speak-up-CEFR-A1/)
 
 ## ✨ Features
-- **TWP (ทวพ.) Landing Page**: Welcomes students with the official **โลโก้ ทวพ.**, bold **"Speak Up! CEFR A1"** title, clear **System Version (`v1.5.0`) & Self-Diagnostic (`8/8 OK`)** banner, and 12-Unit quick-launch cards.
-- **Complete 12 Units (48 Activities, 219 Interactive Items)** based on the *Speak Up: Listening and Speaking Exercises (CEFR A1)* curriculum.
+- **TWP (ทวพ.) Landing Page**: Welcomes students with the official **โลโก้ ทวพ.**, bold **"Speak Up! CEFR A1"** title, clear **System Version (`v1.6.0`) & Self-Diagnostic (`8/8 OK`)** banner, and 12-Unit quick-launch cards.
+- **Complete 12 Units (48 Activities, 297 Interactive Items)** synchronized 100% with the updated *Speak Up: Listening and Speaking Exercises (CEFR A1)* 29-page curriculum.
 - **Pre-Activity Learning Goals & Vocabulary Table (Step 0)**:
   - Displayed immediately upon entering any of the 12 Units before starting Activity 1.
   - Shows unit-specific **Learning Goals** and the 3-column **Vocabulary Table (`Vocabulary | ความหมาย | Example`)** with individual & sequential audio playback and a direct **"Go to Activity 1"** launch button.
 - **Red-Text Listen-First Condition**:
-  - **Activity 1 (Listen to the Story / Conversation / Fun Facts)**: Strictly hides both the title and passage text until the full audio narration completes (`0.85x`). Once finished, requires clicking **`📖 แสดงเนื้อหา`** to reveal the Red Text and provides a **`🙈 ปิดเนื้อหาเพื่อฝึกฟัง`** toggle button. Conversations use automatic **Male/Female voices** matched to character names.
+  - **Activity 1 (Listen to the Story / Conversation / Fun Facts)**: Strictly hides both the title and passage text until the full audio narration completes (`0.85x`). Once finished, requires clicking **`📖 แสดงเนื้อหา`** to reveal the Red Text and provides a **`🙈 ปิดเนื้อหาเพื่อฝึกฟัง`** toggle button. Conversations use automatic **Male/Female voices** matched to character names (`Jack/Emma`, `Server/Dan/Sara`, `Tom/Mia`, `Joy/Tara`, `Max/Nina`).
   - **Activity 2 (Check Your Understanding)**: Question audio plays first; the red question text appears after an answer is selected.
   - **Activity 3 (Listen Again & Complete the Sentence)**: Passage audio + step-by-step question progression.
-  - **Activity 4 (Speak Up! — Parts A, B, C)**:
-    - **Part A**: Listen and repeat sentences + voice recording & self-playback.
-    - **Part B & Part C (Challenge)**: Listen to the question/prompt and sample answer first, then respond in your own words. Includes the **Non-Verbatim Communicative Relevance Evaluator** that checks whether the learner's answer addresses what the question asks for (without requiring verbatim repetition of the sample answer).
+  - **Activity 4 (Speak Up! — Part A & Part B)**:
+    - **Part A (Listen and Repeat — 5 Sentences)**: Listen and repeat sentences + voice recording & self-playback.
+    - **Part B (Talk About Yourself / Answer the Questions — 4 Open Questions)**: Listen to the question and sample answer first (`"Question ... Sample answer: ... Now your turn. You..."`), then respond in your own words. Includes the **Non-Verbatim Communicative Relevance Evaluator** across all 48 questions that checks whether the learner's answer addresses what the question asks for (without requiring verbatim repetition of the sample answer).
 - **4-Standard Speech Evaluation (% out of 100%)**:
   1. **Accent & Pronunciation (สำเนียงและการออกเสียง — 30%)**
   2. **Content Completeness (ความครบถ้วนของเนื้อหา — 30%)**

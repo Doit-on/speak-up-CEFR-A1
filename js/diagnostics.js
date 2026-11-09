@@ -1,14 +1,30 @@
 /**
  * Speak Up! CEFR A1 — Automated Self-Diagnostic, Version Control & Genuine ISO-18004 QR Code Engine
- * Version: 1.5.0 (Build 2026.10.25-COMM-EVAL)
+ * Version: 1.6.0 (Build 2026.11.09-CURRICULUM-SYNC)
  */
 
 window.APP_VERSION = {
-  version: "1.5.0",
-  build: "2026.10.25-COMM-EVAL",
+  version: "1.6.0",
+  build: "2026.11.09-CURRICULUM-SYNC",
   channel: "GitHub Pages Production (Doit-on/speak-up-CEFR-A1)",
-  updatedAt: "2026-10-25",
+  updatedAt: "2026-11-09",
   changelog: [
+    {
+      version: "1.6.0",
+      date: "2026-11-09",
+      notesTh: [
+        "อัปเดตฐานข้อมูลทั้ง 12 Units (Learning Goals, Vocabulary, Activity 1–4) ให้ตรงกับเอกสารต้นฉบับใหม่ Speak Up: CEFR A1 (29 หน้า) ครบ 100%",
+        "ปรับโครงสร้าง Activity 4 ทุก Unit เป็น 2 ส่วนมาตรฐาน: Part A: Listen and Repeat (5 ข้อ) และ Part B: Talk About Yourself / Answer the Questions (4 ข้อ) รวม 9 ข้อต่อ Unit (108 ข้อพูดทั้งระบบ)",
+        "อัปเดตบทสนทนาและเสียงพากย์ตัวละครใหม่: Unit 2 (Jack & Emma), Unit 5 (Server, Dan & Sara), Unit 8 (Tom & Mia), Unit 11 (Joy & Tara เสียงผู้หญิง 2 โทน), Unit 12 (Max & Nina)",
+        "อัปเดตระบบประเมินความสอดคล้องกับคำถาม (QUESTION_CONCEPT_MAP) ให้รองรับคำถาม Part B ทั้ง 48 ข้อใหม่ทั้งหมด โดยผู้เรียนสามารถตอบเป็นประโยคของตัวเองได้โดยไม่ต้องพูดตามตัวอย่าง"
+      ],
+      notesEn: [
+        "Synchronized all 12 Units (Learning Goals, Vocabulary, Activities 1–4) 100% with the updated 29-page Speak Up: CEFR A1 curriculum document",
+        "Standardized Activity 4 across all 12 units into Part A: Listen and Repeat (5 sentences) and Part B: Talk About Yourself / Answer the Questions (4 open questions = 9 speaking items per unit)",
+        "Updated dialogue scripts and multi-speaker voices for Unit 2 (Jack & Emma), Unit 5 (Server, Dan & Sara), Unit 8 (Tom & Mia), Unit 11 (Joy & Tara distinct female voices), and Unit 12 (Max & Nina)",
+        "Synchronized Non-Verbatim Communicative Relevance Evaluator (QUESTION_CONCEPT_MAP) with all 48 new Part B questions across Units 1–12"
+      ]
+    },
     {
       version: "1.5.0",
       date: "2026-10-25",
@@ -385,12 +401,11 @@ window.SelfDiagnostics = (function () {
         Array.isArray(u.activity2) && u.activity2.length >= 3 &&
         Array.isArray(u.activity3) && u.activity3.length >= 5 &&
         u.activity4 &&
-        Array.isArray(u.activity4.partA) &&
-        u.activity4.partB && Array.isArray(u.activity4.partB.items) &&
-        u.activity4.partC && Array.isArray(u.activity4.partC.items);
+        Array.isArray(u.activity4.partA) && u.activity4.partA.length === 5 &&
+        u.activity4.partB && Array.isArray(u.activity4.partB.items) && u.activity4.partB.items.length === 4;
       if (ok) {
         validUnits++;
-        totalQuestions += u.vocabulary.length + u.activity2.length + u.activity3.length + u.activity4.partA.length + u.activity4.partB.items.length + u.activity4.partC.items.length;
+        totalQuestions += u.vocabulary.length + u.activity2.length + u.activity3.length + u.activity4.partA.length + u.activity4.partB.items.length;
       }
     });
 
@@ -463,20 +478,20 @@ window.SelfDiagnostics = (function () {
         confidence: 0.94,
         mode: "repeat"
       });
-      // Non-verbatim answer test for Unit 1 Part C Challenge (different words from sample, but answers the prompt!)
+      // Non-verbatim answer test for Unit 1 Part B Q3 (different words from sample, but answers the question!)
       const commPassEval = window.VoiceEvaluator.evaluateCustomTranscript(
-        "u1_partC_0",
-        "I wake up at 6:30. I have breakfast at 7:00. I go to work at 8:00. In the evening, I eat dinner with my family. I go to bed at 10:00.",
-        ["wake up", "breakfast", "work", "evening", "bed"],
-        "challenge",
-        "Every morning I get up at seven. I go to school at eight. At night I watch TV and sleep at ten."
+        "u1_partB_2",
+        "I do my homework after school.",
+        ["do", "my", "homework", "after", "school"],
+        "open",
+        "I play football and watch TV after school."
       );
       // Off-topic answer test
       const commRetryEval = window.VoiceEvaluator.evaluateCustomTranscript(
-        "u1_partC_0",
-        "I wake up at 6:30.",
-        ["wake up"],
-        "challenge",
+        "u1_partB_2",
+        "I do my homework after school.",
+        ["do", "my", "homework", "after", "school"],
+        "open",
         "Blue jacket is cheap."
       );
       evalOk =
@@ -495,10 +510,10 @@ window.SelfDiagnostics = (function () {
 
     checks.push({
       id: "speech_evaluator",
-      nameTh: "ระบบประเมินการพูด 4 มาตรฐาน และตรวจความสอดคล้องกับคำถาม (Part B & C)",
+      nameTh: "ระบบประเมินการพูด 4 มาตรฐาน และตรวจความสอดคล้องกับคำถาม (Part A & B)",
       nameEn: "4-Metric Speech & Non-Verbatim Communicative Relevance Evaluator",
       passed: evalOk,
-      detail: evalOk ? `Calibrated (Repeat: ${sampleScore}% • Non-Verbatim Challenge Pass: ${commScore}%)` : "Evaluation test failed"
+      detail: evalOk ? `Calibrated (Repeat: ${sampleScore}% • Non-Verbatim Part B Pass: ${commScore}%)` : "Evaluation test failed"
     });
 
     // 5. Sound Effects Synthesizer (Web Audio API)
@@ -541,7 +556,7 @@ window.SelfDiagnostics = (function () {
     });
 
     // 7. Landing Page & TWP Logo Branding
-    const landingOk = !!(window.APP_VERSION && window.APP_VERSION.version === "1.5.0");
+    const landingOk = !!(window.APP_VERSION && window.APP_VERSION.version === "1.6.0");
     checks.push({
       id: "landing_twp",
       nameTh: "หน้า Landing Page โลโก้ ทวพ. และป้ายแสดง Version ระบบ",
