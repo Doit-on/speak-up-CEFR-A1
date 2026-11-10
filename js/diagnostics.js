@@ -401,8 +401,10 @@ window.SelfDiagnostics = (function () {
         Array.isArray(u.activity2) && u.activity2.length >= 3 &&
         Array.isArray(u.activity3) && u.activity3.length >= 5 &&
         u.activity4 &&
+        u.activity4.partATitle && u.activity4.partAInstruction &&
         Array.isArray(u.activity4.partA) && u.activity4.partA.length === 5 &&
-        u.activity4.partB && Array.isArray(u.activity4.partB.items) && u.activity4.partB.items.length === 4;
+        u.activity4.partB && u.activity4.partB.title && u.activity4.partB.instruction &&
+        Array.isArray(u.activity4.partB.items) && u.activity4.partB.items.length === 4;
       if (ok) {
         validUnits++;
         totalQuestions += u.vocabulary.length + u.activity2.length + u.activity3.length + u.activity4.partA.length + u.activity4.partB.items.length;

@@ -91,6 +91,8 @@ window.SPEAKUP_UNITS = [
       }
     ],
     activity4: {
+      partATitle: "Part A: Listen and Repeat",
+      partAInstruction: "Listen and repeat the sentences.",
       partA: [
         "I get up at seven o'clock.",
         "I brush my teeth.",
@@ -214,6 +216,8 @@ window.SPEAKUP_UNITS = [
       }
     ],
     activity4: {
+      partATitle: "Part A: Listen and Repeat",
+      partAInstruction: "Listen and repeat each phrase.",
       partA: [
         "Hi! My name is Emma.",
         "What's your name?",
@@ -334,6 +338,8 @@ window.SPEAKUP_UNITS = [
       }
     ],
     activity4: {
+      partATitle: "Part A: Listen and Repeat",
+      partAInstruction: "Listen and repeat each phrase.",
       partA: [
         "An octopus can change its color.",
         "Bats can find their way in the dark.",
@@ -455,6 +461,8 @@ window.SPEAKUP_UNITS = [
       }
     ],
     activity4: {
+      partATitle: "A. Listen and Repeat",
+      partAInstruction: "Listen to each sentence and repeat it aloud.",
       partA: [
         "I live with my parents.",
         "We spend time together on weekends.",
@@ -578,6 +586,8 @@ window.SPEAKUP_UNITS = [
       }
     ],
     activity4: {
+      partATitle: "A. Listen and Repeat",
+      partAInstruction: "Listen to each phrase and repeat it aloud.",
       partA: [
         "Can I have a lemonade, please?",
         "I'd like a sandwich, please.",
@@ -698,6 +708,8 @@ window.SPEAKUP_UNITS = [
       }
     ],
     activity4: {
+      partATitle: "A. Listen and Repeat",
+      partAInstruction: "Listen to each sentence and repeat it aloud.",
       partA: [
         "The weather is hot and sunny.",
         "It is freezing outside.",
@@ -819,6 +831,8 @@ window.SPEAKUP_UNITS = [
       }
     ],
     activity4: {
+      partATitle: "A. Listen and Repeat",
+      partAInstruction: "Listen to each sentence and repeat it aloud.",
       partA: [
         "My favorite sport is basketball.",
         "I play with my friends.",
@@ -942,6 +956,8 @@ window.SPEAKUP_UNITS = [
       }
     ],
     activity4: {
+      partATitle: "A. Listen and Repeat",
+      partAInstruction: "Listen to each phrase and repeat it aloud.",
       partA: [
         "Excuse me. Can you help me?",
         "I'm looking for the bookshop.",
@@ -1061,6 +1077,8 @@ window.SPEAKUP_UNITS = [
       }
     ],
     activity4: {
+      partATitle: "A. Listen and Repeat",
+      partAInstruction: "Listen to each sentence and repeat it aloud.",
       partA: [
         "Fruit and vegetables are healthy.",
         "Food gives us energy.",
@@ -1180,6 +1198,8 @@ window.SPEAKUP_UNITS = [
       }
     ],
     activity4: {
+      partATitle: "A. Listen and Repeat",
+      partAInstruction: "Listen to each sentence and repeat it aloud.",
       partA: [
         "I like listening to music.",
         "I read comics after school.",
@@ -1302,6 +1322,8 @@ window.SPEAKUP_UNITS = [
       }
     ],
     activity4: {
+      partATitle: "A. Listen and Repeat",
+      partAInstruction: "Listen to each sentence and repeat it aloud.",
       partA: [
         "How much is this T-shirt?",
         "I like the color.",
@@ -1424,6 +1446,8 @@ window.SPEAKUP_UNITS = [
       }
     ],
     activity4: {
+      partATitle: "A. Listen and Repeat",
+      partAInstruction: "Listen to each sentence and repeat it aloud.",
       partA: [
         "How are we going to the concert hall?",
         "Let's take the bus.",
