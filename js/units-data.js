@@ -322,9 +322,9 @@ window.SPEAKUP_UNITS = [
         answerIndex: 0
       },
       {
-        sentence: "3. Bats can find their way in the ___.",
-        options: ["a) water", "b) forest", "c) dark"],
-        answerIndex: 2
+        sentence: "3. Bats use ___ to find their way.",
+        options: ["a) colors", "b) sounds", "c) leaves"],
+        answerIndex: 1
       },
       {
         sentence: "4. Bats use ___ to find things around them.",
